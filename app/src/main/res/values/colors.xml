@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="primary"> #7798FC </color>
+    <color name="secondary"> #FFC144 </color>
+    <color name="light_blue"> #ADC1FF </color>
+
+    <color name="white"> #FFFFFF </color>
+
+    <color name="grey_100"> #F5F5F9 </color>
+    <color name="grey_200"> #E9E9EE </color>
+    <color name="grey_300"> #C6C6DD </color>
+    <color name="grey_400"> #9090A0 </color>
+    <color name="grey_500"> #626273 </color>
+    <color name="grey_600"> #464656 </color>
+    <color name="black"> #000000 </color>
+
+    <color name="success_100"> #76E8AD </color>
+    <color name="success_200"> #1BBF83 </color>
+
+    <color name="danger_100"> #FF8E89 </color>
+    <color name="danger_200"> #F24147 </color>
+</resources>
