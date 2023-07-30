@@ -174,8 +174,12 @@ object Advertisement {
 object Compose {
     val composeActivity = "androidx.activity:activity-compose:${Versions.composeActivityVersion}"
     val composeUi = "androidx.compose.ui:ui:${Versions.composeUiVersion}"
+    val composeTooling = "androidx.compose.ui:ui-tooling:${Versions.composeUiVersion}"
+    val foundation = "androidx.compose.foundation:foundation:1.4.3"
+    val hiltNavigation = "androidx.hilt:hilt-navigation-compose:1.0.0"
+    val material = "androidx.compose.material:material:1.4.3"
+    val material3 = "androidx.compose.material3:material3:1.1.0"
     val composeUiPreview ="androidx.compose.ui:ui-tooling-preview:${Versions.composeUiVersion}"
-    val composeMaterial3 ="androidx.compose.material3:material3:${Versions.composeMaterial3Version}"
     val composeConstraintLayout = "androidx.constraintlayout:constraintlayout-compose:${Versions.composeConstraintLayoutVersion}"
 }
 
@@ -186,7 +190,7 @@ object Billing {
 }
 
 object Versions {
-    const val gradleVersion = "7.2.2"
+    const val gradleVersion = "7.4.2"
     const val kotlinVersion = "1.8.10"
     const val kotlinxDateTimeVersion = "0.4.0"
     const val kotlinxSerializationJsonVersion = "1.4.1"
@@ -228,7 +232,7 @@ object Versions {
 
     const val composeConstraintLayoutVersion = "1.0.1"
     const val composeActivityVersion = "1.7.0"
-    const val composeUiVersion = "1.4.0"
+    const val composeUiVersion = "1.4.3"
     const val composeMaterial3Version = "1.0.1"
 
     const val billingVersion = "5.0.0"

@@ -1,12 +1,11 @@
 plugins {
     id("com.android.application")
-    id("com.google.gms.google-services")
     id("kotlin-android")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("androidx.navigation.safeargs")
     id("kotlin-parcelize")
-    kotlin("plugin.serialization") version "1.8.21"
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -44,6 +43,11 @@ android {
 
     buildFeatures {
         dataBinding = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.5"
     }
 }
 
@@ -67,7 +71,15 @@ dependencies {
     implementation(Flow.flowbinding)
     implementation(View.glide)
 
-
+    implementation(Compose.composeActivity)
+    implementation(Compose.composeUi)
+    implementation(Compose.composeTooling)
+    implementation(Compose.foundation)
+    implementation(Compose.hiltNavigation)
+    implementation(Compose.material)
+    implementation(Compose.material3)
+    implementation(Compose.composeUiPreview)
+    implementation(Compose.composeConstraintLayout)
 
 
 }
