@@ -1,4 +1,4 @@
-package com.uliga.app
+package com.uliga.app.view.main
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.uliga.app.R
 import com.uliga.app.view.analyze.AnalyzeScreen
 import com.uliga.app.view.finance.FinanceScreen
 import com.uliga.app.view.home.HomeScreen

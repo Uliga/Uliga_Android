@@ -1,10 +1,9 @@
-package com.uliga.app
+package com.uliga.app.view.main
 
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import com.uliga.app.base.ComposeViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import javax.inject.Inject
 
 @HiltViewModel

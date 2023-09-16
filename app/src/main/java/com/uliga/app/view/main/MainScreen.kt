@@ -1,4 +1,4 @@
-package com.uliga.app
+package com.uliga.app.view.main
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue

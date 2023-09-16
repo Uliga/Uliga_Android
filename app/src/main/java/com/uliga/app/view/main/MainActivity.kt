@@ -1,4 +1,4 @@
-package com.uliga.app
+package com.uliga.app.view.main
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
