@@ -1,4 +1,4 @@
-package com.uliga.app.view.my
+package com.uliga.app.view.profile
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable

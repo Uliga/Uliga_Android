@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -23,16 +24,28 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.uliga.app.view.analyze.AnalyzeScreen
 import com.uliga.app.view.finance.FinanceScreen
 import com.uliga.app.view.home.HomeScreen
-import com.uliga.app.view.my.MyScreen
+import com.uliga.app.view.profile.MyScreen
 
 enum class MainRoute(
-    @StringRes val title: Int? = null,
+    @StringRes val title: Int,
     val route: String
 ) {
-    HOME(route = "home"),
-    FINANCE(route = "finance"),
-    ANALYZE(route = "analyze"),
-    MY(route = "my")
+    HOME(
+        title = R.string.home,
+        route = "home"
+    ),
+    FINANCE(
+        title = R.string.finance,
+        route = "finance"
+    ),
+    ANALYZE(
+        title = R.string.analyze,
+        route = "analyze"
+    ),
+    PROFILE(
+        title = R.string.profile,
+        route = "profile"
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +66,7 @@ fun MainNavigationComponent(
                         icon = {
                             Icon(Icons.Filled.Favorite, contentDescription = null)
                         },
-                        label = { Text(text = "main") },
+                        label = { Text(text = stringResource(id = screen.title)) },
                         selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                         onClick = {
                             navController.navigate(screen.route) {
@@ -96,7 +109,7 @@ fun MainNavigationComponent(
                     onEvent = viewModel::updateEvent,
                 )
             }
-            composable(MainRoute.MY.route) {
+            composable(MainRoute.PROFILE.route) {
                 MyScreen(
                     navController = navController,
                     data = data,

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">uliiga</string>
+
+    <!-- tab name -->
+    <string name="home"> 홈 </string>
+    <string name="finance"> 가계부 </string>
+    <string name="analyze"> 분석 </string>
+    <string name="profile"> 프로필 </string>
+
 </resources>
