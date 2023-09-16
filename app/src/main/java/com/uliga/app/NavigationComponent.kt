@@ -1,20 +1,41 @@
 package com.uliga.app
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.uliga.app.view.analyze.AnalyzeScreen
+import com.uliga.app.view.finance.FinanceScreen
+import com.uliga.app.view.home.HomeScreen
+import com.uliga.app.view.my.MyScreen
 
 enum class MainRoute(
     @StringRes val title: Int? = null,
     val route: String
 ) {
     HOME(route = "home"),
+    FINANCE(route = "finance"),
+    ANALYZE(route = "analyze"),
+    MY(route = "my")
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainNavigationComponent(
     navController: NavHostController,
@@ -22,16 +43,71 @@ fun MainNavigationComponent(
 ) {
     val data by viewModel.uiState.collectAsStateWithLifecycle()
 
-    NavHost(
-        navController = navController,
-        startDestination = MainRoute.HOME.route
-    ) {
-        composable(MainRoute.HOME.route) {
-            HomeScreen(
-                navController = navController,
-                data = data,
-                onEvent = viewModel::updateEvent,
-            )
+    Scaffold(
+        bottomBar = {
+            BottomNavigation {
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+                MainRoute.values().forEach { screen ->
+                    BottomNavigationItem(
+                        icon = {
+                            Icon(Icons.Filled.Favorite, contentDescription = null)
+                        },
+                        label = { Text(text = "main") },
+                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                        onClick = {
+                            navController.navigate(screen.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = MainRoute.HOME.route,
+            Modifier.padding(innerPadding)
+        ) {
+            composable(MainRoute.HOME.route) {
+                HomeScreen(
+                    navController = navController,
+                    data = data,
+                    onEvent = viewModel::updateEvent,
+                )
+            }
+            composable(MainRoute.FINANCE.route) {
+                FinanceScreen(
+                    navController = navController,
+                    data = data,
+                    onEvent = viewModel::updateEvent,
+                )
+            }
+            composable(MainRoute.ANALYZE.route) {
+                AnalyzeScreen(
+                    navController = navController,
+                    data = data,
+                    onEvent = viewModel::updateEvent,
+                )
+            }
+            composable(MainRoute.MY.route) {
+                MyScreen(
+                    navController = navController,
+                    data = data,
+                    onEvent = viewModel::updateEvent,
+                )
+            }
         }
     }
+
 }
+
+
+
+

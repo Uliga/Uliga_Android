@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.uliga.app.base.ComposeActivity
-import com.uliga.app.ui.theme.UligaApplicationTheme
+import com.uliga.app.ui.theme.MyApplicationTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -15,7 +15,7 @@ class MainActivity : ComposeActivity<MainViewModel, MainUiEvent>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            UligaApplicationTheme {
+            MyApplicationTheme {
                 MainScreen(viewModel)
             }
         }
