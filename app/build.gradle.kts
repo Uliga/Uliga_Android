@@ -89,4 +89,5 @@ dependencies {
 
     implementation(View.navigationCompose)
 
+    implementation("co.yml:ycharts:2.1.0")
 }
