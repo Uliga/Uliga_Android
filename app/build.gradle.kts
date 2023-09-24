@@ -90,4 +90,7 @@ dependencies {
     implementation(View.navigationCompose)
 
     implementation("co.yml:ycharts:2.1.0")
+
+    implementation("com.kizitonwose.calendar:compose:2.3.0")
+
 }

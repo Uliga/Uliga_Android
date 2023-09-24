@@ -19,7 +19,9 @@ val Grey600 = Color(0xFF626273)
 val Grey700 = Color(0xFF464656)
 
 val CustomGrey100 = Color(0xFFF4F4F9)
-val CustomGrey200 = Color(0xFF464656)
+val CustomGrayF9F9F9 = Color(0xFFF9F9F9)
+val CustomGray9B9B9B = Color(0xFF9B9B9B)
+
 val Success100 = Color(0xFF76E8AD)
 val Success200 = Color(0xFF1BBF83)
 

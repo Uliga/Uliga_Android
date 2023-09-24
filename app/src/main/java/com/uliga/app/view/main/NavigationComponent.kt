@@ -86,7 +86,7 @@ fun MainNavigationComponent(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = MainRoute.PROFILE.route,
+            startDestination = MainRoute.FINANCE.route,
             Modifier.padding(innerPadding)
         ) {
             composable(MainRoute.HOME.route) {
