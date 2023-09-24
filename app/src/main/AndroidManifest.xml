@@ -14,8 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Uliiga"
         tools:targetApi="31">
+
         <activity
             android:name=".view.main.MainActivity"
+            android:exported="false"/>
+
+        <activity
+            android:name=".view.ErrorActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Uliiga">
