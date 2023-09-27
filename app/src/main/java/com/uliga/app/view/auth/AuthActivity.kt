@@ -44,9 +44,9 @@ class AuthActivity : ComposeActivity<AuthViewModel, AuthUiEvent>() {
 
                     composable(AuthRoute.SIGNUP.route) {
                         SignUpScreen(
-                            navController = navController,
-                            data = data,
-                            onEvent = viewModel::updateEvent
+//                            navController = navController,
+//                            data = data,
+//                            onEvent = viewModel::updateEvent
                         )
                     }
                 }
