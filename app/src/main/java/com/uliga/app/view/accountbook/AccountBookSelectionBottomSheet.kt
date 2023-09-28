@@ -215,11 +215,3 @@ fun TmpCompose() {
         }
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@RequiresApi(Build.VERSION_CODES.Q)
-@Preview
-@Composable
-fun PreviewAccountBookSelectionBottomSheetScreen() {
-    TmpCompose()
-}
