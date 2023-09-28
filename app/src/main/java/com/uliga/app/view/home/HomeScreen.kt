@@ -62,6 +62,7 @@ import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
+import com.uliga.app.view.home.schedule.ScheduleBottomSheet
 import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
 
@@ -110,7 +111,7 @@ fun HomeScreen(
     }
 
     if (isScheduleSheetSheetOpen) {
-        BudgetSettingBottomSheet(
+        ScheduleBottomSheet(
             sheetState = scheduleSheetState,
             onDismissRequest = {
                 isScheduleSheetSheetOpen = false
