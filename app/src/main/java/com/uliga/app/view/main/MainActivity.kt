@@ -9,8 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.uliga.app.base.ComposeActivity
 import com.uliga.app.ui.theme.MyApplicationTheme
-import com.uliga.app.view.accountbook.TmpCompose
-import com.uliga.app.view.home.HomeScreen
+import com.uliga.app.view.budget.BudgetSettingBottomSheetCompose
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,11 +25,4 @@ class MainActivity : ComposeActivity<MainViewModel, MainUiEvent>() {
             }
         }
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.Q)
-@Preview
-@Composable
-fun PreviewAccountBookSelectionBottomSheetScreen() {
-
 }
