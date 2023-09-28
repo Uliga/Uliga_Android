@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -27,8 +29,14 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,15 +62,17 @@ import com.uliga.app.ui.theme.CustomGrayF9F9F9
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.accountbook.AccountBookSelectionBottomSheet
 import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 
 @SuppressLint("NewApi")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FinanceScreen(
     navController: NavController,
@@ -72,12 +82,13 @@ fun FinanceScreen(
 
     val context = LocalContext.current
 
-
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(100) }
     val endMonth = remember { currentMonth.plusMonths(100) } // Adjust as needed
     val firstDayOfWeek = remember { firstDayOfWeekFromLocale() } // Available from the library
     val daysOfWeek = remember { daysOfWeek() }
+
+    val coroutineScope = rememberCoroutineScope()
 
     val state = rememberCalendarState(
         startMonth = startMonth,
@@ -85,6 +96,34 @@ fun FinanceScreen(
         firstVisibleMonth = currentMonth,
         firstDayOfWeek = daysOfWeek.first()
     )
+
+//    val accountBookSelectionSheetState = rememberModalBottomSheetState(
+//        ModalBottomSheetValue.Expanded,
+//        skipHalfExpanded = true
+//    )
+//
+//    LaunchedEffect(data.showAccountBookSelectionBottomSheet) {
+//        if(data.showAccountBookSelectionBottomSheet == true) {
+//            accountBookSelectionSheetState.show()
+//        } else {
+//            accountBookSelectionSheetState.hide()
+//        }
+//    }
+
+    val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    var isSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if(isSheetOpen) {
+        AccountBookSelectionBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = {
+                isSheetOpen = false
+            }
+        )
+    }
+
 
 
 
@@ -101,7 +140,7 @@ fun FinanceScreen(
                     Text(
                         modifier = Modifier
                             .clickable {
-
+                                isSheetOpen = true
                             },
                         text = "안세훈님의 가계부",
                         color = Color.Black,
@@ -193,6 +232,36 @@ fun FinanceScreen(
     }
 
 
+//    if (!accountBookSelectionSheetState.isVisible) {
+//        AccountBookSelectionBottomSheet(
+//            bottomSheetState = accountBookSelectionSheetState,
+//            sheetContent = {
+//                LazyColumn(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .background(Color.White)
+//                ) {
+//                    item {
+//                        Text(
+//                            modifier = Modifier
+//                                .clickable {
+//
+//                                },
+//                            text = "가계부 목록",
+//                            color = Color.Black,
+//                            fontFamily = pretendard,
+//                            fontWeight = FontWeight.Bold,
+//                            fontSize = 18.sp,
+//                            overflow = TextOverflow.Ellipsis,
+//                            maxLines = 1
+//                        )
+//                    }
+//
+//                }
+//            },
+//            content = {}
+//        )
+//    }
 }
 
 @Composable
@@ -247,8 +316,7 @@ fun TransactionItem() {
                     }
                 )
             }
-            .background(CustomGrayF9F9F9)
-            ,
+            .background(CustomGrayF9F9F9),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
