@@ -36,7 +36,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -62,6 +61,7 @@ import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
+import com.uliga.app.view.home.invitation.InvitationBottomSheet
 import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
 
@@ -76,16 +76,44 @@ fun HomeScreen(
 
     val context = LocalContext.current
 
-    val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
-    var isSheetOpen by rememberSaveable {
+    val budgetSettingSheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    var isBudgetSettingSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
 
-    if (isSheetOpen) {
+    if (isBudgetSettingSheetOpen) {
         BudgetSettingBottomSheet(
-            sheetState = sheetState,
+            sheetState = budgetSettingSheetState,
             onDismissRequest = {
-                isSheetOpen = false
+                isBudgetSettingSheetOpen = false
+            }
+        )
+    }
+
+    val invitationListSheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    var isInvitationListSheetSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (isInvitationListSheetSheetOpen) {
+        InvitationBottomSheet(
+            sheetState = invitationListSheetState,
+            onDismissRequest = {
+                isInvitationListSheetSheetOpen = false
+            }
+        )
+    }
+
+    val scheduleSheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    var isScheduleSheetSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (isScheduleSheetSheetOpen) {
+        BudgetSettingBottomSheet(
+            sheetState = scheduleSheetState,
+            onDismissRequest = {
+                isScheduleSheetSheetOpen = false
             }
         )
     }
@@ -93,6 +121,10 @@ fun HomeScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(
+                horizontal = 16.dp,
+                vertical = 16.dp
+            )
             .background(White),
         verticalArrangement = Arrangement.spacedBy(8.dp),
 
@@ -118,6 +150,34 @@ fun HomeScreen(
                     fontFamily = pretendard,
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp
+                )
+
+                Spacer(
+                    Modifier.weight(1f)
+                )
+
+                Image(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clickable {
+                            isInvitationListSheetSheetOpen = true
+                        },
+                    painter = painterResource(
+                        id = R.drawable.uliga_logo
+                    ),
+                    contentDescription = "tmp invitiation"
+                )
+
+                Image(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clickable {
+                            isScheduleSheetSheetOpen = true
+                        },
+                    painter = painterResource(
+                        id = R.drawable.uliga_logo
+                    ),
+                    contentDescription = "tmp schedule"
                 )
             }
         }
@@ -148,7 +208,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .wrapContentSize()
                         .clickable {
-                            isSheetOpen = true
+                            isBudgetSettingSheetOpen = true
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -611,14 +671,14 @@ private fun DottedLinechart(pointsData: List<Point>) {
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.Q)
-@Preview
-@Composable
-fun Preview() {
-    HomeScreen(
-        navController = NavController(context = LocalContext.current),
-        data = MainUiState(),
-        onEvent = {
-
-        })
-}
+//@RequiresApi(Build.VERSION_CODES.Q)
+//@Preview
+//@Composable
+//fun Preview() {
+//    HomeScreen(
+//        navController = NavController(context = LocalContext.current),
+//        data = MainUiState(),
+//        onEvent = {
+//
+//        })
+//}
