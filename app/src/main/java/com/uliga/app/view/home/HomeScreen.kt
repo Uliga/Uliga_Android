@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,27 +15,32 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import co.yml.charts.axis.AxisData
-import co.yml.charts.common.extensions.formatToSinglePrecision
 import co.yml.charts.common.model.Point
 import co.yml.charts.ui.linechart.LineChart
 import co.yml.charts.ui.linechart.model.Line
@@ -42,7 +48,6 @@ import co.yml.charts.ui.linechart.model.LineChartData
 import co.yml.charts.ui.linechart.model.LinePlotData
 import co.yml.charts.ui.linechart.model.LineStyle
 import co.yml.charts.ui.linechart.model.LineType
-import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.uliga.app.R
@@ -53,11 +58,14 @@ import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Primary
+import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun HomeScreen(
@@ -67,6 +75,20 @@ fun HomeScreen(
 ) {
 
     val context = LocalContext.current
+
+    val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    var isSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (isSheetOpen) {
+        BudgetSettingBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = {
+                isSheetOpen = false
+            }
+        )
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -101,17 +123,55 @@ fun HomeScreen(
         }
 
         item {
-            Text(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    top = 16.dp
-                ),
-                text = "이번 달 예산",
-                color = Grey700,
-                fontFamily = pretendard,
-                fontWeight = Medium,
-                fontSize = 20.sp
-            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.padding(
+                        start = 16.dp
+                    ),
+                    text = "이번 달 예산",
+                    color = Grey700,
+                    fontFamily = pretendard,
+                    fontWeight = Medium,
+                    fontSize = 20.sp
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+
+                Row(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .clickable {
+                            isSheetOpen = true
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .size(16.dp),
+                        painter = painterResource(
+                            id = R.drawable.ic_adding_budget
+                        ),
+                        contentDescription = null
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Text(
+                        text = "예산 설정하러 가기",
+                        color = Secondary,
+                        fontFamily = pretendard,
+                        fontWeight = Medium,
+                        fontSize = 14.sp
+                    )
+                }
+            }
 
             Text(
                 modifier = Modifier.padding(
@@ -313,7 +373,7 @@ fun HomeScreen(
                     Point(27f, 0f),
                     Point(28f, 0f),
                     Point(29f, 0f),
-                    )
+                )
 
             DottedLinechart(pointsData)
         }
@@ -546,9 +606,19 @@ private fun DottedLinechart(pointsData: List<Point>) {
     LineChart(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
-        ,
+            .height(300.dp),
         lineChartData = data
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
+@Preview
+@Composable
+fun Preview() {
+    HomeScreen(
+        navController = NavController(context = LocalContext.current),
+        data = MainUiState(),
+        onEvent = {
+
+        })
+}
