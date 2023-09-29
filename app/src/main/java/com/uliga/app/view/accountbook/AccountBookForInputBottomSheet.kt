@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,12 +22,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Primary
+import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.schedule.RadioButtonWithNoCheckBox
 
@@ -52,30 +56,17 @@ import com.uliga.app.view.schedule.RadioButtonWithNoCheckBox
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun AccountBookForInputBottomSheet(
-    sheetState: SheetState,
-    onDismissRequest: () -> Unit
-) {
-    ModalBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = {
-            onDismissRequest
-        })
-    {
-
-        AccountBookForInputBottomSheetCompose()
-    }
-
-
-}
-
-@RequiresApi(Build.VERSION_CODES.Q)
-@Composable
 fun AccountBookForInputBottomSheetCompose() {
 
     var accountBookTypeTextState by remember {
         mutableStateOf("지출")
     }
+
+    var isAccountBookCategoryExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    var accountBookCategoryList = listOf("식비", "카페 간식", "생활", "편의점, 마트 잡화", "생활", "기타")
 
     var accountBookCategoryTextState by remember {
         mutableStateOf("")
@@ -85,6 +76,11 @@ fun AccountBookForInputBottomSheetCompose() {
         mutableStateOf("")
     }
 
+    var accountBookPaymentMethodList = listOf("카드", "현금", "이체")
+
+    var isAccountPaymentMethodExpanded by remember {
+        mutableStateOf(false)
+    }
 
     var accountBookPaymentMethodTextState by remember {
         mutableStateOf("")
@@ -168,34 +164,66 @@ fun AccountBookForInputBottomSheetCompose() {
                 )
 
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                ExposedDropdownMenuBox(
+                    modifier = Modifier.fillMaxSize(),
+                    expanded = isAccountBookCategoryExpanded,
+                    onExpandedChange = {
+                        isAccountBookCategoryExpanded = it
+                    }
                 ) {
-
                     TextField(
+                        value = accountBookCategoryTextState,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isAccountBookCategoryExpanded)
+                        },
+                        textStyle = TextStyle(
+                            color = Color.Black, fontSize = 16.sp
+                        ),
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(
+                            unfocusedContainerColor = White,
+                            focusedContainerColor = White,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                        ),
+                        singleLine = true,
                         modifier = Modifier
                             .border(
                                 width = 1.dp,
                                 color = Grey400,
                                 shape = RoundedCornerShape(10.dp)
                             )
-                            .fillMaxWidth(),
-                        value = accountBookCategoryTextState,
-                        onValueChange = {
-                            accountBookCategoryTextState = it
-                        },
-                        textStyle = TextStyle(
-                            color = Color.Black, fontSize = 16.sp
-                        ),
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                        ),
-                        singleLine = true,
+                            .fillMaxWidth()
+                            .menuAnchor()
                     )
 
+                    DropdownMenu(
+                        expanded = isAccountBookCategoryExpanded,
+                        onDismissRequest = { isAccountBookCategoryExpanded = false },
+                        modifier = Modifier
+                            .background(White)
+                            .exposedDropdownSize(),
+                    ) {
+
+                        accountBookCategoryList.forEach { accountBookCategory ->
+                            DropdownMenuItem(text = {
+                                Text(
+                                    color = Color.Black,
+                                    fontFamily = pretendard,
+                                    fontWeight = FontWeight.Light,
+                                    fontSize = 16.sp,
+                                    text = accountBookCategory
+                                )
+                            }, onClick = {
+                                accountBookCategoryTextState = accountBookCategory
+                                isAccountBookCategoryExpanded = false
+                            })
+                        }
+
+                    }
                 }
+
             }
         }
 
@@ -217,36 +245,69 @@ fun AccountBookForInputBottomSheetCompose() {
                 )
 
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
+                ExposedDropdownMenuBox(
+                    modifier = Modifier.fillMaxSize(),
+                    expanded = isAccountPaymentMethodExpanded,
+                    onExpandedChange = {
+                        isAccountPaymentMethodExpanded = it
+                    }
                 ) {
-
                     TextField(
+                        value = accountBookPaymentMethodTextState,
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isAccountPaymentMethodExpanded)
+                        },
+                        textStyle = TextStyle(
+                            color = Color.Black, fontSize = 16.sp
+                        ),
+                        colors = ExposedDropdownMenuDefaults.textFieldColors(
+                            unfocusedContainerColor = White,
+                            focusedContainerColor = White,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                        ),
+                        singleLine = true,
                         modifier = Modifier
                             .border(
                                 width = 1.dp,
                                 color = Grey400,
                                 shape = RoundedCornerShape(10.dp)
                             )
-                            .fillMaxWidth(),
-                        value = accountBookPaymentMethodTextState,
-                        onValueChange = {
-                            accountBookPaymentMethodTextState = it
-                        },
-                        textStyle = TextStyle(
-                            color = Color.Black, fontSize = 16.sp
-                        ),
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                        ),
-                        singleLine = true,
+                            .fillMaxWidth()
+                            .menuAnchor()
                     )
 
+                    DropdownMenu(
+                        expanded = isAccountPaymentMethodExpanded,
+                        onDismissRequest = { isAccountPaymentMethodExpanded = false },
+                        modifier = Modifier
+                            .background(White)
+                            .exposedDropdownSize(),
+                    ) {
+
+                        accountBookPaymentMethodList.forEach { accountBookPaymentMethod ->
+                            DropdownMenuItem(text = {
+                                Text(
+                                    color = Color.Black,
+                                    fontFamily = pretendard,
+                                    fontWeight = FontWeight.Light,
+                                    fontSize = 16.sp,
+                                    text = accountBookPaymentMethod
+                                )
+                            }, onClick = {
+                                accountBookPaymentMethodTextState = accountBookPaymentMethod
+                                isAccountPaymentMethodExpanded = false
+                            })
+                        }
+
+                    }
                 }
+
             }
         }
+
 
         item {
             Column(
@@ -270,7 +331,7 @@ fun AccountBookForInputBottomSheetCompose() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    TextField(
+                    androidx.compose.material.TextField(
                         modifier = Modifier
                             .border(
                                 width = 1.dp,
@@ -319,7 +380,7 @@ fun AccountBookForInputBottomSheetCompose() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    TextField(
+                    androidx.compose.material.TextField(
                         modifier = Modifier
                             .border(
                                 width = 1.dp,
@@ -371,7 +432,7 @@ fun AccountBookForInputBottomSheetCompose() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    TextField(
+                    androidx.compose.material.TextField(
                         modifier = Modifier
                             .border(
                                 width = 1.dp,
@@ -423,9 +484,10 @@ fun AccountBookForInputBottomSheetCompose() {
                 )
             }
         }
-    }
-}
 
+    }
+
+}
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Preview
