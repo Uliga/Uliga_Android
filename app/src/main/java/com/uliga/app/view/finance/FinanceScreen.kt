@@ -1,6 +1,7 @@
 package com.uliga.app.view.finance
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -67,7 +68,7 @@ import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
-import com.uliga.app.view.accountbook.AccountBookForInputBottomSheet
+import com.uliga.app.view.accountbook.AccountBookForInputActivity
 import com.uliga.app.view.accountbook.AccountBookSelectionBottomSheet
 import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
@@ -142,18 +143,18 @@ fun FinanceScreen(
     }
 
     val accountBookForInputSheet = androidx.compose.material3.rememberModalBottomSheetState()
-    var isAccountBookForInputSheetOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    if (isAccountBookForInputSheetOpen) {
-        AccountBookForInputBottomSheet(
-            sheetState = accountBookForInputSheet,
-            onDismissRequest = {
-                isAccountBookForInputSheetOpen = false
-            }
-        )
-    }
+//    var isAccountBookForInputSheetOpen by rememberSaveable {
+//        mutableStateOf(false)
+//    }
+//
+//    if (isAccountBookForInputSheetOpen) {
+//        AccountBookForInputScreen(
+//            sheetState = accountBookForInputSheet,
+//            onDismissRequest = {
+//                isAccountBookForInputSheetOpen = false
+//            }
+//        )
+//    }
 
     LazyColumn(
         modifier = Modifier
@@ -255,7 +256,9 @@ fun FinanceScreen(
                     modifier = Modifier
                         .wrapContentSize()
                         .clickable {
-                            isAccountBookForInputSheetOpen = true
+                            val intent = Intent(context, AccountBookForInputActivity::class.java)
+                            context.startActivity(intent)
+
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

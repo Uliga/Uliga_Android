@@ -60,7 +60,6 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
-import com.uliga.app.view.accountbook.AccountBookForInputBottomSheet
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
 import com.uliga.app.view.main.MainUiEvent
