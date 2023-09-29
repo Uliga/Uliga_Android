@@ -2,6 +2,12 @@ package com.uliga.app.view.auth.login
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,6 +20,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,6 +42,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -45,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.uliga.app.R
+import com.uliga.app.ToastAnimation
 import com.uliga.app.ui.theme.CustomGrey100
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey600
@@ -55,6 +65,9 @@ import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.auth.AuthRoute
 import com.uliga.app.view.auth.AuthUiEvent
 import com.uliga.app.view.auth.AuthUiState
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -77,16 +90,35 @@ fun LoginScreen(
 //    ) {
 //        // onDimsissRequest
 //    }
+//
+//    var deleteAlertDialogVisibleState by remember {
+//        mutableStateOf(false)
+//    }
+//
+//    TmpDeleteAlertDialog(
+//        deleteAlertDialogVisibleState
+//    ) {
+//        // onDimsissRequest
+//    }
 
-    var deleteAlertDialogVisibleState by remember {
-        mutableStateOf(true)
+    var isVisible by remember {
+        mutableStateOf(false)
     }
 
-    TmpDeleteAlertDialog(
-        deleteAlertDialogVisibleState
-    ) {
-        // onDimsissRequest
+    var isAnimating by remember {
+        mutableStateOf(false)
     }
+
+    val yOffset by animateFloatAsState(
+        targetValue = if(isAnimating) 500f else 200f,
+        animationSpec = tween(durationMillis = 1000),
+        finishedListener = { endValue ->
+            if(endValue == 500f) {
+                isAnimating = false
+            }
+        },
+        label = ""
+    )
 
     Column(
         modifier = Modifier
@@ -219,7 +251,9 @@ fun LoginScreen(
                 ),
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-                    navController.navigate(AuthRoute.SIGNUP.route)
+                    isAnimating = isAnimating.not()
+                    isVisible = isVisible.not()
+//                    navController.navigate(AuthRoute.SIGNUP.route)
                 }) {
                 Text(
                     color = Color.White,
@@ -358,6 +392,55 @@ fun LoginScreen(
         }
 
     }
+
+
+
+//    Box(
+//        modifier = Modifier.fillMaxSize()
+//    ) {
+//        AnimatedVisibility(
+//            visible = isVisible,
+//            modifier = Modifier.align(Alignment.TopCenter),
+//            enter = slideInVertically(initialOffsetY = {
+//                -it
+//            }),
+//            exit = slideOutVertically(targetOffsetY = {
+//                -it
+//            }) + fadeOut()
+//        ) {
+            Box(
+                modifier = Modifier
+                    .offset(
+                        x = 200.dp,
+                        y = yOffset.dp)
+                    .shadow(
+                        elevation = 10.dp,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .background(Color.White)
+                    .wrapContentSize()
+                    .padding(8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    color = Primary,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp,
+                    text = "에러메시지이이비니니아아아"
+                )
+//            }
+//        }
+    }
+
+//    if(isVisible) {
+//        ToastAnimation(
+//            isVisible = !isVisible,
+//            toastMessage = "에러 메시지ㅣ이이이잉이비니다아앙"
+//        )
+//    }
+
+
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
