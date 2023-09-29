@@ -60,11 +60,12 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.accountbook.AccountBookForInputBottomSheet
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
-import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
 import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
+import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -118,6 +119,21 @@ fun HomeScreen(
             }
         )
     }
+
+    val accountBookForInputSheet = androidx.compose.material3.rememberModalBottomSheetState()
+    var isAccountBookForInputSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (isAccountBookForInputSheetOpen) {
+        AccountBookForInputBottomSheet(
+            sheetState = accountBookForInputSheet,
+            onDismissRequest = {
+                isAccountBookForInputSheetOpen = false
+            }
+        )
+    }
+
 
     LazyColumn(
         modifier = Modifier
@@ -379,78 +395,55 @@ fun HomeScreen(
         }
 
         item {
-            Text(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    top = 8.dp
-                ),
-                text = "이번 달 총 지출",
-                color = Grey700,
-                fontFamily = pretendard,
-                fontWeight = Medium,
-                fontSize = 20.sp
-            )
-
-            Text(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                ),
-                text = "10,000원",
-                color = Grey600,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Bold,
-                fontSize = 28.sp
-            )
-
-            val pointsData: List<Point> =
-                listOf(
-                    Point(0f, 40f),
-                    Point(1f, 90f),
-                    Point(2f, 0f),
-                    Point(3f, 60f),
-                    Point(4f, 10f),
-                    Point(5f, 0f),
-                    Point(6f, 0f),
-                    Point(7f, 0f),
-                    Point(8f, 0f),
-                    Point(9f, 0f),
-                    Point(10f, 0f),
-                    Point(11f, 0f),
-                    Point(12f, 0f),
-                    Point(13f, 0f),
-                    Point(14f, 0f),
-                    Point(15f, 0f),
-                    Point(16f, 0f),
-                    Point(17f, 0f),
-                    Point(18f, 0f),
-                    Point(19f, 0f),
-                    Point(20f, 0f),
-                    Point(21f, 0f),
-                    Point(22f, 0f),
-                    Point(23f, 60f),
-                    Point(24f, 10f),
-                    Point(25f, 0f),
-                    Point(26f, 0f),
-                    Point(27f, 0f),
-                    Point(28f, 0f),
-                    Point(29f, 0f),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.padding(
+                        start = 16.dp
+                    ),
+                    text = "다가오는 금융 일정",
+                    color = Grey700,
+                    fontFamily = pretendard,
+                    fontWeight = Medium,
+                    fontSize = 20.sp
                 )
 
-            DottedLinechart(pointsData)
-        }
+                Spacer(modifier = Modifier.weight(1f))
 
-        item {
-            Text(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    bottom = 16.dp
-                ),
-                text = "다가오는 금융 일정",
-                color = Grey700,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Medium,
-                fontSize = 20.sp
-            )
+
+                Row(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .clickable {
+                            isAccountBookForInputSheetOpen = true
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .size(16.dp),
+                        painter = painterResource(
+                            id = R.drawable.ic_adding_budget
+                        ),
+                        contentDescription = null
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Text(
+                        text = "금융 일정 추가하기",
+                        color = Secondary,
+                        fontFamily = pretendard,
+                        fontWeight = Medium,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+
         }
 
         items(5) {
@@ -611,6 +604,68 @@ fun HomeScreen(
                 )
             }
         }
+
+        item {
+            Text(
+                modifier = Modifier.padding(
+                    start = 16.dp,
+                    top = 8.dp
+                ),
+                text = "이번 달 총 지출",
+                color = Grey700,
+                fontFamily = pretendard,
+                fontWeight = Medium,
+                fontSize = 20.sp
+            )
+
+            Text(
+                modifier = Modifier.padding(
+                    start = 16.dp,
+                ),
+                text = "10,000원",
+                color = Grey600,
+                fontFamily = pretendard,
+                fontWeight = FontWeight.Bold,
+                fontSize = 28.sp
+            )
+
+            val pointsData: List<Point> =
+                listOf(
+                    Point(0f, 40f),
+                    Point(1f, 90f),
+                    Point(2f, 0f),
+                    Point(3f, 60f),
+                    Point(4f, 10f),
+                    Point(5f, 0f),
+                    Point(6f, 0f),
+                    Point(7f, 0f),
+                    Point(8f, 0f),
+                    Point(9f, 0f),
+                    Point(10f, 0f),
+                    Point(11f, 0f),
+                    Point(12f, 0f),
+                    Point(13f, 0f),
+                    Point(14f, 0f),
+                    Point(15f, 0f),
+                    Point(16f, 0f),
+                    Point(17f, 0f),
+                    Point(18f, 0f),
+                    Point(19f, 0f),
+                    Point(20f, 0f),
+                    Point(21f, 0f),
+                    Point(22f, 0f),
+                    Point(23f, 60f),
+                    Point(24f, 10f),
+                    Point(25f, 0f),
+                    Point(26f, 0f),
+                    Point(27f, 0f),
+                    Point(28f, 0f),
+                    Point(29f, 0f),
+                )
+
+            DottedLinechart(pointsData)
+        }
+
     }
 }
 
