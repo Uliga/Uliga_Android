@@ -51,6 +51,7 @@ import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CheckAlertDialog
+import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.auth.AuthRoute
 import com.uliga.app.view.auth.AuthUiEvent
 import com.uliga.app.view.auth.AuthUiState
@@ -67,16 +68,25 @@ fun LoginScreen(
 
     val context = LocalContext.current
 
-    var checkAlertDialogVisibleState by remember {
+//    var checkAlertDialogVisibleState by remember {
+//        mutableStateOf(true)
+//    }
+//
+//    TmpCheckAlertDialog(
+//        checkAlertDialogVisibleState
+//    ) {
+//        // onDimsissRequest
+//    }
+
+    var deleteAlertDialogVisibleState by remember {
         mutableStateOf(true)
     }
 
-    TmpCheckAlertDialog(
-        checkAlertDialogVisibleState
+    TmpDeleteAlertDialog(
+        deleteAlertDialogVisibleState
     ) {
         // onDimsissRequest
     }
-
 
     Column(
         modifier = Modifier
@@ -347,6 +357,21 @@ fun LoginScreen(
             }
         }
 
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+@Composable
+fun TmpDeleteAlertDialog(
+    deleteAlertDialogVisibleState: Boolean,
+    onDismissRequest: () -> Unit
+) {
+    if (deleteAlertDialogVisibleState) {
+        DeleteAlertDialog(
+            onDismissRequest = {},
+            title = "안세훈님의 가계부 삭제",
+            subTitle = "정말 안세훈님의 가계부를 삭제하시겠어요?"
+        )
     }
 }
 
