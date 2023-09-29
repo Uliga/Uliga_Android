@@ -13,14 +13,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -29,7 +33,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,7 +68,7 @@ import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.accountbook.AccountBookSelectionBottomSheet
 import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
-import kotlinx.coroutines.launch
+import com.uliga.app.view.schedule.ScheduleBottomSheet
 import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -115,7 +118,7 @@ fun FinanceScreen(
         mutableStateOf(false)
     }
 
-    if(isSheetOpen) {
+    if (isSheetOpen) {
         AccountBookSelectionBottomSheet(
             sheetState = sheetState,
             onDismissRequest = {
@@ -125,7 +128,15 @@ fun FinanceScreen(
     }
 
 
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
 
+    if (showDialog) {
+        showSettingDropDownMenu(
+            showDialog = showDialog,
+        )
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -152,7 +163,9 @@ fun FinanceScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = { /* doSomething() */ }) {
+                    IconButton(onClick = {
+                        showDialog = true
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.Add,
                             contentDescription = "Localized description"
@@ -367,5 +380,68 @@ fun TransactionItem() {
             ),
             contentDescription = null
         )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun showSettingDropDownMenu(
+    showDialog: Boolean,
+) {
+    val scheduleSheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    var isScheduleSheetStateOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (isScheduleSheetStateOpen) {
+        ScheduleBottomSheet(
+            sheetState = scheduleSheetState,
+            onDismissRequest = {
+                isScheduleSheetStateOpen = false
+            }
+        )
+    }
+
+    var expanded by remember { mutableStateOf(true) }
+    val items = listOf(
+        "금융 일정 추가하기", "가계부 작성하기"
+    )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.TopEnd)
+            .absolutePadding(top = 45.dp, right = 20.dp)
+    ) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .wrapContentWidth()
+                .background(
+                    Color.White
+                )
+        ) {
+            items.forEachIndexed { index, s ->
+                DropdownMenuItem(onClick = {
+                    expanded = false
+//                    showDialog = false
+
+                    when (index) {
+                        0 -> {
+                            isScheduleSheetStateOpen = true
+                        }
+                    }
+
+                }) {
+                    Text(text = s)
+                    if (index < 3) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+                }
+            }
+        }
+
+
     }
 }
