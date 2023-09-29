@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -31,9 +32,10 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 
+
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun CheckAlertDialog(
+fun DeleteAlertDialog(
     onDismissRequest: () -> Unit,
     properties: DialogProperties = DialogProperties(),
     title: String,
@@ -91,18 +93,45 @@ fun CheckAlertDialog(
                         vertical = 4.dp
                     ),
                     colors = ButtonDefaults.buttonColors(
+                        backgroundColor = White,
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = {
+                        onDismissRequest
+                    }) {
+
+
+                    Text(
+                        color = Primary,
+                        fontFamily = pretendard,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp,
+                        text = "취소"
+                    )
+                }
+
+                Button(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(horizontal = 4.dp),
+                    contentPadding = PaddingValues(
+                        vertical = 4.dp
+                    ),
+                    colors = ButtonDefaults.buttonColors(
                         backgroundColor = Primary,
                     ),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
                         onDismissRequest
                     }) {
+
+
                     Text(
                         color = Color.White,
                         fontFamily = pretendard,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
-                        text = "확인"
+                        text = "삭제"
                     )
                 }
             }
@@ -111,14 +140,13 @@ fun CheckAlertDialog(
 
 }
 
-//@RequiresApi(Build.VERSION_CODES.Q)
-//@Preview
-//@Composable
-//fun Preview() {
-//    CheckAlertDialog(
-//        onDismissRequest = {},
-//        title = "가계부 생성 완료",
-//        subTitle = "가계부가 성공적으로 만들어졌습니다. \n" +
-//                "당신의 합리적인 소비생활을 응원합니다! \uD83D\uDE4B\u200D♀️"
-//    )
-//}
+@RequiresApi(Build.VERSION_CODES.Q)
+@Preview
+@Composable
+fun Preview() {
+    DeleteAlertDialog(
+        onDismissRequest = {},
+        title = "안세훈님의 가계부 삭제",
+        subTitle = "정말 안세훈님의 가계부를 삭제하시겠어요?"
+    )
+}
