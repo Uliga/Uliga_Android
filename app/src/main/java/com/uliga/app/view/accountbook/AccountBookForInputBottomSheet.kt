@@ -488,10 +488,3 @@ fun AccountBookForInputBottomSheetCompose() {
     }
 
 }
-
-@RequiresApi(Build.VERSION_CODES.Q)
-@Preview
-@Composable
-fun Preview() {
-    AccountBookForInputBottomSheetCompose()
-}

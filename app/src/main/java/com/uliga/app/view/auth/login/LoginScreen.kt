@@ -29,8 +29,10 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,7 +41,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -49,6 +50,7 @@ import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.CheckAlertDialog
 import com.uliga.app.view.auth.AuthRoute
 import com.uliga.app.view.auth.AuthUiEvent
 import com.uliga.app.view.auth.AuthUiState
@@ -64,6 +66,17 @@ fun LoginScreen(
 ) {
 
     val context = LocalContext.current
+
+    var checkAlertDialogVisibleState by remember {
+        mutableStateOf(true)
+    }
+
+    TmpCheckAlertDialog(
+        checkAlertDialogVisibleState
+    ) {
+        // onDimsissRequest
+    }
+
 
     Column(
         modifier = Modifier
@@ -196,7 +209,7 @@ fun LoginScreen(
                 ),
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-                navController.navigate(AuthRoute.SIGNUP.route)
+                    navController.navigate(AuthRoute.SIGNUP.route)
                 }) {
                 Text(
                     color = Color.White,
@@ -334,20 +347,23 @@ fun LoginScreen(
             }
         }
 
-
-    }
-
-
-
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-    ) {
-
-
-
-
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
+@Composable
+fun TmpCheckAlertDialog(
+    checkAlertDialogVisibleState: Boolean,
+    onDismissRequest: () -> Unit
+) {
+    if (checkAlertDialogVisibleState) {
+        CheckAlertDialog(
+            onDismissRequest = onDismissRequest,
+            title = "가계부 생성 완료",
+            subTitle = "가계부가 성공적으로 만들어졌습니다. \n" +
+                    "당신의 합리적인 소비생활을 응원합니다! \uD83D\uDE4B\u200D♀️"
+        )
+    }
+
+}
 
