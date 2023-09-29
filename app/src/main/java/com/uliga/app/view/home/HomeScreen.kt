@@ -66,6 +66,7 @@ import com.uliga.app.view.home.invitation.InvitationBottomSheet
 import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
+import com.uliga.app.view.schedule.ScheduleBottomSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -120,20 +121,19 @@ fun HomeScreen(
         )
     }
 
-    val accountBookForInputSheet = androidx.compose.material3.rememberModalBottomSheetState()
-    var isAccountBookForInputSheetOpen by rememberSaveable {
+    val scheduleSheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    var isScheduleSheetStateOpen by rememberSaveable {
         mutableStateOf(false)
     }
 
-    if (isAccountBookForInputSheetOpen) {
-        AccountBookForInputBottomSheet(
-            sheetState = accountBookForInputSheet,
+    if (isScheduleSheetStateOpen) {
+        ScheduleBottomSheet(
+            sheetState = scheduleSheetState,
             onDismissRequest = {
-                isAccountBookForInputSheetOpen = false
+                isScheduleSheetStateOpen = false
             }
         )
     }
-
 
     LazyColumn(
         modifier = Modifier
@@ -419,7 +419,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .wrapContentSize()
                         .clickable {
-                            isAccountBookForInputSheetOpen = true
+                            isScheduleSheetStateOpen = true
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

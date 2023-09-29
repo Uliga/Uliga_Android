@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -63,8 +64,10 @@ import com.uliga.app.R
 import com.uliga.app.ui.theme.CustomGray9B9B9B
 import com.uliga.app.ui.theme.CustomGrayF9F9F9
 import com.uliga.app.ui.theme.Grey700
+import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.accountbook.AccountBookForInputBottomSheet
 import com.uliga.app.view.accountbook.AccountBookSelectionBottomSheet
 import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
@@ -135,6 +138,20 @@ fun FinanceScreen(
     if (showDialog) {
         showSettingDropDownMenu(
             showDialog = showDialog,
+        )
+    }
+
+    val accountBookForInputSheet = androidx.compose.material3.rememberModalBottomSheetState()
+    var isAccountBookForInputSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (isAccountBookForInputSheetOpen) {
+        AccountBookForInputBottomSheet(
+            sheetState = accountBookForInputSheet,
+            onDismissRequest = {
+                isAccountBookForInputSheetOpen = false
+            }
         )
     }
 
@@ -214,20 +231,54 @@ fun FinanceScreen(
         }
 
         item {
-            Text(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(
-                        start = 32.dp,
-                        end = 32.dp,
-                        top = 8.dp
+                    .padding(end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    modifier = Modifier.padding(
+                        start = 16.dp
                     ),
-                text = "2월 17일 가계부",
-                color = Grey700,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Medium,
-                fontSize = 18.sp
-            )
+                    text = "9월 23일",
+                    color = Grey700,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 20.sp
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+
+                Row(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .clickable {
+                            isAccountBookForInputSheetOpen = true
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .size(16.dp),
+                        painter = painterResource(
+                            id = R.drawable.ic_adding_budget
+                        ),
+                        contentDescription = null
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Text(
+                        text = "가계부 추가하기",
+                        color = Secondary,
+                        fontFamily = pretendard,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 14.sp
+                    )
+                }
+            }
         }
 
         item {

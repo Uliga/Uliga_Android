@@ -47,7 +47,6 @@ import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.schedule.RadioButtonWithNoCheckBox
-import com.uliga.app.view.schedule.ScheduleBottomSheetCompose
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,7 +63,7 @@ fun AccountBookForInputBottomSheet(
         })
     {
 
-        ScheduleBottomSheetCompose()
+        AccountBookForInputBottomSheetCompose()
     }
 
 
@@ -78,24 +77,24 @@ fun AccountBookForInputBottomSheetCompose() {
         mutableStateOf("지출")
     }
 
-    var accountBookCategoryTextState  by remember {
+    var accountBookCategoryTextState by remember {
         mutableStateOf("")
     }
 
-    var accountBookAccountTextState  by remember {
+    var accountBookAccountTextState by remember {
         mutableStateOf("")
     }
 
 
-    var accountBookPaymentMethodTextState  by remember {
+    var accountBookPaymentMethodTextState by remember {
         mutableStateOf("")
     }
 
-    var accountBookCostTextState  by remember {
+    var accountBookCostTextState by remember {
         mutableStateOf("")
     }
 
-    var accountBookMemoTextState  by remember {
+    var accountBookMemoTextState by remember {
         mutableStateOf("")
     }
 
