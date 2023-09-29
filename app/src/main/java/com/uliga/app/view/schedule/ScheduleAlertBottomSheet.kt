@@ -1,4 +1,4 @@
-package com.uliga.app.view.home.schedule
+package com.uliga.app.view.schedule
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -33,7 +33,7 @@ import com.uliga.app.ui.theme.pretendard
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleBottomSheet(
+fun ScheduleAlertBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit
 ) {
@@ -44,13 +44,13 @@ fun ScheduleBottomSheet(
         })
     {
 
-        ScheduleBottomSheetCompose()
+        ScheduleAlertBottomSheetCompose()
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun ScheduleBottomSheetCompose() {
+fun ScheduleAlertBottomSheetCompose() {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()

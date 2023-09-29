@@ -62,7 +62,7 @@ import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
-import com.uliga.app.view.home.schedule.ScheduleBottomSheet
+import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
 import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
 
@@ -105,16 +105,16 @@ fun HomeScreen(
         )
     }
 
-    val scheduleSheetState = androidx.compose.material3.rememberModalBottomSheetState()
-    var isScheduleSheetSheetOpen by rememberSaveable {
+    val scheduleAlertSheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    var isScheduleAlertSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
 
-    if (isScheduleSheetSheetOpen) {
-        ScheduleBottomSheet(
-            sheetState = scheduleSheetState,
+    if (isScheduleAlertSheetOpen) {
+        ScheduleAlertBottomSheet(
+            sheetState = scheduleAlertSheetState,
             onDismissRequest = {
-                isScheduleSheetSheetOpen = false
+                isScheduleAlertSheetOpen = false
             }
         )
     }
@@ -173,7 +173,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .size(40.dp)
                         .clickable {
-                            isScheduleSheetSheetOpen = true
+                            isScheduleAlertSheetOpen = true
                         },
                     painter = painterResource(
                         id = R.drawable.uliga_logo
