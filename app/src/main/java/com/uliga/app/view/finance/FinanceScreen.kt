@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -64,8 +65,12 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.uliga.app.R
 import com.uliga.app.ui.theme.CustomGray9B9B9B
 import com.uliga.app.ui.theme.CustomGrayF9F9F9
+import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey700
+import com.uliga.app.ui.theme.LightBlue
 import com.uliga.app.ui.theme.Secondary
+import com.uliga.app.ui.theme.Success100
+import com.uliga.app.ui.theme.Success200
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.accountbook.AccountBookForInputActivity
@@ -386,22 +391,65 @@ fun TransactionItem() {
             .background(CustomGrayF9F9F9),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
+
+//        Box(
+//            modifier = Modifier
+//                .padding(16.dp)
+//                .size(52.dp)
+//                .border(width = 1.dp, color = Success100, shape = RoundedCornerShape(5.dp))
+//                .weight(1f)
+//                .background(Success100)
+//                ,
+//        ) {
+//            Text(
+//                modifier = Modifier
+//                    .align(Alignment.Center),
+//                text = "지출",
+//                color = White,
+//                fontFamily = pretendard,
+//                fontWeight = FontWeight.SemiBold,
+//                fontSize = 16.sp,
+//                overflow = TextOverflow.Ellipsis,
+//                maxLines = 1
+//            )
+//        }
+
+        Column(
             modifier = Modifier
-                .padding(16.dp)
-                .size(52.dp)
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 4.dp
+                )
                 .weight(1f),
-            painter = painterResource(
-                id = R.drawable.ic_transaction
-            ),
-            contentDescription = null
-        )
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(52.dp),
+                painter = painterResource(
+                    id = R.drawable.ic_transaction
+                ),
+                contentDescription = null
+            )
+
+            Text(
+                text = "지출",
+                color = LightBlue,
+                fontFamily = pretendard,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 11.sp,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
+        }
+
 
         Column(
             modifier = Modifier.weight(3f)
         ) {
             Text(
-                text = "월세, 생활비 입금fdsdfdsfdsdsfsdfsd",
+                text = "식비 / sdf",
                 color = Grey700,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.SemiBold,
@@ -411,13 +459,23 @@ fun TransactionItem() {
             )
 
             Text(
-                text = "매월 28일 / 600,000원 / 수입sdfsdfsdsdfsdfds",
+                text = "1,000원 / 현금 / by. 안세훈",
                 color = CustomGray9B9B9B,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 11.sp,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
+            )
+
+            Text(
+                text = "메모메모메모메모메모메모메모",
+                color = LightBlue,
+                fontFamily = pretendard,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 11.sp,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2
             )
         }
 
