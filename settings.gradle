@@ -1,4 +1,4 @@
 
 rootProject.name = "uliiga"
 include(":app")
-
+include(":chart")
