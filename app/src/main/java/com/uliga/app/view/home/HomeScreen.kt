@@ -29,9 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,12 +47,16 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.analyze.HorizontalBarChartDataModel
+import com.uliga.app.view.analyze.VerticalBarChartDataModel
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
 import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
 import com.uliga.app.view.schedule.ScheduleBottomSheet
+import com.uliga.chart.bar.HorizontalBarChart
+import com.uliga.chart.bar.VerticalBarChart
 import com.uliga.chart.line.LineChart
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -251,23 +252,14 @@ fun HomeScreen(
                 fontSize = 28.sp
             )
 
-            Image(
-                modifier = Modifier
-                    .height(56.dp)
-                    .padding(
-                        horizontal = 8.dp
-                    ),
-                painter = painterResource(
-                    id = R.drawable.tmp_progress_bar
-                ),
-                contentDescription = "uliga logo"
-            )
+            VerticalBarChartScreenContent()
 
             Spacer(
                 modifier = Modifier.height(
                     16.dp
                 )
             )
+
             Divider(
                 modifier = Modifier.padding(
                     horizontal = 8.dp,
@@ -653,6 +645,33 @@ fun LineChartRow(lineChartDataModel: LineChartDataModel) {
     }
 }
 
+@Composable
+private fun VerticalBarChartScreenContent() {
+    val barChartDataModel = VerticalOneBarChartDataModel()
+
+    Column(
+        modifier = Modifier.padding(
+            horizontal = 12.dp,
+            vertical = 12.dp
+        )
+    ) {
+        VerticalBarChartRow(barChartDataModel)
+    }
+}
+
+@Composable
+private fun VerticalBarChartRow(barChartDataModel: VerticalOneBarChartDataModel) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+    ) {
+        VerticalBarChart(
+            barChartData = barChartDataModel.barChartData,
+            labelDrawer = barChartDataModel.labelDrawer
+        )
+    }
+}
 
 
 
