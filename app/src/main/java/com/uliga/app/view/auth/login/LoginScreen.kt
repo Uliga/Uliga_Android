@@ -1,13 +1,10 @@
 package com.uliga.app.view.auth.login
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,7 +17,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,9 +38,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -62,12 +57,8 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CheckAlertDialog
 import com.uliga.app.view.DeleteAlertDialog
-import com.uliga.app.view.auth.AuthRoute
 import com.uliga.app.view.auth.AuthUiEvent
 import com.uliga.app.view.auth.AuthUiState
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -110,10 +101,10 @@ fun LoginScreen(
     }
 
     val yOffset by animateFloatAsState(
-        targetValue = if(isAnimating) 500f else 200f,
-        animationSpec = tween(durationMillis = 1000),
+        targetValue = if (isAnimating) 25f else -100f,
+        animationSpec = tween(durationMillis = 1500),
         finishedListener = { endValue ->
-            if(endValue == 500f) {
+            if (endValue == 25f) {
                 isAnimating = false
             }
         },
@@ -393,52 +384,10 @@ fun LoginScreen(
 
     }
 
-
-
-//    Box(
-//        modifier = Modifier.fillMaxSize()
-//    ) {
-//        AnimatedVisibility(
-//            visible = isVisible,
-//            modifier = Modifier.align(Alignment.TopCenter),
-//            enter = slideInVertically(initialOffsetY = {
-//                -it
-//            }),
-//            exit = slideOutVertically(targetOffsetY = {
-//                -it
-//            }) + fadeOut()
-//        ) {
-            Box(
-                modifier = Modifier
-                    .offset(
-                        x = 200.dp,
-                        y = yOffset.dp)
-                    .shadow(
-                        elevation = 10.dp,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .background(Color.White)
-                    .wrapContentSize()
-                    .padding(8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    color = Primary,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.sp,
-                    text = "에러메시지이이비니니아아아"
-                )
-//            }
-//        }
-    }
-
-//    if(isVisible) {
-//        ToastAnimation(
-//            isVisible = !isVisible,
-//            toastMessage = "에러 메시지ㅣ이이이잉이비니다아앙"
-//        )
-//    }
+    ToastAnimation(
+        yOffset = yOffset,
+        toastMessage = "에러 앙"
+    )
 
 
 }
