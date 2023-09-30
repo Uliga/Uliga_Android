@@ -30,11 +30,19 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.5"
+    }
 }
 
 dependencies {
     implementation(Core.coreKtx)
-    
+
     implementation(Coroutines.core)
     implementation(Coroutines.android)
 

@@ -39,16 +39,6 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import co.yml.charts.axis.AxisData
-import co.yml.charts.common.model.Point
-import co.yml.charts.ui.linechart.LineChart
-import co.yml.charts.ui.linechart.model.Line
-import co.yml.charts.ui.linechart.model.LineChartData
-import co.yml.charts.ui.linechart.model.LinePlotData
-import co.yml.charts.ui.linechart.model.LineStyle
-import co.yml.charts.ui.linechart.model.LineType
-import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
-import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.uliga.app.R
 import com.uliga.app.ui.theme.CustomGrey100
 import com.uliga.app.ui.theme.Danger100
@@ -66,6 +56,7 @@ import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
 import com.uliga.app.view.schedule.ScheduleBottomSheet
+import com.uliga.chart.line.LineChart
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -628,103 +619,43 @@ fun HomeScreen(
                 fontSize = 28.sp
             )
 
-            val pointsData: List<Point> =
-                listOf(
-                    Point(0f, 40f),
-                    Point(1f, 90f),
-                    Point(2f, 0f),
-                    Point(3f, 60f),
-                    Point(4f, 10f),
-                    Point(5f, 0f),
-                    Point(6f, 0f),
-                    Point(7f, 0f),
-                    Point(8f, 0f),
-                    Point(9f, 0f),
-                    Point(10f, 0f),
-                    Point(11f, 0f),
-                    Point(12f, 0f),
-                    Point(13f, 0f),
-                    Point(14f, 0f),
-                    Point(15f, 0f),
-                    Point(16f, 0f),
-                    Point(17f, 0f),
-                    Point(18f, 0f),
-                    Point(19f, 0f),
-                    Point(20f, 0f),
-                    Point(21f, 0f),
-                    Point(22f, 0f),
-                    Point(23f, 60f),
-                    Point(24f, 10f),
-                    Point(25f, 0f),
-                    Point(26f, 0f),
-                    Point(27f, 0f),
-                    Point(28f, 0f),
-                    Point(29f, 0f),
-                )
-
-            DottedLinechart(pointsData)
+            LineChartScreenContent()
         }
 
     }
 }
 
 @Composable
-private fun DottedLinechart(pointsData: List<Point>) {
-    val steps = 30
-    val xAxisData = AxisData.Builder()
-        .axisStepSize(10.dp)
-        .steps(pointsData.size - 1)
-        .labelAndAxisLinePadding(10.dp)
-        .startDrawPadding(30.dp)
-        .startPadding(30.dp)
-        .axisLineColor(Color.Transparent)
-        .build()
-    val yAxisData = AxisData.Builder()
-        .steps(steps)
-        .labelAndAxisLinePadding(10.dp)
-        .startDrawPadding(30.dp)
-        .startPadding(30.dp)
-        .shouldDrawAxisLineTillEnd(false)
-        .axisLineColor(Transparent)
-        .build()
-    val data = LineChartData(
-        linePlotData = LinePlotData(
-            lines = listOf(
-                Line(
-                    dataPoints = pointsData,
-                    lineStyle = LineStyle(
-                        lineType = LineType.Straight(isDotted = false),
-                        color = Danger100
-                    ),
-                    shadowUnderLine = ShadowUnderLine(
-                        brush = Brush.verticalGradient(
-                            listOf(
-                                Color.White,
-                                Color.Transparent
-                            )
-                        ), alpha = 0.3f
-                    ),
-                    selectionHighlightPopUp = SelectionHighlightPopUp(
-                        backgroundColor = Color.Yellow,
-                        popUpLabel = { x, y ->
-                            val xLabel = "1일 : ${x.toInt()} "
-                            val yLabel = "y일 : ${String.format("%.2f", y)}"
-                            "$xLabel \n $yLabel"
-                        }
-                    )
-                )
-            )
-        ),
-        xAxisData = xAxisData,
-        yAxisData = yAxisData
-    )
-    LineChart(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp),
-        lineChartData = data
-    )
+fun LineChartScreenContent() {
+    val lineChartDataModel = LineChartDataModel()
+
+    Column(
+        modifier = Modifier.padding(
+            horizontal = 12.dp,
+            vertical = 8.dp
+        )
+    ) {
+        LineChartRow(lineChartDataModel)
+    }
 }
+@Composable
+fun LineChartRow(lineChartDataModel: LineChartDataModel) {
+    Box(
+        modifier = Modifier
+            .height(250.dp)
+            .fillMaxWidth()
+    ) {
+
+        LineChart(
+            linesChartData = listOf(lineChartDataModel.lineChartData),
+            horizontalOffset = lineChartDataModel.horizontalOffset,
+        )
+    }
+}
+
+
+
+
 
 //@RequiresApi(Build.VERSION_CODES.Q)
 //@Preview

@@ -42,7 +42,6 @@ android {
     }
 
     buildFeatures {
-        dataBinding = true
         compose = true
     }
 
@@ -52,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":chart"))
     implementation(Core.coreKtx)
 
     implementation(View.appcompat)
@@ -88,8 +88,6 @@ dependencies {
     implementation( "androidx.navigation:navigation-compose:2.5.3")
 
     implementation(View.navigationCompose)
-
-    implementation("co.yml:ycharts:2.1.0")
 
     implementation("com.kizitonwose.calendar:compose:2.3.0")
 
