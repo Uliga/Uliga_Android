@@ -153,7 +153,7 @@ fun HomeScreen(
                     modifier = Modifier.padding(
                         end = 12.dp
                     ),
-                    text = "안세훈님의 가계부",
+                    text = "우리가",
                     color = Primary,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.Bold,
@@ -187,6 +187,53 @@ fun HomeScreen(
                     ),
                     contentDescription = "tmp schedule"
                 )
+            }
+        }
+
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    modifier = Modifier.padding(
+                        start = 16.dp
+                    ),
+                    text = "현재 가계부",
+                    color = Grey700,
+                    fontFamily = pretendard,
+                    fontWeight = Medium,
+                    fontSize = 20.sp
+                )
+
+                Row {
+                    Text(
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                        ),
+                        text = "안세훈님의 가계부",
+                        color = Grey600,
+                        fontFamily = pretendard,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 28.sp
+                    )
+
+                    Spacer(Modifier.weight(1f))
+
+                    Text(
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                        ),
+                        text = "변경 버튼",
+                        color = Grey600,
+                        fontFamily = pretendard,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 28.sp
+                    )
+                }
+
             }
         }
 
