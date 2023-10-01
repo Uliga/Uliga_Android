@@ -24,9 +24,13 @@ class AuthActivity : ComponentActivity(), UligaActivity {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
+
         super.onCreate(savedInstanceState)
         setContent {
             MyApplicationTheme {
+
 
                 val navController = rememberNavController()
 

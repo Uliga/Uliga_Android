@@ -1,6 +1,11 @@
 package com.uliga.app.view.auth.login
 
+import android.app.Activity
 import android.os.Build
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -47,8 +52,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.tasks.Task
 import com.uliga.app.R
 import com.uliga.app.ToastAnimation
+import com.uliga.app.ext.getGoogleSignInClient
 import com.uliga.app.ui.theme.CustomGrey100
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey600
@@ -61,7 +70,6 @@ import com.uliga.app.view.auth.AuthViewModel
 import com.uliga.domain.AuthType
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-import org.orbitmvi.orbit.viewmodel.observe
 
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -78,6 +86,19 @@ fun LoginScreen(
     viewModel.collectSideEffect {
         handleSideEffect(it)
     }
+
+    val activityResult =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data
+                val task: Task<GoogleSignInAccount> =
+                    GoogleSignIn.getSignedInAccountFromIntent(intent)
+
+                viewModel.login(AuthType.GOOGLE, task.result.idToken)
+            } else {
+
+            }
+        }
 
 //    var checkAlertDialogVisibleState by remember {
 //        mutableStateOf(true)
@@ -332,7 +353,7 @@ fun LoginScreen(
                         modifier = Modifier
                             .wrapContentSize()
                             .clickable {
-                                viewModel.login(AuthType.KAKAO)
+                                viewModel.login(AuthType.KAKAO, null)
                             },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -364,7 +385,10 @@ fun LoginScreen(
 
                     Column(
                         modifier = Modifier
-                            .wrapContentSize(),
+                            .wrapContentSize()
+                            .clickable {
+                                activityResult.launch(getGoogleSignInClient(context).signInIntent)
+                            },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
@@ -443,3 +467,4 @@ private fun handleSideEffect(sideEffect: AuthSideEffect) {
 
     }
 }
+

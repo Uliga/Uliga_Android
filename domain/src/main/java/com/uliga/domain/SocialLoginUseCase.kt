@@ -9,8 +9,8 @@ class SocialLoginUseCase @Inject constructor(
     private val socialLoginProvider: SocialLoginProvider
 ){
 
-    suspend operator fun invoke(authType: AuthType): Result<LoginResult> {
-        val socialLoginResult = socialLoginProvider.login(authType)
+    suspend operator fun invoke(authType: AuthType, checkedIdToken: String?): Result<LoginResult> {
+        val socialLoginResult = socialLoginProvider.login(authType, checkedIdToken)
         Log.d("socialLoginResult", socialLoginResult.toString())
 
         return Result.success(LoginResult(""))

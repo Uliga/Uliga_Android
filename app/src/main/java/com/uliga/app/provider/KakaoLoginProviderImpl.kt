@@ -7,21 +7,17 @@ import com.uliga.app.base.LastActivityUtils
 import com.uliga.domain.AuthType
 import com.uliga.domain.SocialLoginProvider
 import com.uliga.domain.SocialLoginResult
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resumeWithException
 
 @Singleton
-class KakaoLoginProviderImpl @Inject constructor(
-    @ApplicationContext private val applicationContext: Context
-) : SocialLoginProvider {
+class KakaoLoginProviderImpl @Inject constructor() : SocialLoginProvider {
 
-    override suspend fun login(type: AuthType): SocialLoginResult {
+    override suspend fun login(type: AuthType, checkedIdToken: String?): SocialLoginResult {
         val authToken = loginWithKakao(LastActivityUtils.requireLastActivity()).getOrThrow()
         return accessTokenToResult(authToken.accessToken)
-
     }
 
     override suspend fun logout(type: AuthType): Unit =
@@ -40,7 +36,7 @@ class KakaoLoginProviderImpl @Inject constructor(
         return@runCatching if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
             loginWithKakaoWeb(context)
 
-        //            loginWithKakaApp(context)
+            //            loginWithKakaApp(context)
         } else {
             loginWithKakaoWeb(context)
         }
