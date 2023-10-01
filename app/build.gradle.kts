@@ -52,6 +52,8 @@ android {
 
 dependencies {
     implementation(project(":chart"))
+    implementation(project(":domain"))
+
     implementation(Core.coreKtx)
 
     implementation(View.appcompat)

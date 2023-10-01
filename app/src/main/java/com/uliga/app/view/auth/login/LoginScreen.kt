@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,6 +58,7 @@ import com.uliga.app.view.CheckAlertDialog
 import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.auth.AuthSideEffect
 import com.uliga.app.view.auth.AuthViewModel
+import com.uliga.domain.AuthType
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import org.orbitmvi.orbit.viewmodel.observe
@@ -328,7 +330,10 @@ fun LoginScreen(
                 ) {
                     Column(
                         modifier = Modifier
-                            .wrapContentSize(),
+                            .wrapContentSize()
+                            .clickable {
+                                viewModel.login(AuthType.KAKAO)
+                            },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Image(
