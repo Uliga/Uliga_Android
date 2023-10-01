@@ -94,7 +94,7 @@ fun LoginScreen(
                 val task: Task<GoogleSignInAccount> =
                     GoogleSignIn.getSignedInAccountFromIntent(intent)
 
-                viewModel.login(AuthType.GOOGLE, task.result.idToken)
+                viewModel.login(AuthType.GOOGLE, task.result.idToken, task.result.email)
             } else {
 
             }
@@ -353,7 +353,7 @@ fun LoginScreen(
                         modifier = Modifier
                             .wrapContentSize()
                             .clickable {
-                                viewModel.login(AuthType.KAKAO, null)
+                                viewModel.login(AuthType.KAKAO, null, null)
                             },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {

@@ -13,9 +13,9 @@ import kotlin.coroutines.resumeWithException
 @Singleton
 class GoogleLoginProviderImpl @Inject constructor() : SocialLoginProvider {
 
-    override suspend fun login(type: AuthType, checkedIdToken: String?): SocialLoginResult {
+    override suspend fun login(type: AuthType, checkedIdToken: String?, checkedEmail: String?): SocialLoginResult {
         // Just Mapping
-        return SocialLoginResult(AuthType.GOOGLE, checkedIdToken!!)
+        return SocialLoginResult(AuthType.GOOGLE, checkedIdToken, checkedEmail)
     }
 
     override suspend fun logout(type: AuthType): Unit =

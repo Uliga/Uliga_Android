@@ -28,9 +28,9 @@ class AuthViewModel @Inject constructor(
 
     }
 
-    fun login(type: AuthType, checkedIdToken: String?) = intent {
+    fun login(type: AuthType, checkedIdToken: String?, checkedEmail: String?) = intent {
         reduce { state.copy(isLoading = true) }
-        val socialLoginResult = socialLoginUseCase(type, checkedIdToken).getOrThrow()
+        val socialLoginResult = socialLoginUseCase(type, checkedIdToken, checkedEmail).getOrThrow()
 
         reduce {
             state.copy(

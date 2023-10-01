@@ -8,7 +8,8 @@ import java.io.Serializable
 @Parcelize
 data class SocialLoginResult(
     val type: AuthType,
-    val token: String
+    val token: String?,
+    val email: String?
 ): Parcelable, Serializable
 
 enum class AuthType {

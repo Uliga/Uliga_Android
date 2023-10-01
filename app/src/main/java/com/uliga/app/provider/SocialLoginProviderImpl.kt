@@ -11,9 +11,9 @@ import javax.inject.Singleton
 class SocialLoginProviderImpl @Inject constructor(
     private val providers: Map<AuthType, @JvmSuppressWildcards Provider<SocialLoginProvider>>,
 ) : SocialLoginProvider {
-    override suspend fun login(type: AuthType, checkedIdToken: String?): SocialLoginResult {
+    override suspend fun login(type: AuthType, checkedIdToken: String?, checkedEmail: String?): SocialLoginResult {
         return providers[type]?.run {
-            get().login(type, checkedIdToken)
+            get().login(type, checkedIdToken, checkedEmail)
         } ?: throw IllegalArgumentException("$type of parameter type is not allowed value.")
     }
 

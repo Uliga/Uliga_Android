@@ -15,7 +15,7 @@ import kotlin.coroutines.resumeWithException
 @Singleton
 class KakaoLoginProviderImpl @Inject constructor() : SocialLoginProvider {
 
-    override suspend fun login(type: AuthType, checkedIdToken: String?): SocialLoginResult {
+    override suspend fun login(type: AuthType, checkedIdToken: String?, checkedEmail: String?): SocialLoginResult {
         val authToken = loginWithKakao(LastActivityUtils.requireLastActivity()).getOrThrow()
         return accessTokenToResult(authToken.accessToken)
     }
@@ -83,7 +83,8 @@ class KakaoLoginProviderImpl @Inject constructor() : SocialLoginProvider {
                     Result.success(
                         SocialLoginResult(
                             type = AuthType.KAKAO,
-                            token = accessToken
+                            token = accessToken,
+                            email = user?.kakaoAccount?.email
                         )
                     )
                 )
