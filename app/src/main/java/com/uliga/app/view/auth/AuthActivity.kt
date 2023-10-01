@@ -1,10 +1,14 @@
 package com.uliga.app.view.auth
 
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -16,19 +20,18 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class AuthActivity : ComposeActivity<AuthViewModel, AuthUiEvent>() {
+class AuthActivity : ComponentActivity() {
 
-    override val viewModel: AuthViewModel by viewModels()
+    private val viewModel: AuthViewModel by viewModels()
 
+
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyApplicationTheme {
 
                 val navController = rememberNavController()
-                val data by viewModel.uiState.collectAsStateWithLifecycle()
-                val showLoading by viewModel.showLoading.collectAsStateWithLifecycle()
-                val errorMessage by viewModel.error.collectAsStateWithLifecycle(null)
 
                 NavHost(
                     navController = navController,
@@ -37,16 +40,14 @@ class AuthActivity : ComposeActivity<AuthViewModel, AuthUiEvent>() {
                     composable(AuthRoute.LOGIN.route) {
                         LoginScreen(
                             navController = navController,
-                            data = data,
-                            onEvent = viewModel::updateEvent
+                            viewModel = viewModel
                         )
                     }
 
                     composable(AuthRoute.SIGNUP.route) {
                         SignUpScreen(
-//                            navController = navController,
-//                            data = data,
-//                            onEvent = viewModel::updateEvent
+                            navController = navController,
+                            viewModel = viewModel
                         )
                     }
                 }
