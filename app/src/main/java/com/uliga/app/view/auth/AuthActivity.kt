@@ -6,13 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.uliga.app.base.ComposeActivity
+import com.uliga.app.base.UligaActivity
 import com.uliga.app.ui.theme.MyApplicationTheme
 import com.uliga.app.view.auth.login.LoginScreen
 import com.uliga.app.view.auth.signup.SignUpScreen
@@ -20,7 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class AuthActivity : ComponentActivity() {
+class AuthActivity : ComponentActivity(), UligaActivity {
 
     private val viewModel: AuthViewModel by viewModels()
 

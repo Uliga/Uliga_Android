@@ -1,6 +1,8 @@
 package com.uliga.app.view.auth
 
 import androidx.lifecycle.ViewModel
+import com.uliga.domain.AuthType
+import com.uliga.domain.SocialLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -12,15 +14,28 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-
-
+    private val socialLoginUseCase: SocialLoginUseCase
 ) : ContainerHost<AuthUiState, AuthSideEffect>, ViewModel() {
 
     override val container = container<AuthUiState, AuthSideEffect>(AuthUiState.empty())
 
-    fun socialLogin() = intent {
-        reduce { state.copy(isLoading = true) }
-        
+    init {
+
     }
 
+    fun socialLogin() = intent {
+        reduce { state.copy(isLoading = true) }
+
+    }
+
+    fun login(type: AuthType) = intent {
+        reduce { state.copy(isLoading = true) }
+        val socialLoginResult = socialLoginUseCase(type).getOrThrow()
+
+        reduce {
+            state.copy(
+                isLoading = true
+            )
+        }
+    }
 }

@@ -216,7 +216,7 @@ object Versions {
     const val calendarVersion = "1.0.3"
     const val permissionVersion = "3.3.0"
     const val flexBoxVersion = "3.0.0"
-    const val kakaoSdkUser = "2.10.0"
+    const val kakaoSdkUser = "2.17.0"
     const val startupVersion = "1.1.1"
     const val loggerVersion = "2.2.0"
     const val spectrumVersion = "1.3.0"

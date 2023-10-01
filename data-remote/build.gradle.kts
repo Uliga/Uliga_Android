@@ -1,6 +1,9 @@
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
+    id("com.google.devtools.ksp")
+    id("kotlin-kapt")
+    kotlin("plugin.serialization") version "1.8.21"
 }
 
 android {
@@ -33,11 +36,30 @@ android {
 }
 
 dependencies {
+    implementation(project(":data"))
+    implementation(Core.coreKtx)
 
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.9.0")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation(Kotlin.standardLibrary)
+    implementation(Kotlin.serialization)
+
+    implementation(Coroutines.android)
+    implementation(Coroutines.core)
+
+    implementation(DI.daggerHiltAndroid)
+    kapt(DI.daggerHiltAndroidAnnotation)
+
+    implementation(Remote.retrofit)
+    api(Remote.retrofitScalar)
+    api(Remote.retrofitConverter)
+    api(Remote.retrofitAdapter)
+    implementation(Remote.okHttp)
+    implementation(Remote.loggingInterceptor)
+
+    implementation(Ktor.core)
+    implementation(Ktor.cio)
+    implementation(Ktor.okHttp)
+    implementation(Ktor.logging)
+    implementation(Ktor.contentNegotiation)
+    implementation(Ktor.serializationJson)
+    implementation(Ktor.auth)
 }
