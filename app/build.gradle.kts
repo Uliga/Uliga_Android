@@ -91,4 +91,8 @@ dependencies {
 
     implementation("com.kizitonwose.calendar:compose:2.3.0")
 
+    implementation("org.orbit-mvi:orbit-viewmodel:6.1.0")
+// If using Jetpack Compose include
+    implementation("org.orbit-mvi:orbit-compose:6.1.0")
+
 }

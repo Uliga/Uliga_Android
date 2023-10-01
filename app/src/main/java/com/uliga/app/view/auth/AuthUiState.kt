@@ -1,7 +1,15 @@
 package com.uliga.app.view.auth
 
-import com.uliga.app.base.ComposeViewModel
+import androidx.compose.runtime.Immutable
 
+@Immutable
 data class AuthUiState(
-    val tmp: String? = null
-): ComposeViewModel.UiState
+    val isLoading: Boolean
+) {
+
+    companion object {
+        fun empty() = AuthUiState(
+            isLoading = false
+        )
+    }
+}

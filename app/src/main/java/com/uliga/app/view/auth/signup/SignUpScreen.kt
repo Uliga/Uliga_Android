@@ -42,11 +42,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.uliga.app.R
 import com.uliga.app.ui.theme.Black
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.auth.AuthViewModel
 import com.uliga.app.view.main.MainActivity
 
 
@@ -54,9 +56,8 @@ import com.uliga.app.view.main.MainActivity
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun SignUpScreen(
-//    navController: NavController,
-//    data: AuthUiState,
-//    onEvent: (AuthUiEvent) -> Unit
+    navController: NavController,
+    viewModel: AuthViewModel
 ) {
 
     val context = LocalContext.current
