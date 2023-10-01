@@ -2,3 +2,7 @@
 rootProject.name = "uliiga"
 include(":app")
 include(":chart")
+include(":domain")
+include(":data")
+include(":data-local")
+include(":data-remote")

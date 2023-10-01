@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">uliiga</string>
 
+    <string name="kakao_native_app_key"> bd4b9bf91c641e9eadc305a617fc5f82 </string>
     <!-- tab name -->
     <string name="home"> 홈 </string>
     <string name="finance"> 가계부 </string>

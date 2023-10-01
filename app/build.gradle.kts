@@ -95,4 +95,6 @@ dependencies {
 // If using Jetpack Compose include
     implementation("org.orbit-mvi:orbit-compose:6.1.0")
 
+    implementation(ThirdParty.permission)
+    implementation(ThirdParty.kakaoSdkUser)
 }
