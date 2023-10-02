@@ -28,8 +28,9 @@ class AuthViewModel @Inject constructor(
     fun socialLogin(type: AuthType, checkedIdToken: String?, checkedEmail: String?) = intent {
         reduce { state.copy(isLoading = true) }
         val socialLoginResult = socialLoginUseCase(type, checkedIdToken, checkedEmail).getOrThrow()
+        val socialLoginEmail = socialLoginResult.email
 
-        if(socialLoginResult.email == null) {
+        if(socialLoginEmail == null) {
 
             reduce {
                 state.copy(
@@ -39,7 +40,7 @@ class AuthViewModel @Inject constructor(
 
             return@intent
         } else {
-            getUserAuthEmailExistedUseCase(socialLoginResult.email!!).onSuccess {
+            getUserAuthEmailExistedUseCase(socialLoginEmail).onSuccess {
                 if(it.exists == null) {
                     postSideEffect(AuthSideEffect.ToastMessage("이메일에 대한 정보를 불러올 수 없습니다."))
                     return@intent
@@ -48,7 +49,7 @@ class AuthViewModel @Inject constructor(
                 if(it.exists!!) {
                     postSideEffect(AuthSideEffect.NavigateToMainActivity)
                 } else {
-                    postSideEffect(AuthSideEffect.NavigateToSignUpScreen)
+                    postSideEffect(AuthSideEffect.NavigateToSocialSignUpScreen(socialLoginEmail))
                 }
 
             }.onFailure { throwable ->

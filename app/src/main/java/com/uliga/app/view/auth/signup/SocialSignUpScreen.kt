@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,25 +40,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.uliga.app.R
 import com.uliga.app.ui.theme.Black
 import com.uliga.app.ui.theme.Grey400
+import com.uliga.app.ui.theme.LightBlue
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.auth.AuthViewModel
 import com.uliga.app.view.main.MainActivity
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun SignUpScreen(
+fun SocialSignupScreen(
     navController: NavController,
-    viewModel: AuthViewModel
+    viewModel: AuthViewModel,
+    param: String,
 ) {
 
     val context = LocalContext.current
@@ -159,7 +160,7 @@ fun SignUpScreen(
                 )
 
 
-                val emailAddressTextState = remember { mutableStateOf("") }
+                val emailAddressTextState = remember { mutableStateOf(param) }
 
                 TextField(
                     modifier = Modifier
@@ -182,93 +183,6 @@ fun SignUpScreen(
             }
         }
 
-        item {
-            Column(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(
-                        horizontal = 16.dp
-                    )
-            ) {
-                Text(
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    text = "비밀번호",
-                )
-
-                Spacer(
-                    modifier = Modifier
-                        .height(8.dp)
-                )
-
-
-                val passwordTextState = remember { mutableStateOf("") }
-
-                TextField(
-                    modifier = Modifier
-                        .border(width = 1.dp, color = Grey400, shape = RoundedCornerShape(10.dp))
-                        .fillMaxWidth(),
-                    value = passwordTextState.value,
-                    onValueChange = {
-                        passwordTextState.value = it
-                    },
-                    textStyle = TextStyle(
-                        color = Color.Black, fontSize = 20.sp
-                    ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    singleLine = true,
-                )
-            }
-        }
-
-        item {
-            Column(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .padding(
-                        horizontal = 16.dp
-                    )
-            ) {
-                Text(
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    text = "비밀번호 확인",
-                )
-
-                Spacer(
-                    modifier = Modifier
-                        .height(8.dp)
-                )
-
-
-                val passwordAgainTextState = remember { mutableStateOf("") }
-
-                TextField(
-                    modifier = Modifier
-                        .border(width = 1.dp, color = Grey400, shape = RoundedCornerShape(10.dp))
-                        .fillMaxWidth(),
-                    value = passwordAgainTextState.value,
-                    onValueChange = {
-                        passwordAgainTextState.value = it
-                    },
-                    textStyle = TextStyle(
-                        color = Color.Black, fontSize = 20.sp
-                    ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    singleLine = true,
-                )
-            }
-        }
 
         item {
             Column(
@@ -355,6 +269,29 @@ fun SignUpScreen(
                     ),
                     singleLine = true,
                 )
+
+                Button(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(horizontal = 4.dp),
+                    contentPadding = PaddingValues(
+                        vertical = 4.dp
+                    ),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = LightBlue,
+                    ),
+                    shape = RoundedCornerShape(10.dp),
+                    onClick = {
+
+                    }) {
+                    Text(
+                        color = Primary,
+                        fontFamily = pretendard,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp,
+                        text = "확인"
+                    )
+                }
             }
         }
 
@@ -365,9 +302,9 @@ fun SignUpScreen(
             ) {
                 Checkbox(checked = false, onCheckedChange = {
 
-                    }
+                }
                 )
-                
+
                 Text(
                     color = Color(0xFF9590A0),
                     fontFamily = pretendard,
@@ -413,4 +350,3 @@ fun SignUpScreen(
 
 
 }
-

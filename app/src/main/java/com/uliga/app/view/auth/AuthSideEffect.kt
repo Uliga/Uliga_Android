@@ -6,7 +6,9 @@ sealed class AuthSideEffect {
 
     object NavigateToMainActivity: AuthSideEffect()
 
-    object NavigateToSignUpScreen: AuthSideEffect()
+    object NavigateToNormalSignUpScreen: AuthSideEffect()
+
+    data class NavigateToSocialSignUpScreen(val email: String): AuthSideEffect()
 
     data class ToastMessage(val toastMessage: String): AuthSideEffect()
 }
