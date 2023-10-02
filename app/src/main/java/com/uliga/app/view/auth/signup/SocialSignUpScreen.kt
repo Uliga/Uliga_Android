@@ -58,10 +58,15 @@ import com.uliga.app.view.main.MainActivity
 fun SocialSignupScreen(
     navController: NavController,
     viewModel: AuthViewModel,
-    param: String,
+    paramEmail: String,
+    paramName: String
 ) {
 
     val context = LocalContext.current
+
+    val emailAddressTextState = remember { mutableStateOf(paramEmail) }
+    val nameTextState = remember { mutableStateOf(paramName) }
+    val nickNameTextState = remember { mutableStateOf("") }
 
     LazyColumn(
         modifier = Modifier
@@ -160,7 +165,6 @@ fun SocialSignupScreen(
                 )
 
 
-                val emailAddressTextState = remember { mutableStateOf(param) }
 
                 TextField(
                     modifier = Modifier
@@ -204,9 +208,6 @@ fun SocialSignupScreen(
                         .height(8.dp)
                 )
 
-
-                val nameTextState = remember { mutableStateOf("") }
-
                 TextField(
                     modifier = Modifier
                         .border(width = 1.dp, color = Grey400, shape = RoundedCornerShape(10.dp))
@@ -249,15 +250,14 @@ fun SocialSignupScreen(
                 )
 
 
-                val nameTextState = remember { mutableStateOf("") }
 
                 TextField(
                     modifier = Modifier
                         .border(width = 1.dp, color = Grey400, shape = RoundedCornerShape(10.dp))
                         .fillMaxWidth(),
-                    value = nameTextState.value,
+                    value = nickNameTextState.value,
                     onValueChange = {
-                        nameTextState.value = it
+                        nickNameTextState.value = it
                     },
                     textStyle = TextStyle(
                         color = Color.Black, fontSize = 20.sp

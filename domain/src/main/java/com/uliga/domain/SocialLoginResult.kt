@@ -9,8 +9,9 @@ import java.io.Serializable
 data class SocialLoginResult(
     val type: AuthType,
     val token: String?,
-    val email: String?
-): Parcelable, Serializable
+    val email: String?,
+    val name: String?
+) : Parcelable, Serializable
 
 enum class AuthType {
     KAKAO,
