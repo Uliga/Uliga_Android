@@ -4,5 +4,9 @@ sealed class AuthSideEffect {
 
     object Finish : AuthSideEffect()
 
-    object NavigateToSign
+    object NavigateToMainActivity: AuthSideEffect()
+
+    object NavigateToSignUpScreen: AuthSideEffect()
+
+    data class ToastMessage(val toastMessage: String): AuthSideEffect()
 }

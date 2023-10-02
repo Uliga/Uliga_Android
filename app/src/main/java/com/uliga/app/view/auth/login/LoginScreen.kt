@@ -1,8 +1,9 @@
 package com.uliga.app.view.auth.login
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -65,8 +66,10 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CheckAlertDialog
 import com.uliga.app.view.DeleteAlertDialog
+import com.uliga.app.view.auth.AuthRoute
 import com.uliga.app.view.auth.AuthSideEffect
 import com.uliga.app.view.auth.AuthViewModel
+import com.uliga.app.view.main.MainActivity
 import com.uliga.domain.AuthType
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -83,9 +86,7 @@ fun LoginScreen(
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
 
-    viewModel.collectSideEffect {
-        handleSideEffect(it)
-    }
+
 
     val activityResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -94,7 +95,7 @@ fun LoginScreen(
                 val task: Task<GoogleSignInAccount> =
                     GoogleSignIn.getSignedInAccountFromIntent(intent)
 
-                viewModel.login(AuthType.GOOGLE, task.result.idToken, task.result.email)
+                viewModel.socialLogin(AuthType.GOOGLE, task.result.idToken, task.result.email)
             } else {
 
             }
@@ -139,6 +140,10 @@ fun LoginScreen(
         },
         label = ""
     )
+
+    viewModel.collectSideEffect {
+        handleSideEffect(it, navController, yOffset, context)
+    }
 
     Column(
         modifier = Modifier
@@ -273,7 +278,6 @@ fun LoginScreen(
                 onClick = {
                     isAnimating = isAnimating.not()
                     isVisible = isVisible.not()
-//                    navController.navigate(AuthRoute.SIGNUP.route)
                 }) {
                 Text(
                     color = Color.White,
@@ -353,7 +357,7 @@ fun LoginScreen(
                         modifier = Modifier
                             .wrapContentSize()
                             .clickable {
-                                viewModel.login(AuthType.KAKAO, null, null)
+                                viewModel.socialLogin(AuthType.KAKAO, null, null)
                             },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -419,10 +423,6 @@ fun LoginScreen(
 
     }
 
-    ToastAnimation(
-        yOffset = yOffset,
-        toastMessage = "에러 앙"
-    )
 
 
 }
@@ -459,10 +459,21 @@ fun TmpCheckAlertDialog(
 
 }
 
-private fun handleSideEffect(sideEffect: AuthSideEffect) {
+@RequiresApi(Build.VERSION_CODES.Q)
+private fun handleSideEffect(sideEffect: AuthSideEffect, navController: NavController, yOffset: Float, context: Context) {
     when (sideEffect) {
         is AuthSideEffect.Finish -> {
 
+        }
+        is AuthSideEffect.ToastMessage -> {
+
+        }
+        is AuthSideEffect.NavigateToSignUpScreen -> {
+            navController.navigate(AuthRoute.SIGNUP.route)
+        }
+        is AuthSideEffect.NavigateToMainActivity -> {
+            val intent = Intent(context, MainActivity::class.java)
+            context.startActivity(intent)
         }
 
     }
