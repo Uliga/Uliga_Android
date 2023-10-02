@@ -55,18 +55,20 @@ class AuthActivity : ComponentActivity(), UligaActivity {
                     }
 
                     composable(
-                        route = AuthRoute.SOCIAL_SIGNUP.route + "/{email}",
+                        route = AuthRoute.SOCIAL_SIGNUP.route + "/{email}/{name}",
                         arguments = listOf(
-                            navArgument("email") { type = NavType.StringType }
+                            navArgument("email") { type = NavType.StringType },
+                            navArgument("name") { type = NavType.StringType }
                         )
                     ) {
                         val paramEmail = it.arguments?.getString("email") ?: ""
-
+                        val paramName = it.arguments?.getString("name") ?: ""
 
                         SocialSignupScreen(
                             navController = navController,
                             viewModel = viewModel,
-                            param =  paramEmail
+                            paramEmail = paramEmail,
+                            paramName = paramName
                         )
                     }
                 }

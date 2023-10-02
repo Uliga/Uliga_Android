@@ -8,7 +8,10 @@ sealed class AuthSideEffect {
 
     object NavigateToNormalSignUpScreen: AuthSideEffect()
 
-    data class NavigateToSocialSignUpScreen(val email: String): AuthSideEffect()
+    data class NavigateToSocialSignUpScreen(
+        val email: String,
+        val name: String
+    ): AuthSideEffect()
 
     data class ToastMessage(val toastMessage: String): AuthSideEffect()
 }

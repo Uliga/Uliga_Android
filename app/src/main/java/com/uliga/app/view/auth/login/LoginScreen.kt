@@ -93,7 +93,7 @@ fun LoginScreen(
                 val task: Task<GoogleSignInAccount> =
                     GoogleSignIn.getSignedInAccountFromIntent(intent)
 
-                viewModel.socialLogin(AuthType.GOOGLE, task.result.idToken, task.result.email)
+                viewModel.socialLogin(AuthType.GOOGLE, task.result.idToken, task.result.email, task.result.displayName)
             } else {
 
             }
@@ -355,7 +355,7 @@ fun LoginScreen(
                         modifier = Modifier
                             .wrapContentSize()
                             .clickable {
-                                viewModel.socialLogin(AuthType.KAKAO, null, null)
+                                viewModel.socialLogin(AuthType.KAKAO, null, null, null)
                             },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -477,7 +477,7 @@ private fun handleSideEffect(
         }
 
         is AuthSideEffect.NavigateToSocialSignUpScreen -> {
-            navController.navigate(AuthActivity.AuthRoute.SOCIAL_SIGNUP.route + "/${sideEffect.email}")
+            navController.navigate(AuthActivity.AuthRoute.SOCIAL_SIGNUP.route + "/${sideEffect.email}/${sideEffect.name}")
         }
 
         is AuthSideEffect.NavigateToMainActivity -> {
