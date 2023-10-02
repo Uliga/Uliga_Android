@@ -57,7 +57,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.uliga.app.R
-import com.uliga.app.ToastAnimation
 import com.uliga.app.ext.getGoogleSignInClient
 import com.uliga.app.ui.theme.CustomGrey100
 import com.uliga.app.ui.theme.Grey400
@@ -66,7 +65,7 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CheckAlertDialog
 import com.uliga.app.view.DeleteAlertDialog
-import com.uliga.app.view.auth.AuthRoute
+import com.uliga.app.view.auth.AuthActivity
 import com.uliga.app.view.auth.AuthSideEffect
 import com.uliga.app.view.auth.AuthViewModel
 import com.uliga.app.view.main.MainActivity
@@ -85,7 +84,6 @@ fun LoginScreen(
 
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
-
 
 
     val activityResult =
@@ -424,7 +422,6 @@ fun LoginScreen(
     }
 
 
-
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -460,17 +457,29 @@ fun TmpCheckAlertDialog(
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
-private fun handleSideEffect(sideEffect: AuthSideEffect, navController: NavController, yOffset: Float, context: Context) {
+private fun handleSideEffect(
+    sideEffect: AuthSideEffect,
+    navController: NavController,
+    yOffset: Float,
+    context: Context
+) {
     when (sideEffect) {
         is AuthSideEffect.Finish -> {
 
         }
+
         is AuthSideEffect.ToastMessage -> {
 
         }
-        is AuthSideEffect.NavigateToSignUpScreen -> {
-            navController.navigate(AuthRoute.SIGNUP.route)
+
+        is AuthSideEffect.NavigateToNormalSignUpScreen -> {
+            navController.navigate(AuthActivity.AuthRoute.NORMAL_SIGNUP.route)
         }
+
+        is AuthSideEffect.NavigateToSocialSignUpScreen -> {
+            navController.navigate(AuthActivity.AuthRoute.SOCIAL_SIGNUP.route + "/${sideEffect.email}")
+        }
+
         is AuthSideEffect.NavigateToMainActivity -> {
             val intent = Intent(context, MainActivity::class.java)
             context.startActivity(intent)
