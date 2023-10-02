@@ -2,7 +2,7 @@ package com.uliga.app.view.auth
 
 import androidx.lifecycle.ViewModel
 import com.uliga.domain.AuthType
-import com.uliga.domain.usecase.GetUserAuthEmailExistedUseCase
+import com.uliga.domain.usecase.GetUserAuthDataExistedUseCase
 import com.uliga.domain.usecase.SocialLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val socialLoginUseCase: SocialLoginUseCase,
-    private val getUserAuthEmailExistedUseCase: GetUserAuthEmailExistedUseCase
+    private val getUserAuthDataExistedUseCase: GetUserAuthDataExistedUseCase
 ) : ContainerHost<AuthUiState, AuthSideEffect>, ViewModel() {
 
     override val container = container<AuthUiState, AuthSideEffect>(AuthUiState.empty())
@@ -47,7 +47,7 @@ class AuthViewModel @Inject constructor(
 
             return@intent
         } else {
-            getUserAuthEmailExistedUseCase(socialLoginEmail).onSuccess {
+            getUserAuthDataExistedUseCase("mail", socialLoginEmail).onSuccess {
                 if (it.exists == null) {
                     postSideEffect(AuthSideEffect.ToastMessage("이메일에 대한 정보를 불러올 수 없습니다."))
                     return@intent

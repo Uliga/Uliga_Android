@@ -1,8 +1,8 @@
 package com.uliga.domain.repository
 
-import com.uliga.domain.model.UserAuthEmailExisted
+import com.uliga.domain.model.UserAuthDataExisted
 
 interface UserAuthRepository {
 
-    suspend fun getUserAuthEmailExisted(email: String): Result<UserAuthEmailExisted>
+    suspend fun getUserAuthDataExisted(type: String, data: String): Result<UserAuthDataExisted>
 }
