@@ -52,7 +52,11 @@ android {
 
 dependencies {
     implementation(project(":chart"))
+
     implementation(project(":domain"))
+    implementation(project(":data"))
+    implementation(project(":data-remote"))
+    implementation(project(":data-local"))
 
     implementation(Core.coreKtx)
 
