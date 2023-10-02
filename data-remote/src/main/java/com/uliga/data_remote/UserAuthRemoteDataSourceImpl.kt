@@ -1,8 +1,8 @@
 package com.uliga.data_remote
 
 import com.uliga.data.UserAuthRemoteDataSource
-import com.uliga.data.model.UserAuthEmailExistedData
-import com.uliga.data_remote.model.UserAuthEmailExistedDto
+import com.uliga.data.model.UserAuthDataExistedData
+import com.uliga.data_remote.model.UserAuthDataExistedDto
 import com.uliga.data_remote.model.toData
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -12,11 +12,13 @@ import javax.inject.Inject
 
 class UserAuthRemoteDataSourceImpl @Inject constructor(
     private val client: HttpClient
-): UserAuthRemoteDataSource {
-    override suspend fun getUserAuthEmailExisted(email: String): UserAuthEmailExistedData {
+) : UserAuthRemoteDataSource {
+    override suspend fun getUserAuthDataExisted(type: String, data: String): UserAuthDataExistedData {
+        val pathType = if(type == "mail") Path.MAIL else Path.NICKNAME
+
         return client.get {
-            url.path(Path.AUTH, Path.MAIL, Path.EXISTS, email)
-        }.body<UserAuthEmailExistedDto>().toData()
+            url.path(Path.AUTH, pathType, Path.EXISTS, data)
+        }.body<UserAuthDataExistedDto>().toData()
     }
 
 

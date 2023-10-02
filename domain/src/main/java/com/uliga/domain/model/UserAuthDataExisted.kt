@@ -6,6 +6,6 @@ import java.io.Serializable
 
 
 @Parcelize
-data class UserAuthEmailExisted(
+data class UserAuthDataExisted(
     val exists: Boolean?
 ): Parcelable, Serializable

@@ -1,8 +1,8 @@
 package com.uliga.data
 
-import com.uliga.data.model.UserAuthEmailExistedData
+import com.uliga.data.model.UserAuthDataExistedData
 
 interface UserAuthRemoteDataSource {
 
-    suspend fun getUserAuthEmailExisted(email: String): UserAuthEmailExistedData
+    suspend fun getUserAuthDataExisted(type: String, data: String): UserAuthDataExistedData
 }
