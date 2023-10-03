@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -37,6 +38,7 @@ import com.uliga.app.ui.theme.MyApplicationTheme
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
 import dagger.hilt.android.AndroidEntryPoint
+import org.orbitmvi.orbit.compose.collectAsState
 
 
 @AndroidEntryPoint
@@ -48,6 +50,8 @@ class AccountBookGenerationActivity: ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyApplicationTheme {
+
+                val state = viewModel.collectAsState().value
 
                 LazyColumn(
                     modifier = Modifier
@@ -82,125 +86,133 @@ class AccountBookGenerationActivity: ComponentActivity() {
                         )
                     }
 
-                    items(5) {
+                    items(state.accountBooks?.accountBooks?.size ?: 0) {
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .padding(
-                                    horizontal = 16.dp,
-                                )
-                                .clickable {
-
-                                }
-                                .border(width = 1.dp, color = Primary, shape = RoundedCornerShape(5.dp))
-                                .background(Color.White),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(start = 16.dp),
-                                text = "안세훈",
-                                color = Primary,
-                                fontFamily = pretendard,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-
-                            Text(
-                                text = "님의 가계부",
-                                color = Primary,
-                                fontFamily = pretendard,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 18.sp,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-
-                            Spacer(
-                                Modifier.weight(1f)
-                            )
-
-                            Image(
-                                modifier = Modifier
-                                    .padding(
-                                        top = 16.dp,
-                                        bottom = 16.dp,
-                                        end = 16.dp
-                                    )
-                                    .size(40.dp),
-                                painter = painterResource(
-                                    id = R.drawable.ic_account_book_select
-                                ),
-                                contentDescription = "uliga logo"
-                            )
-                        }
-
-                    }
-
-                    items(5) {
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .padding(
-                                    horizontal = 16.dp,
-                                )
-                                .clickable {
-
-                                }
-                                .border(width = 1.dp, color = Grey500, shape = RoundedCornerShape(5.dp))
-                                .background(Color.White),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                modifier = Modifier.padding(start = 16.dp),
-                                text = "안세훈",
-                                color = Grey500,
-                                fontFamily = pretendard,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-
-                            Text(
-                                text = "님의 공유 가계부",
-                                color = Grey500,
-                                fontFamily = pretendard,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 18.sp,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-
-                            Spacer(
-                                Modifier.weight(1f)
-                            )
-
-                            Image(
-                                modifier = Modifier
-                                    .alpha(0f)
-                                    .padding(
-                                        top = 16.dp,
-                                        bottom = 16.dp,
-                                        end = 16.dp
-                                    )
-                                    .size(40.dp)
-                                ,
-                                painter = painterResource(
-                                    id = R.drawable.ic_account_book_select
-                                ),
-                                contentDescription = null
-                            )
-                        }
-
+                        selectedAccountBook()
+                        unselectedAccountBook()
                     }
                 }
             }
         }
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+@Composable
+fun selectedAccountBook() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(
+                horizontal = 16.dp,
+            )
+            .clickable {
+
+            }
+            .border(width = 1.dp, color = Primary, shape = RoundedCornerShape(5.dp))
+            .background(Color.White),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.padding(start = 16.dp),
+            text = "안세훈",
+            color = Primary,
+            fontFamily = pretendard,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
+        )
+
+        Text(
+            text = "님의 가계부",
+            color = Primary,
+            fontFamily = pretendard,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
+        )
+
+        Spacer(
+            Modifier.weight(1f)
+        )
+
+        Image(
+            modifier = Modifier
+                .padding(
+                    top = 16.dp,
+                    bottom = 16.dp,
+                    end = 16.dp
+                )
+                .size(40.dp),
+            painter = painterResource(
+                id = R.drawable.ic_account_book_select
+            ),
+            contentDescription = "uliga logo"
+        )
+    }
+
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+@Composable
+fun unselectedAccountBook() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(
+                horizontal = 16.dp,
+            )
+            .clickable {
+
+            }
+            .border(width = 1.dp, color = Grey500, shape = RoundedCornerShape(5.dp))
+            .background(Color.White),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.padding(start = 16.dp),
+            text = "안세훈",
+            color = Grey500,
+            fontFamily = pretendard,
+            fontWeight = FontWeight.Bold,
+            fontSize = 18.sp,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
+        )
+
+        Text(
+            text = "님의 공유 가계부",
+            color = Grey500,
+            fontFamily = pretendard,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
+        )
+
+        Spacer(
+            Modifier.weight(1f)
+        )
+
+        Image(
+            modifier = Modifier
+                .alpha(0f)
+                .padding(
+                    top = 16.dp,
+                    bottom = 16.dp,
+                    end = 16.dp
+                )
+                .size(40.dp)
+            ,
+            painter = painterResource(
+                id = R.drawable.ic_account_book_select
+            ),
+            contentDescription = null
+        )
+    }
+
 }
