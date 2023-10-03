@@ -10,6 +10,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -22,6 +23,9 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol
 import io.ktor.http.append
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.util.concurrent.TimeUnit
 
@@ -62,37 +66,21 @@ internal object KtorClientModule {
             }
             headers {
                 append(HttpHeaders.ContentType, ContentType.Application.Json)
+
+                runBlocking {
+                    val accessToken = userAuthLocalDataSource.getToken()
+                    if(accessToken != "") {
+                        append(HttpHeaders.Authorization, accessToken)
+                    }
+                }
             }
+
         }
 
         install(Auth) {
             bearer {
-//                loadTokens {
-//                                  }
-//                refreshTokens {
-//                    val currentToken = withContext(Dispatchers.IO) { userLocalDataSource.getToken() }
-//                    val refreshToken = currentToken.second
-//
-//                    val token = client.post {
-//                        markAsRefreshTokenRequest()
-//                        url.path(Path.AUTHENTICATE, Path.TOKEN_REFRESH)
-//                        setBody(RefreshTokenRequestDto(refreshToken))
-//                    }.body<TokenDto>()
-//
-//                    withContext(Dispatchers.IO) {
-//                        userLocalDataSource.updateToken(token.accessToken, token.refreshToken)
-//                    }
-//
-//                    BearerTokens(
-//                        accessToken = token.accessToken,
-//                        refreshToken = token.refreshToken
-//                    )
-//                }
-//                sendWithoutRequest { request ->
-//                    val token = runBlocking { userLocalDataSource.getToken() }
-//                    token.first.isNotEmpty() &&
-//                            !request.url.encodedPathSegments.contains(Path.AUTHENTICATE)
-//                }
+
+
             }
         }
 
