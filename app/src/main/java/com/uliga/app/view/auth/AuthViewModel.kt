@@ -1,5 +1,6 @@
 package com.uliga.app.view.auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.uliga.domain.AuthType
 import com.uliga.domain.usecase.GetUserAuthDataExistedUseCase
@@ -25,6 +26,7 @@ class AuthViewModel @Inject constructor(
 
     }
 
+
     fun socialLogin(
         type: AuthType,
         checkedIdToken: String?,
@@ -34,45 +36,59 @@ class AuthViewModel @Inject constructor(
         reduce { state.copy(isLoading = true) }
         val socialLoginResult =
             socialLoginUseCase(type, checkedIdToken, checkedEmail, checkedName).getOrThrow()
-        val socialLoginEmail = socialLoginResult.email
-        val socialLoginName = socialLoginResult.name
+        val socialLoginEmail = socialLoginResult.email ?: ""
+        val socialLoginName = socialLoginResult.name ?: ""
 
-        if (socialLoginEmail == null || socialLoginName == null) {
+        getUserAuthDataExistedUseCase("mail", socialLoginEmail).onSuccess {
+            if (it.exists == null) {
+                postSideEffect(AuthSideEffect.ToastMessage("이메일에 대한 정보를 불러올 수 없습니다."))
+                return@intent
+            }
 
-            reduce {
-                state.copy(
-                    isLoading = false
+            if (it.exists!!) {
+                postSideEffect(AuthSideEffect.NavigateToMainActivity)
+            } else {
+                Log.d("getUserAuthDataExistedUseCase", "${socialLoginEmail} ${socialLoginName}")
+
+                postSideEffect(
+                    AuthSideEffect.NavigateToSocialSignUpScreen(
+                        socialLoginEmail, socialLoginName
+                    )
                 )
             }
 
-            return@intent
-        } else {
-            getUserAuthDataExistedUseCase("mail", socialLoginEmail).onSuccess {
-                if (it.exists == null) {
-                    postSideEffect(AuthSideEffect.ToastMessage("이메일에 대한 정보를 불러올 수 없습니다."))
-                    return@intent
-                }
+        }.onFailure { throwable ->
+            reduce {
+                state.copy(
+                    isLoading = false,
+                )
+            }
+        }
+    }
 
-                if (it.exists!!) {
-                    postSideEffect(AuthSideEffect.NavigateToMainActivity)
-                } else {
-                    postSideEffect(
-                        AuthSideEffect.NavigateToSocialSignUpScreen(
-                            socialLoginEmail, socialLoginName
-                        )
+    fun getIsNickNameExisted(nickName: String) = intent {
+        if(nickName.isEmpty()) {
+            postSideEffect(AuthSideEffect.ToastMessage("닉네임을 적어주세요."))
+            return@intent
+        }
+
+        getUserAuthDataExistedUseCase("nickname", nickName)
+            .onSuccess {
+                reduce {
+                    state.copy(isLoading = true)
+                }
+                reduce {
+                    state.copy(
+                        isLoading = false,
+                        isNickNameExisted = it.exists
                     )
                 }
-
-            }.onFailure { throwable ->
+            }.onFailure {
                 reduce {
                     state.copy(
                         isLoading = false,
                     )
                 }
             }
-
-        }
-
-
     }
 }

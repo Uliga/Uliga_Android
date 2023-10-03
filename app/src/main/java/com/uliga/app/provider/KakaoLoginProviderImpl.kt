@@ -1,6 +1,7 @@
 package com.uliga.app.provider
 
 import android.content.Context
+import android.util.Log
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.uliga.app.base.LastActivityUtils
@@ -79,12 +80,13 @@ class KakaoLoginProviderImpl @Inject constructor() : SocialLoginProvider {
                     continuation.resumeWithException(it)
                     return@me
                 }
+
                 continuation.resumeWith(
                     Result.success(
                         SocialLoginResult(
                             type = AuthType.KAKAO,
                             token = accessToken,
-                            name = user?.kakaoAccount?.name,
+                            name = user?.kakaoAccount?.profile?.nickname,
                             email = user?.kakaoAccount?.email
                         )
                     )
