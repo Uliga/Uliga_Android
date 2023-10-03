@@ -91,4 +91,12 @@ class AuthViewModel @Inject constructor(
                 }
             }
     }
+
+    fun getIsPrivacyChecked(isPrivacyChecked: Boolean) = intent {
+        reduce {
+            state.copy(
+                isPrivacyChecked = isPrivacyChecked
+            )
+        }
+    }
 }
