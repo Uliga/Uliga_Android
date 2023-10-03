@@ -3,8 +3,10 @@ package com.uliga.app.view.auth
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.uliga.domain.AuthType
+import com.uliga.domain.model.NormalLoginRequest
 import com.uliga.domain.model.SocialLoginRequest
 import com.uliga.domain.usecase.GetUserAuthDataExistedUseCase
+import com.uliga.domain.usecase.PostNormalLoginUseCase
 import com.uliga.domain.usecase.PostSocialLoginUseCase
 import com.uliga.domain.usecase.SocialLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +22,8 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val socialLoginUseCase: SocialLoginUseCase,
     private val getUserAuthDataExistedUseCase: GetUserAuthDataExistedUseCase,
-    private val postSocialLoginUseCase: PostSocialLoginUseCase
+    private val postSocialLoginUseCase: PostSocialLoginUseCase,
+    private val postNormalLoginUseCase: PostNormalLoginUseCase
 ) : ContainerHost<AuthUiState, AuthSideEffect>, ViewModel() {
 
     override val container = container<AuthUiState, AuthSideEffect>(AuthUiState.empty())
@@ -49,11 +52,21 @@ class AuthViewModel @Inject constructor(
             }
 
             if (it.exists!!) {
-                postSideEffect(AuthSideEffect.Finish)
-                postSideEffect(AuthSideEffect.NavigateToMainActivity)
-            } else {
-                Log.d("getUserAuthDataExistedUseCase", "${socialLoginEmail} ${socialLoginName}")
 
+                val normalLoginRequest = NormalLoginRequest(
+                    email = socialLoginEmail,
+                    password = "12341234"
+                )
+
+                postNormalLoginUseCase(normalLoginRequest).onSuccess {
+                    postSideEffect(AuthSideEffect.Finish)
+                    postSideEffect(AuthSideEffect.NavigateToMainActivity)
+                }.onFailure {
+
+                }
+
+
+            } else {
                 postSideEffect(
                     AuthSideEffect.NavigateToSocialSignUpScreen(
                         socialLoginEmail, socialLoginName
@@ -121,7 +134,7 @@ class AuthViewModel @Inject constructor(
             userName = userName,
             nickName = nickName,
             loginType = "EMAIL",
-            applicationPassword = "1234"
+            applicationPassword = "12341234"
         )
 
         postSocialLoginUseCase(socialLoginRequest)
@@ -133,10 +146,5 @@ class AuthViewModel @Inject constructor(
             .onFailure {
 
             }
-    }
-
-    override fun onCleared() {
-        Log.d("AuthViewModel", "onCleared")
-        super.onCleared()
     }
 }
