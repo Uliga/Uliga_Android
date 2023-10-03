@@ -125,13 +125,11 @@ class AuthViewModel @Inject constructor(
 
         postSocialLoginUseCase(socialLoginRequest)
             .onSuccess {
-
-                Log.d("LoginResponse", it.toString())
+                postSideEffect(AuthSideEffect.ToastMessage("회원가입에 성공했습니다."))
+                postSideEffect(AuthSideEffect.NavigateToMainActivity)
             }
             .onFailure {
 
             }
-
-
     }
 }
