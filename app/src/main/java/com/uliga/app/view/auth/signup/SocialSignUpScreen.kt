@@ -319,7 +319,7 @@ fun SocialSignupScreen(
                     checked = privacyCheckBoxState.value,
                     onCheckedChange = {
                         privacyCheckBoxState.value = !privacyCheckBoxState.value
-                        viewModel.getIsPrivacyChecked(privacyCheckBoxState.value)
+                        viewModel.fetchIsPrivacyChecked(privacyCheckBoxState.value)
                     }
                 )
 
@@ -349,8 +349,13 @@ fun SocialSignupScreen(
                 ),
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-                    val intent = Intent(context, MainActivity::class.java)
-                    context.startActivity(intent)
+                  viewModel.postSocialLogin(
+                      email = emailAddressTextState.value,
+                      userName = nameTextState.value,
+                      nickName = nickNameTextState.value,
+                      privacyCheckBoxState = privacyCheckBoxState.value
+                  )
+
                 }) {
                 Text(
                     color = Color.White,
