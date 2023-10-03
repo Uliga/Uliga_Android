@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,8 +33,10 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.uliga.app.R
+import com.uliga.app.ToastAnimation
 import com.uliga.app.ui.theme.Black
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Primary
@@ -73,8 +78,34 @@ fun SocialSignupScreen(
     val nickNameTextState = remember { mutableStateOf("") }
     val privacyCheckBoxState = remember { mutableStateOf(state.isPrivacyChecked) }
 
+    var isVisible by remember {
+        mutableStateOf(false)
+    }
+
+    var isAnimating by remember {
+        mutableStateOf(false)
+    }
+
+    var label by remember {
+        mutableStateOf("")
+    }
+
+    val yOffset by animateFloatAsState(
+        targetValue = if (isAnimating) 25f else -100f,
+        animationSpec = tween(durationMillis = 1500),
+        finishedListener = { endValue ->
+            if (endValue == 25f) {
+                isAnimating = false
+            }
+        },
+        label = ""
+    )
+
     viewModel.collectSideEffect {
-        handleSideEffect(it, navController, context)
+        handleSideEffect(it, navController, context) { toastMessage ->
+            isAnimating = true
+            label = toastMessage
+        }
     }
 
     LazyColumn(
@@ -371,6 +402,7 @@ fun SocialSignupScreen(
 
     }
 
+    ToastAnimation(yOffset = yOffset, toastMessage = label)
 
 }
 
@@ -379,7 +411,8 @@ fun SocialSignupScreen(
 private fun handleSideEffect(
     sideEffect: AuthSideEffect,
     navController: NavController,
-    context: Context
+    context: Context,
+    toastRequest: (String) -> Unit
 ) {
     when (sideEffect) {
         is AuthSideEffect.Finish -> {
@@ -387,7 +420,7 @@ private fun handleSideEffect(
         }
 
         is AuthSideEffect.ToastMessage -> {
-
+            toastRequest(sideEffect.toastMessage)
         }
 
         is AuthSideEffect.NavigateToMainActivity -> {
