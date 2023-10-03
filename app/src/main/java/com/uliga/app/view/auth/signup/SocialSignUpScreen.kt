@@ -71,6 +71,7 @@ fun SocialSignupScreen(
     val emailAddressTextState = remember { mutableStateOf(paramEmail) }
     val nameTextState = remember { mutableStateOf(paramName) }
     val nickNameTextState = remember { mutableStateOf("") }
+    val privacyCheckBoxState = remember { mutableStateOf(state.isPrivacyChecked) }
 
     viewModel.collectSideEffect {
         handleSideEffect(it, navController, context)
@@ -288,7 +289,9 @@ fun SocialSignupScreen(
                     ),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor =
-                        if (state.isNickNameExisted == null || state.isNickNameExisted) Color(0xFFE9EEFF)
+                        if (state.isNickNameExisted == null || state.isNickNameExisted) Color(
+                            0xFFE9EEFF
+                        )
                         else Color(0xFFF2F4F7),
                     ),
                     shape = RoundedCornerShape(10.dp),
@@ -297,7 +300,7 @@ fun SocialSignupScreen(
                     }) {
                     Text(
                         color = if (state.isNickNameExisted == null || state.isNickNameExisted) Primary
-                                else Color(0xFFCCCCCF),
+                        else Color(0xFFCCCCCF),
                         fontFamily = pretendard,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
@@ -312,9 +315,12 @@ fun SocialSignupScreen(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Checkbox(checked = false, onCheckedChange = {
-
-                }
+                Checkbox(
+                    checked = privacyCheckBoxState.value,
+                    onCheckedChange = {
+                        privacyCheckBoxState.value = !privacyCheckBoxState.value
+                        viewModel.getIsPrivacyChecked(privacyCheckBoxState.value)
+                    }
                 )
 
                 Text(
