@@ -28,7 +28,11 @@
             android:exported="false"/>
 
         <activity
-            android:name=".view.accountbook.AccountBookForInputActivity"
+            android:name=".view.accountBook.input.AccountBookForInputActivity"
+            android:exported="false"/>
+
+        <activity
+            android:name=".view.accountBook.generation.AccountBookGenerationActivity"
             android:exported="false"/>
 
         <activity

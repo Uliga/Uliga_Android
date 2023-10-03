@@ -1,4 +1,4 @@
-package com.uliga.app.view.accountbook
+package com.uliga.app.view.accountBook.input
 
 import android.os.Build
 import android.os.Bundle

@@ -1,4 +1,4 @@
-package com.uliga.app.view.accountbook
+package com.uliga.app.view.accountBook.selection
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -30,11 +30,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uliga.app.R
-import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
