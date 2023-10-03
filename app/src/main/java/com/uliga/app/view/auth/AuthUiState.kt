@@ -4,14 +4,16 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class AuthUiState(
-    val isLoading: Boolean,
+    val isLoading: Boolean = false,
     val exception: Exception? = null,
+    val isNickNameExisted: Boolean? = null,
 ) {
 
     companion object {
         fun empty() = AuthUiState(
             isLoading = false,
             exception = null,
+            isNickNameExisted = null
         )
     }
 }

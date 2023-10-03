@@ -1,5 +1,6 @@
 package com.uliga.app.view.auth.signup
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -46,11 +47,13 @@ import androidx.navigation.NavController
 import com.uliga.app.R
 import com.uliga.app.ui.theme.Black
 import com.uliga.app.ui.theme.Grey400
-import com.uliga.app.ui.theme.LightBlue
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.auth.AuthSideEffect
 import com.uliga.app.view.auth.AuthViewModel
 import com.uliga.app.view.main.MainActivity
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -62,11 +65,16 @@ fun SocialSignupScreen(
     paramName: String
 ) {
 
+    val state = viewModel.collectAsState().value
     val context = LocalContext.current
 
     val emailAddressTextState = remember { mutableStateOf(paramEmail) }
     val nameTextState = remember { mutableStateOf(paramName) }
     val nickNameTextState = remember { mutableStateOf("") }
+
+    viewModel.collectSideEffect {
+        handleSideEffect(it, navController, context)
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -271,6 +279,7 @@ fun SocialSignupScreen(
                 )
 
                 Button(
+                    enabled = state.isNickNameExisted == null || state.isNickNameExisted,
                     modifier = Modifier
                         .wrapContentSize()
                         .padding(horizontal = 4.dp),
@@ -278,14 +287,17 @@ fun SocialSignupScreen(
                         vertical = 4.dp
                     ),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = LightBlue,
+                        backgroundColor =
+                        if (state.isNickNameExisted == null || state.isNickNameExisted) Color(0xFFE9EEFF)
+                        else Color(0xFFF2F4F7),
                     ),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
-
+                        viewModel.getIsNickNameExisted(nickNameTextState.value)
                     }) {
                     Text(
-                        color = Primary,
+                        color = if (state.isNickNameExisted == null || state.isNickNameExisted) Primary
+                                else Color(0xFFCCCCCF),
                         fontFamily = pretendard,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
@@ -350,3 +362,29 @@ fun SocialSignupScreen(
 
 
 }
+
+
+@RequiresApi(Build.VERSION_CODES.Q)
+private fun handleSideEffect(
+    sideEffect: AuthSideEffect,
+    navController: NavController,
+    context: Context
+) {
+    when (sideEffect) {
+        is AuthSideEffect.Finish -> {
+
+        }
+
+        is AuthSideEffect.ToastMessage -> {
+
+        }
+
+        is AuthSideEffect.NavigateToMainActivity -> {
+            val intent = Intent(context, MainActivity::class.java)
+            context.startActivity(intent)
+        }
+
+        else -> {}
+    }
+}
+
