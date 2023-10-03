@@ -49,6 +49,7 @@ class AuthViewModel @Inject constructor(
             }
 
             if (it.exists!!) {
+                postSideEffect(AuthSideEffect.Finish)
                 postSideEffect(AuthSideEffect.NavigateToMainActivity)
             } else {
                 Log.d("getUserAuthDataExistedUseCase", "${socialLoginEmail} ${socialLoginName}")
@@ -126,10 +127,16 @@ class AuthViewModel @Inject constructor(
         postSocialLoginUseCase(socialLoginRequest)
             .onSuccess {
                 postSideEffect(AuthSideEffect.ToastMessage("회원가입에 성공했습니다."))
+                postSideEffect(AuthSideEffect.Finish)
                 postSideEffect(AuthSideEffect.NavigateToMainActivity)
             }
             .onFailure {
 
             }
+    }
+
+    override fun onCleared() {
+        Log.d("AuthViewModel", "onCleared")
+        super.onCleared()
     }
 }

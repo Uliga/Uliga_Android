@@ -57,6 +57,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.uliga.app.R
+import com.uliga.app.ToastAnimation
 import com.uliga.app.ext.getGoogleSignInClient
 import com.uliga.app.ui.theme.CustomGrey100
 import com.uliga.app.ui.theme.Grey400
@@ -136,11 +137,14 @@ fun LoginScreen(
                 isAnimating = false
             }
         },
-        label = ""
+        label = "dfsdfsdf"
     )
-
+    
     viewModel.collectSideEffect {
-        handleSideEffect(it, navController, yOffset, context)
+        handleSideEffect(it, navController, context) { toastMessage ->
+            isAnimating != isAnimating
+
+        }
     }
 
     Column(
@@ -422,6 +426,8 @@ fun LoginScreen(
     }
 
 
+    ToastAnimation(yOffset = yOffset, toastMessage = "")
+
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -460,16 +466,17 @@ fun TmpCheckAlertDialog(
 private fun handleSideEffect(
     sideEffect: AuthSideEffect,
     navController: NavController,
-    yOffset: Float,
-    context: Context
+    context: Context,
+    toastRequest: (String) -> Unit
 ) {
     when (sideEffect) {
         is AuthSideEffect.Finish -> {
-
+            val activity = (context as? Activity)
+            activity?.finish()
         }
 
         is AuthSideEffect.ToastMessage -> {
-
+            toastRequest(sideEffect.toastMessage)
         }
 
         is AuthSideEffect.NavigateToNormalSignUpScreen -> {
