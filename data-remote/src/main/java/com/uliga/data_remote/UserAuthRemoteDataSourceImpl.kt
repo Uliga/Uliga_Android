@@ -2,6 +2,7 @@ package com.uliga.data_remote
 
 import com.uliga.data.UserAuthRemoteDataSource
 import com.uliga.data.model.LoginResponseData
+import com.uliga.data.model.NormalLoginRequestData
 import com.uliga.data.model.SocialLoginRequestData
 import com.uliga.data.model.UserAuthDataExistedData
 import com.uliga.data_remote.model.LoginResponseDto
@@ -34,6 +35,13 @@ class UserAuthRemoteDataSourceImpl @Inject constructor(
         return client.post {
             url.path(Path.AUTH, Path.SOCIAL_LOGIN)
             setBody(socialLoginRequestData.toDto())
+        }.body<LoginResponseDto>().toData()
+    }
+
+    override suspend fun postNormalLogin(normalLoginRequestData: NormalLoginRequestData): LoginResponseData {
+        return client.post {
+            url.path(Path.AUTH, Path.LOGIN)
+            setBody(normalLoginRequestData.toDto())
         }.body<LoginResponseDto>().toData()
     }
 

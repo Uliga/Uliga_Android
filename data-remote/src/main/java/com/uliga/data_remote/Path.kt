@@ -16,4 +16,6 @@ object Path {
     const val EXISTS = "exists"
 
     const val SOCIAL_LOGIN = "social-login"
+
+    const val LOGIN = "login"
 }

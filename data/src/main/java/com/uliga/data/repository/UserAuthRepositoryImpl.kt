@@ -5,6 +5,7 @@ import com.uliga.data.UserAuthRemoteDataSource
 import com.uliga.data.model.toData
 import com.uliga.data.model.toDomain
 import com.uliga.domain.model.LoginResponse
+import com.uliga.domain.model.NormalLoginRequest
 import com.uliga.domain.model.SocialLoginRequest
 import com.uliga.domain.model.UserAuthDataExisted
 import com.uliga.domain.repository.UserAuthRepository
@@ -32,6 +33,12 @@ class UserAuthRepositoryImpl @Inject constructor(
     override suspend fun postSocialLogin(socialLoginRequest: SocialLoginRequest): Result<LoginResponse> {
         return runCatching {
             userAuthRemoteDataSource.postSocialLogin(socialLoginRequest.toData()).toDomain()
+        }
+    }
+
+    override suspend fun postNormalLogin(normalLoginRequest: NormalLoginRequest): Result<LoginResponse> {
+        return runCatching {
+            userAuthRemoteDataSource.postNormalLogin(normalLoginRequest.toData()).toDomain()
         }
     }
 
