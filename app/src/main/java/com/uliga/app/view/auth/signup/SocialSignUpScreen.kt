@@ -54,6 +54,7 @@ import com.uliga.app.ui.theme.Black
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.accountBook.generation.AccountBookGenerationActivity
 import com.uliga.app.view.auth.AuthSideEffect
 import com.uliga.app.view.auth.AuthViewModel
 import com.uliga.app.view.main.MainActivity
@@ -428,6 +429,10 @@ private fun handleSideEffect(
             context.startActivity(intent)
         }
 
+        is AuthSideEffect.NavigateToAccountBookGenerationActivity -> {
+            val intent = Intent(context, AccountBookGenerationActivity::class.java)
+            context.startActivity(intent)
+        }
         else -> {}
     }
 }

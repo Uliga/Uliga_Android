@@ -492,6 +492,8 @@ private fun handleSideEffect(
             context.startActivity(intent)
         }
 
+        else -> {}
+
     }
 }
 

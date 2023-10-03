@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -65,16 +64,13 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.uliga.app.R
 import com.uliga.app.ui.theme.CustomGray9B9B9B
 import com.uliga.app.ui.theme.CustomGrayF9F9F9
-import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.LightBlue
 import com.uliga.app.ui.theme.Secondary
-import com.uliga.app.ui.theme.Success100
-import com.uliga.app.ui.theme.Success200
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
-import com.uliga.app.view.accountbook.AccountBookForInputActivity
-import com.uliga.app.view.accountbook.AccountBookSelectionBottomSheet
+import com.uliga.app.view.accountBook.input.AccountBookForInputActivity
+import com.uliga.app.view.accountBook.selection.AccountBookSelectionBottomSheet
 import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleBottomSheet
