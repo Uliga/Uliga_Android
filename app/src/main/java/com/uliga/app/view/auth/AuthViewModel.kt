@@ -3,7 +3,9 @@ package com.uliga.app.view.auth
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.uliga.domain.AuthType
+import com.uliga.domain.model.SocialLoginRequest
 import com.uliga.domain.usecase.GetUserAuthDataExistedUseCase
+import com.uliga.domain.usecase.PostSocialLoginUseCase
 import com.uliga.domain.usecase.SocialLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
@@ -17,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val socialLoginUseCase: SocialLoginUseCase,
-    private val getUserAuthDataExistedUseCase: GetUserAuthDataExistedUseCase
+    private val getUserAuthDataExistedUseCase: GetUserAuthDataExistedUseCase,
+    private val postSocialLoginUseCase: PostSocialLoginUseCase
 ) : ContainerHost<AuthUiState, AuthSideEffect>, ViewModel() {
 
     override val container = container<AuthUiState, AuthSideEffect>(AuthUiState.empty())
@@ -92,11 +95,43 @@ class AuthViewModel @Inject constructor(
             }
     }
 
-    fun getIsPrivacyChecked(isPrivacyChecked: Boolean) = intent {
+    fun fetchIsPrivacyChecked(isPrivacyChecked: Boolean) = intent {
         reduce {
             state.copy(
                 isPrivacyChecked = isPrivacyChecked
             )
         }
+    }
+
+    fun postSocialLogin(
+        email: String,
+        userName: String,
+        nickName: String,
+        privacyCheckBoxState: Boolean
+    ) = intent {
+
+        if(!privacyCheckBoxState) {
+
+            return@intent
+        }
+
+        val socialLoginRequest = SocialLoginRequest(
+            email = email,
+            userName = userName,
+            nickName = nickName,
+            loginType = "EMAIL",
+            applicationPassword = "1234"
+        )
+
+        postSocialLoginUseCase(socialLoginRequest)
+            .onSuccess {
+
+                Log.d("LoginResponse", it.toString())
+            }
+            .onFailure {
+
+            }
+
+
     }
 }
