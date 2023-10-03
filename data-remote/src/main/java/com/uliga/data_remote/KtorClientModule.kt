@@ -67,7 +67,7 @@ internal object KtorClientModule {
                 runBlocking {
                     val accessToken = userAuthLocalDataSource.getToken()
                     if(accessToken != "") {
-                        append(HttpHeaders.Authorization, accessToken)
+                        append(HttpHeaders.Authorization, "Bearer $accessToken")
                     }
                 }
             }
