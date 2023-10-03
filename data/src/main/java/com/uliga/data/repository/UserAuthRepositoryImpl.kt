@@ -14,6 +14,12 @@ class UserAuthRepositoryImpl @Inject constructor(
     private val userAuthRemoteDataSource: UserAuthRemoteDataSource,
     private val userAuthLocalDataSource: UserAuthLocalDataSource
 ) : UserAuthRepository {
+
+
+    /**
+     * Remote
+     */
+
     override suspend fun getUserAuthDataExisted(
         type: String,
         data: String
@@ -29,5 +35,31 @@ class UserAuthRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Local
+     */
 
+    override suspend fun updateToken(accessToken: String): Result<Unit> {
+        return runCatching {
+            userAuthLocalDataSource.updateToken(accessToken)
+        }
+    }
+
+    override suspend fun getToken(): Result<String> {
+        return runCatching {
+            userAuthLocalDataSource.getToken()
+        }
+    }
+
+    override suspend fun updateId(id: Long): Result<Unit> {
+        return runCatching {
+            userAuthLocalDataSource.updateId(id)
+        }
+    }
+
+    override suspend fun getId(): Result<Long> {
+        return runCatching {
+            userAuthLocalDataSource.getId()
+        }
+    }
 }
