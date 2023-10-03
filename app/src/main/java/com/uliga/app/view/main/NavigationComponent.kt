@@ -92,8 +92,6 @@ fun MainNavigationComponent(
             composable(MainRoute.HOME.route) {
                 HomeScreen(
                     navController = navController,
-                    data = data,
-                    onEvent = viewModel::updateEvent,
                 )
             }
             composable(MainRoute.FINANCE.route) {

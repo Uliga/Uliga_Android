@@ -1,9 +1,9 @@
 package com.uliga.domain.repository
 
-import com.uliga.domain.model.LoginResponse
-import com.uliga.domain.model.NormalLoginRequest
-import com.uliga.domain.model.SocialLoginRequest
-import com.uliga.domain.model.UserAuthDataExisted
+import com.uliga.domain.model.userAuth.LoginResponse
+import com.uliga.domain.model.userAuth.NormalLoginRequest
+import com.uliga.domain.model.userAuth.SocialLoginRequest
+import com.uliga.domain.model.userAuth.UserAuthDataExisted
 
 interface UserAuthRepository {
 

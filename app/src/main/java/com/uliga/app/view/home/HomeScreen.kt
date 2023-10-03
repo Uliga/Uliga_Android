@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.uliga.app.R
 import com.uliga.app.ui.theme.CustomGrey100
@@ -64,8 +65,7 @@ import com.uliga.chart.line.LineChart
 @Composable
 fun HomeScreen(
     navController: NavController,
-    data: MainUiState,
-    onEvent: (MainUiEvent) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
 
     val context = LocalContext.current

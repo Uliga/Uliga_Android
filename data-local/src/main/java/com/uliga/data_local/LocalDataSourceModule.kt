@@ -1,6 +1,6 @@
 package com.uliga.data_local
 
-import com.uliga.data.UserAuthLocalDataSource
+import com.uliga.data.datasource.UserAuthLocalDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
