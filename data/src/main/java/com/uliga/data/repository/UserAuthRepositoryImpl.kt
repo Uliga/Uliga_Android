@@ -1,13 +1,13 @@
 package com.uliga.data.repository
 
-import com.uliga.data.UserAuthLocalDataSource
-import com.uliga.data.UserAuthRemoteDataSource
-import com.uliga.data.model.toData
-import com.uliga.data.model.toDomain
-import com.uliga.domain.model.LoginResponse
-import com.uliga.domain.model.NormalLoginRequest
-import com.uliga.domain.model.SocialLoginRequest
-import com.uliga.domain.model.UserAuthDataExisted
+import com.uliga.data.datasource.UserAuthLocalDataSource
+import com.uliga.data.datasource.UserAuthRemoteDataSource
+import com.uliga.data.model.userAuth.toData
+import com.uliga.data.model.userAuth.toDomain
+import com.uliga.domain.model.userAuth.LoginResponse
+import com.uliga.domain.model.userAuth.NormalLoginRequest
+import com.uliga.domain.model.userAuth.SocialLoginRequest
+import com.uliga.domain.model.userAuth.UserAuthDataExisted
 import com.uliga.domain.repository.UserAuthRepository
 import javax.inject.Inject
 

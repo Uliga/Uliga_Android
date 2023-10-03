@@ -1,14 +1,13 @@
 package com.uliga.app.view.auth
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.uliga.domain.AuthType
-import com.uliga.domain.model.NormalLoginRequest
-import com.uliga.domain.model.SocialLoginRequest
-import com.uliga.domain.usecase.GetUserAuthDataExistedUseCase
-import com.uliga.domain.usecase.PostNormalLoginUseCase
-import com.uliga.domain.usecase.PostSocialLoginUseCase
-import com.uliga.domain.usecase.SocialLoginUseCase
+import com.uliga.domain.model.userAuth.NormalLoginRequest
+import com.uliga.domain.model.userAuth.SocialLoginRequest
+import com.uliga.domain.usecase.userAuth.GetUserAuthDataExistedUseCase
+import com.uliga.domain.usecase.userAuth.PostNormalLoginUseCase
+import com.uliga.domain.usecase.userAuth.PostSocialLoginUseCase
+import com.uliga.domain.usecase.userAuth.SocialLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent

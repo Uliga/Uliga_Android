@@ -18,4 +18,10 @@ object Path {
     const val SOCIAL_LOGIN = "social-login"
 
     const val LOGIN = "login"
+
+    /**
+     * AccountBook
+     */
+
+    const val ACCOUNT_BOOK = "accountBook"
 }

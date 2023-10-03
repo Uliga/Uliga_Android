@@ -1,12 +1,11 @@
 package com.uliga.data_local
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.uliga.data.UserAuthLocalDataSource
+import com.uliga.data.datasource.UserAuthLocalDataSource
 import javax.inject.Inject
 
 class UserAuthLocalDataSourceImpl @Inject constructor(
