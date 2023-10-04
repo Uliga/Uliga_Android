@@ -19,6 +19,8 @@ object Path {
 
     const val LOGIN = "login"
 
+    const val REISSUE = "reissue"
+
     /**
      * AccountBook
      */
