@@ -1,5 +1,6 @@
 package com.uliga.app.view.accountBook.generation
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -20,9 +21,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -42,9 +48,11 @@ import org.orbitmvi.orbit.compose.collectAsState
 
 
 @AndroidEntryPoint
-class AccountBookGenerationActivity: ComponentActivity() {
+class AccountBookGenerationActivity : ComponentActivity() {
 
     private val viewModel: AccountBookGenerationViewModel by viewModels()
+
+    @SuppressLint("UnrememberedMutableState")
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,8 +60,11 @@ class AccountBookGenerationActivity: ComponentActivity() {
             MyApplicationTheme {
 
                 val state = viewModel.collectAsState().value
+                var selectedIndex by remember { mutableStateOf(-1) }
+                val onItemClick = { index: Int -> selectedIndex = index }
 
                 LazyColumn(
+                    state = rememberLazyListState(),
                     modifier = Modifier
                         .wrapContentSize()
                         .padding(
@@ -86,10 +97,14 @@ class AccountBookGenerationActivity: ComponentActivity() {
                         )
                     }
 
-                    items(state.accountBooks?.accountBooks?.size ?: 0) {
+                    items(state.accountBooks?.accountBooks?.size ?: 0) { index ->
 
-                        selectedAccountBook()
-                        unselectedAccountBook()
+                        selectedAccountBook(
+                            index = index,
+                            selected = selectedIndex == index,
+                            onClick = onItemClick
+                        )
+
                     }
                 }
             }
@@ -99,7 +114,11 @@ class AccountBookGenerationActivity: ComponentActivity() {
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun selectedAccountBook() {
+fun selectedAccountBook(
+    index: Int,
+    selected: Boolean,
+    onClick: (Int) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -108,16 +127,20 @@ fun selectedAccountBook() {
                 horizontal = 16.dp,
             )
             .clickable {
-
+                onClick(index)
             }
-            .border(width = 1.dp, color = Primary, shape = RoundedCornerShape(5.dp))
+            .border(
+                width = 1.dp,
+                color = if (selected) Primary else Grey500,
+                shape = RoundedCornerShape(5.dp)
+            )
             .background(Color.White),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             modifier = Modifier.padding(start = 16.dp),
             text = "안세훈",
-            color = Primary,
+            color = if (selected) Primary else Grey500,
             fontFamily = pretendard,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
@@ -127,7 +150,7 @@ fun selectedAccountBook() {
 
         Text(
             text = "님의 가계부",
-            color = Primary,
+            color = if (selected) Primary else Grey500,
             fontFamily = pretendard,
             fontWeight = FontWeight.SemiBold,
             fontSize = 18.sp,
@@ -146,6 +169,7 @@ fun selectedAccountBook() {
                     bottom = 16.dp,
                     end = 16.dp
                 )
+                .alpha(if (selected) 1f else 0f)
                 .size(40.dp),
             painter = painterResource(
                 id = R.drawable.ic_account_book_select
@@ -206,8 +230,7 @@ fun unselectedAccountBook() {
                     bottom = 16.dp,
                     end = 16.dp
                 )
-                .size(40.dp)
-            ,
+                .size(40.dp),
             painter = painterResource(
                 id = R.drawable.ic_account_book_select
             ),
