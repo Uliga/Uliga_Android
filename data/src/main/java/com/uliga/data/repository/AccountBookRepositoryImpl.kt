@@ -19,9 +19,9 @@ class AccountBookRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun postAccountBook(accountBookGenerationRequest: AccountBookGenerationRequest): Result<AccountBookGenerationResponseData> {
+    override suspend fun postAccountBook(accountBookGenerationRequest: AccountBookGenerationRequest): Result<AccountBookGenerationResponse> {
         return runCatching {
-            accountBookRemoteDataSource.postAccountBook(accountBookGenerationRequest.toData())
+            accountBookRemoteDataSource.postAccountBook(accountBookGenerationRequest.toData()).toDomain()
         }
     }
 }
