@@ -48,7 +48,7 @@ fun AccountBookSelectionBottomSheet(
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = {
-            onDismissRequest
+            onDismissRequest()
         })
     {
 
