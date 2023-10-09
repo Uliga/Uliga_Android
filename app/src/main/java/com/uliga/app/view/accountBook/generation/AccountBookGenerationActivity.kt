@@ -171,8 +171,11 @@ class AccountBookGenerationActivity : ComponentActivity() {
 
                     items(state.accountBooks?.accountBooks?.size ?: 0) { index ->
 
+                        val accountBookName = state.accountBooks?.accountBooks?.get(index)?.info?.accountBookName ?: ""
+
                         selectedAccountBook(
                             index = index,
+                            accountBookName = accountBookName,
                             selected = selectedIndex == index,
                             onClick = onItemClick
                         )
@@ -220,6 +223,7 @@ class AccountBookGenerationActivity : ComponentActivity() {
 @Composable
 fun selectedAccountBook(
     index: Int,
+    accountBookName: String,
     selected: Boolean,
     onClick: (Int) -> Unit
 ) {
@@ -243,20 +247,10 @@ fun selectedAccountBook(
     ) {
         Text(
             modifier = Modifier.padding(start = 16.dp),
-            text = "안세훈",
+            text = accountBookName,
             color = if (selected) Primary else Grey500,
             fontFamily = pretendard,
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1
-        )
-
-        Text(
-            text = "님의 가계부",
-            color = if (selected) Primary else Grey500,
-            fontFamily = pretendard,
-            fontWeight = FontWeight.SemiBold,
             fontSize = 18.sp,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1
