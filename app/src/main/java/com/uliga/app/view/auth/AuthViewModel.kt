@@ -136,8 +136,6 @@ class AuthViewModel @Inject constructor(
             applicationPassword = "12341234"
         )
 
-        postSideEffect(AuthSideEffect.NavigateToAccountBookGenerationActivity)
-
         postSocialLoginUseCase(socialLoginRequest)
             .onSuccess {
                 postSideEffect(AuthSideEffect.ToastMessage("회원가입에 성공했습니다."))

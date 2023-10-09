@@ -26,4 +26,10 @@ object Path {
      */
 
     const val ACCOUNT_BOOK = "accountBook"
+
+    /**
+     * Memeber
+     */
+
+    const val MEMBER = "member"
 }
