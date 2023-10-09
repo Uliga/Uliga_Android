@@ -1,8 +1,17 @@
 package com.uliga.app.view.main
 
-import com.uliga.app.base.ComposeViewModel
-
 data class MainUiState(
+    val isLoading: Boolean = false,
+    val exception: Exception? = null,
     val userToken: String? = null,
     val showAccountBookSelectionBottomSheet: Boolean? = null,
-) : ComposeViewModel.UiState
+) {
+    companion object {
+        fun empty() = MainUiState(
+            isLoading = false,
+            exception = null,
+            userToken = null,
+            showAccountBookSelectionBottomSheet = null
+        )
+    }
+}

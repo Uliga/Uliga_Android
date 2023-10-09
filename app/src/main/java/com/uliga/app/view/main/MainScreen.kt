@@ -11,9 +11,6 @@ fun MainScreen(
     viewModel: MainViewModel
 ) {
     val navController: NavHostController = rememberNavController()
-    val data by viewModel.uiState.collectAsStateWithLifecycle()
-    val showLoading by viewModel.showLoading.collectAsStateWithLifecycle()
-    val errorMessage by viewModel.error.collectAsStateWithLifecycle(null)
 
     MainNavigationComponent(
         navController = navController,

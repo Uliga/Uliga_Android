@@ -48,15 +48,10 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
-import com.uliga.app.view.analyze.HorizontalBarChartDataModel
-import com.uliga.app.view.analyze.VerticalBarChartDataModel
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
-import com.uliga.app.view.main.MainUiEvent
-import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
 import com.uliga.app.view.schedule.ScheduleBottomSheet
-import com.uliga.chart.bar.HorizontalBarChart
 import com.uliga.chart.bar.VerticalBarChart
 import com.uliga.chart.line.LineChart
 

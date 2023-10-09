@@ -1,5 +1,7 @@
 package com.uliga.app.view.main
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
@@ -49,13 +51,13 @@ enum class MainRoute(
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainNavigationComponent(
     navController: NavHostController,
     viewModel: MainViewModel,
 ) {
-    val data by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         bottomBar = {
@@ -97,22 +99,17 @@ fun MainNavigationComponent(
             composable(MainRoute.FINANCE.route) {
                 FinanceScreen(
                     navController = navController,
-                    data = data,
-                    onEvent = viewModel::updateEvent,
                 )
             }
             composable(MainRoute.ANALYZE.route) {
                 AnalyzeScreen(
                     navController = navController,
-                    data = data,
-                    onEvent = viewModel::updateEvent,
+
                 )
             }
             composable(MainRoute.PROFILE.route) {
                 MyScreen(
                     navController = navController,
-                    data = data,
-                    onEvent = viewModel::updateEvent,
                 )
             }
         }
