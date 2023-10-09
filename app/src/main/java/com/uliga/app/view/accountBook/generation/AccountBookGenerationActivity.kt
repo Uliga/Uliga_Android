@@ -12,20 +12,32 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +58,8 @@ import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.MyApplicationTheme
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.finance.showSettingDropDownMenu
+import com.uliga.app.view.schedule.ScheduleBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import org.orbitmvi.orbit.compose.collectAsState
 
@@ -67,18 +81,69 @@ class AccountBookGenerationActivity : ComponentActivity() {
                 var selectedIndex by remember { mutableStateOf(-1) }
                 val onItemClick = { index: Int -> selectedIndex = index }
 
+                var isAccountBookGenerationState by rememberSaveable {
+                    mutableStateOf(false)
+                }
 
+                var showAccountBookGenerationDialog by remember {
+                    mutableStateOf(false)
+                }
+
+                if (isAccountBookGenerationState) {
+                    showAccountBookGenerationDropDownMenu(
+                        showDialog = showAccountBookGenerationDialog,
+                    )
+                }
 
                 LazyColumn(
                     state = rememberLazyListState(),
                     modifier = Modifier
                         .wrapContentSize()
-                        .padding(
-                            vertical = 16.dp,
-                        )
                         .background(Color.White),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+
+                    item {
+
+                        CenterAlignedTopAppBar(
+                            modifier = Modifier.background(Color.White),
+                            title = {
+                                Row {
+                                    Image(
+                                        modifier = Modifier
+                                            .size(40.dp),
+                                        painter = painterResource(
+                                            id = R.drawable.uliga_logo
+                                        ),
+                                        contentDescription = "uliga logo"
+                                    )
+
+                                    Text(
+                                        modifier = Modifier.padding(
+                                            end = 12.dp
+                                        ),
+                                        text = "우리가",
+                                        color = Primary,
+                                        fontFamily = pretendard,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 24.sp
+                                    )
+                                }
+                            },
+                            actions = {
+                                IconButton(onClick = {
+                                    isAccountBookGenerationState = true
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Add,
+                                        contentDescription = "Localized description"
+                                    )
+                                }
+                            }
+                        )
+
+                    }
+
                     item {
                         Text(
                             modifier = Modifier
@@ -112,26 +177,36 @@ class AccountBookGenerationActivity : ComponentActivity() {
                         )
 
                     }
-                }
 
-                val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
-                var isSheetOpen by rememberSaveable {
-                    mutableStateOf(false)
-                }
+                    item {
+                        Button(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            contentPadding = PaddingValues(
+                                vertical = 16.dp
+                            ),
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Primary,
+                            ),
+                            shape = RoundedCornerShape(10.dp),
+                            onClick = {
 
-                if(isSheetOpen) {
-                    AccountBookGenerationBottomSheet(
-                        sheetState = sheetState,
-                        onDismissRequest = {
-                            isSheetOpen = false
+
+                            }) {
+                            Text(
+                                color = Color.White,
+                                fontFamily = pretendard,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                text = "우리가 시작하기"
+                            )
                         }
-                    )
+                    }
                 }
-                Button(onClick = { isSheetOpen = true }) {
-
-                }
-
             }
+
+
         }
     }
 }
@@ -262,4 +337,67 @@ fun unselectedAccountBook() {
         )
     }
 
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun showAccountBookGenerationDropDownMenu(
+    showDialog: Boolean,
+) {
+    val accountBookGenerationSheetState = androidx.compose.material3.rememberModalBottomSheetState()
+    var isAccountBookGenerationSheetStateOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (isAccountBookGenerationSheetStateOpen) {
+        AccountBookGenerationBottomSheet(
+            sheetState = accountBookGenerationSheetState,
+            onDismissRequest = {
+                isAccountBookGenerationSheetStateOpen = false
+            }
+        )
+    }
+
+    var expanded by remember { mutableStateOf(true) }
+    val items = listOf(
+        "가계부 추가하기"
+    )
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.TopEnd)
+            .absolutePadding(top = 45.dp, right = 20.dp)
+    ) {
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .wrapContentWidth()
+                .background(
+                    Color.White
+                )
+        ) {
+            items.forEachIndexed { index, s ->
+                DropdownMenuItem(onClick = {
+                    expanded = false
+//                    showDialog = false
+
+                    when (index) {
+                        0 -> {
+                            isAccountBookGenerationSheetStateOpen = true
+                        }
+                    }
+
+                }) {
+                    Text(text = s)
+                    if (index < 3) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
+                }
+            }
+        }
+
+
+    }
 }
