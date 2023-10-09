@@ -91,7 +91,7 @@ class AccountBookGenerationActivity : ComponentActivity() {
                 }
 
                 if (isAccountBookGenerationState) {
-                    showAccountBookGenerationDropDownMenu {
+                    showAccountBookGenerationDropDownMenu(viewModel) {
                         showAccountBookGenerationDialog = false
                     }
                 }
@@ -348,6 +348,7 @@ fun unselectedAccountBook() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun showAccountBookGenerationDropDownMenu(
+    viewModel: AccountBookGenerationViewModel,
     showDialogRequest: () -> Unit,
 ) {
     val accountBookGenerationSheetState = androidx.compose.material3.rememberModalBottomSheetState()
@@ -357,10 +358,12 @@ fun showAccountBookGenerationDropDownMenu(
 
     if (isAccountBookGenerationSheetStateOpen) {
         AccountBookGenerationBottomSheet(
+            viewModel = viewModel,
             sheetState = accountBookGenerationSheetState,
             onDismissRequest = {
                 isAccountBookGenerationSheetStateOpen = false
-            }
+            },
+
         )
     }
 
