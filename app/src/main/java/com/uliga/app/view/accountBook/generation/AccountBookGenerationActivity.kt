@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absolutePadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -90,15 +91,15 @@ class AccountBookGenerationActivity : ComponentActivity() {
                 }
 
                 if (isAccountBookGenerationState) {
-                    showAccountBookGenerationDropDownMenu(
-                        showDialog = showAccountBookGenerationDialog,
-                    )
+                    showAccountBookGenerationDropDownMenu {
+                        showAccountBookGenerationDialog = false
+                    }
                 }
 
                 LazyColumn(
                     state = rememberLazyListState(),
                     modifier = Modifier
-                        .wrapContentSize()
+                        .fillMaxSize()
                         .background(Color.White),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -347,7 +348,7 @@ fun unselectedAccountBook() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun showAccountBookGenerationDropDownMenu(
-    showDialog: Boolean,
+    showDialogRequest: () -> Unit,
 ) {
     val accountBookGenerationSheetState = androidx.compose.material3.rememberModalBottomSheetState()
     var isAccountBookGenerationSheetStateOpen by rememberSaveable {
@@ -385,7 +386,7 @@ fun showAccountBookGenerationDropDownMenu(
             items.forEachIndexed { index, s ->
                 DropdownMenuItem(onClick = {
                     expanded = false
-//                    showDialog = false
+                    showDialogRequest()
 
                     when (index) {
                         0 -> {
