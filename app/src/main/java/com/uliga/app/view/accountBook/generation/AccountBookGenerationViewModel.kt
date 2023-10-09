@@ -1,8 +1,9 @@
 package com.uliga.app.view.accountBook.generation
 
 import androidx.lifecycle.ViewModel
-import com.uliga.app.view.auth.AuthSideEffect
+import com.uliga.domain.model.accountBook.AccountBookGenerationRequest
 import com.uliga.domain.usecase.accountbook.GetAccountBooksUseCase
+import com.uliga.domain.usecase.accountbook.PostAccountBookUseCase
 import com.uliga.domain.usecase.member.DeleteMemberUseCase
 import com.uliga.domain.usecase.userAuth.GetUserAuthDataExistedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AccountBookGenerationViewModel @Inject constructor(
+    private val postAccountBookUseCase: PostAccountBookUseCase,
     private val getAccountBooksUseCase: GetAccountBooksUseCase,
     private val deleteMemberUseCase: DeleteMemberUseCase,
     private val getUserAuthDataExistedUseCase: GetUserAuthDataExistedUseCase
@@ -50,7 +52,7 @@ class AccountBookGenerationViewModel @Inject constructor(
     }
 
     fun getIsEmailExisted(email: String) = intent {
-        if(email.isEmpty()) {
+        if (email.isEmpty()) {
             postSideEffect(AccountBookGenerationSideEffect.ToastMessage("닉네임을 적어주세요."))
             return@intent
         }
@@ -58,7 +60,7 @@ class AccountBookGenerationViewModel @Inject constructor(
         getUserAuthDataExistedUseCase("mail", email)
             .onSuccess {
 
-                if(it.exists == null) return@intent
+                if (it.exists == null) return@intent
 
                 reduce {
                     state.copy(
@@ -66,7 +68,7 @@ class AccountBookGenerationViewModel @Inject constructor(
                     )
                 }
 
-                if(it.exists!!) {
+                if (it.exists!!) {
                     postSideEffect(AccountBookGenerationSideEffect.AddEmailChip)
                 } else {
                     postSideEffect(AccountBookGenerationSideEffect.ToastMessage("이메일이 존재하지 않습니다."))
@@ -84,6 +86,56 @@ class AccountBookGenerationViewModel @Inject constructor(
                     )
                 }
             }
+    }
+
+    fun postAccountBook(
+        name: String,
+        relationship: String,
+        categoryList: List<String>,
+        emailList: List<String>
+    ) = intent {
+        if (name.isEmpty()) {
+            postSideEffect(AccountBookGenerationSideEffect.ToastMessage("가계부 이름을 입력해주세요."))
+            return@intent
+        }
+
+        if (relationship.isEmpty()) {
+            postSideEffect(AccountBookGenerationSideEffect.ToastMessage("관계를 입력해주세요."))
+            return@intent
+        }
+
+        val accountBookGenerationRequest = AccountBookGenerationRequest(
+            name = name,
+            categories = categoryList,
+            emails = emailList,
+            relationship = relationship
+        )
+
+        postAccountBookUseCase(accountBookGenerationRequest)
+            .onSuccess {
+
+                getAccountBooksUseCase()
+                    .onSuccess {
+                        reduce { state.copy(isLoading = true) }
+                        reduce {
+                            state.copy(
+                                accountBooks = it
+                            )
+                        }
+
+                        postSideEffect(AccountBookGenerationSideEffect.FinishAccountBookGenerationBottomSheet)
+
+                    }
+                    .onFailure {
+
+                    }
+            }
+            .onFailure {
+
+            }
+
+        reduce { state.copy(isLoading = true) }
+
     }
 
 
