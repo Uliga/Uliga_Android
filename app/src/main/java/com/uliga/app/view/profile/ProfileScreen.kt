@@ -31,15 +31,12 @@ import com.uliga.app.ui.theme.Grey300
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
-import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
 
 @SuppressLint("NewApi")
 @Composable
 fun MyScreen(
     navController: NavController,
-    data: MainUiState,
-    onEvent: (MainUiEvent) -> Unit
 ) {
 
     val context = LocalContext.current

@@ -6,8 +6,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -38,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.uliga.app.customTabIndicatorOffset
 import com.uliga.app.ui.theme.pretendard
-import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
 import kotlinx.coroutines.launch
 
@@ -47,8 +44,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun AnalyzeScreen(
     navController: NavController,
-    data: MainUiState,
-    onEvent: (MainUiEvent) -> Unit
 ) {
 
     val context = LocalContext.current

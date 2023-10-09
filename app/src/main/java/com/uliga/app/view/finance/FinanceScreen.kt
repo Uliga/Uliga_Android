@@ -71,7 +71,6 @@ import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.accountBook.input.AccountBookForInputActivity
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionBottomSheet
-import com.uliga.app.view.main.MainUiEvent
 import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleBottomSheet
 import java.time.DayOfWeek
@@ -84,8 +83,6 @@ import java.util.Locale
 @Composable
 fun FinanceScreen(
     navController: NavController,
-    data: MainUiState,
-    onEvent: (MainUiEvent) -> Unit
 ) {
 
     val context = LocalContext.current
