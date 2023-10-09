@@ -8,6 +8,8 @@ sealed class AccountBookGenerationSideEffect {
 
     object NavigateToMainActivity: AccountBookGenerationSideEffect()
 
+    object FinishAccountBookGenerationBottomSheet: AccountBookGenerationSideEffect()
+
     object AddEmailChip: AccountBookGenerationSideEffect()
 
     data class ToastMessage(val toastMessage: String): AccountBookGenerationSideEffect()

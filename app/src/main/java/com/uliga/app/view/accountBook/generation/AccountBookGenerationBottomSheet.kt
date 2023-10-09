@@ -103,7 +103,7 @@ fun AccountBookGenerationBottomSheet(
             mutableStateOf("")
         }
 
-        var relationShip by remember {
+        var relationship by remember {
             mutableStateOf("")
         }
 
@@ -113,11 +113,7 @@ fun AccountBookGenerationBottomSheet(
         }
 
         val invitiationElementList = remember {
-            mutableStateListOf(
-                "ansehoon1999@gmail.com",
-                "ansehoon1999@gmail.com",
-                "ansehoon1999@gmail.com"
-            )
+            mutableStateListOf("")
         }
 
         var accountBookCategory by remember {
@@ -136,7 +132,8 @@ fun AccountBookGenerationBottomSheet(
                 },
                 onEmailAddingRequest = {
                     invitiationElementList.add(accountBookInvitation)
-                }
+                },
+                onDismissRequest = onDismissRequest
             )
         }
 
@@ -266,9 +263,9 @@ fun AccountBookGenerationBottomSheet(
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .fillMaxWidth(),
-                        value = relationShip,
+                        value = relationship,
                         onValueChange = {
-                            relationShip = it
+                            relationship = it
                         },
                         textStyle = TextStyle(
                             color = Color.Black, fontSize = 16.sp
@@ -482,7 +479,12 @@ fun AccountBookGenerationBottomSheet(
                     ),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
-
+                        viewModel.postAccountBook(
+                            name = accountBookName,
+                            relationship = relationship,
+                            categoryList = categoryElementList.toList(),
+                            emailList = invitiationElementList.toList()
+                        )
 
                     }) {
                     Text(
@@ -608,7 +610,8 @@ private fun handleSideEffect(
     sideEffect: AccountBookGenerationSideEffect,
     context: Context,
     toastRequest: (String) -> Unit,
-    onEmailAddingRequest: () -> Unit
+    onEmailAddingRequest: () -> Unit,
+    onDismissRequest: () -> Unit
 ) {
     when (sideEffect) {
         is AccountBookGenerationSideEffect.ToastMessage -> {
@@ -625,6 +628,10 @@ private fun handleSideEffect(
 
         is AccountBookGenerationSideEffect.Finish -> {
 
+        }
+
+        is AccountBookGenerationSideEffect.FinishAccountBookGenerationBottomSheet -> {
+            onDismissRequest()
         }
 
 
