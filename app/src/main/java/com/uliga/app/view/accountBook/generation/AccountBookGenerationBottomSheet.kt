@@ -207,6 +207,60 @@ fun AccountBookGenerationBottomSheetCompose() {
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .fillMaxWidth(),
+                text = "관계",
+            )
+
+            Spacer(
+                modifier = Modifier
+                    .height(8.dp)
+            )
+
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                androidx.compose.material.TextField(
+                    modifier = Modifier
+                        .border(
+                            width = 1.dp,
+                            color = Grey400,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .fillMaxWidth(),
+                    value = accountBookName,
+                    onValueChange = {
+                        accountBookName = it
+                    },
+                    textStyle = TextStyle(
+                        color = Color.Black, fontSize = 16.sp
+                    ),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                    ),
+                    singleLine = true,
+                    placeholder = {
+                        Text(
+                            text = "공유 가계부 조직의 관계를 입력해주세요.",
+                            color = Grey500,
+                            fontFamily = pretendard,
+                            fontWeight = FontWeight.SemiBold,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
+                )
+
+            }
+        }
+
+        item {
+            Text(
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .fillMaxWidth(),
                 text = "사용자 초대",
             )
 
