@@ -204,6 +204,10 @@ class AccountBookGenerationActivity : ComponentActivity() {
                         }
                     }
                 }
+                
+                Button(onClick = { viewModel.deleteMember() }) {
+                    
+                }
             }
 
 
