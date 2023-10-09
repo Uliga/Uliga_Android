@@ -44,6 +44,8 @@ dependencies {
     implementation(Coroutines.android)
     implementation(Kotlin.serialization)
 
+    implementation(ThirdParty.gson)
+
     implementation(DI.daggerHiltAndroid)
     kapt(DI.daggerHiltAndroidAnnotation)
 }

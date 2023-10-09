@@ -1,5 +1,6 @@
 package com.uliga.data_local
 
+import com.uliga.data.datasource.AccountBookLocalDataSource
 import com.uliga.data.datasource.UserAuthLocalDataSource
 import dagger.Binds
 import dagger.Module
@@ -17,4 +18,10 @@ internal interface LocalDataSourceModule {
     fun bindUserLocalDataSource(
         impl: UserAuthLocalDataSourceImpl
     ): UserAuthLocalDataSource
+
+    @Singleton
+    @Binds
+    fun bindAccountBookLocalDataSource(
+        impl: AccountBookLocalDataSourceImpl
+    ): AccountBookLocalDataSource
 }

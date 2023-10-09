@@ -1,6 +1,8 @@
 package com.uliga.app.view.accountBook.generation
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -60,9 +62,11 @@ import com.uliga.app.ui.theme.MyApplicationTheme
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.finance.showSettingDropDownMenu
+import com.uliga.app.view.main.MainActivity
 import com.uliga.app.view.schedule.ScheduleBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 
 @AndroidEntryPoint
@@ -94,6 +98,24 @@ class AccountBookGenerationActivity : ComponentActivity() {
                     showAccountBookGenerationDropDownMenu(viewModel) {
                         showAccountBookGenerationDialog = false
                     }
+                }
+
+                var isAnimating by remember {
+                    mutableStateOf(false)
+                }
+
+                var label by remember {
+                    mutableStateOf("")
+                }
+
+
+                viewModel.collectSideEffect {
+                    handleSideEffect(it, this,
+                        toastRequest = { toastMessage ->
+                            isAnimating = true
+                            label = toastMessage
+                        },
+                    )
                 }
 
                 LazyColumn(
@@ -169,16 +191,58 @@ class AccountBookGenerationActivity : ComponentActivity() {
                         )
                     }
 
-                    items(state.accountBooks?.accountBooks?.size ?: 0) { index ->
+                    items(state.accountBooks?.accountBooks?.size ?: 0) {
 
-                        val accountBookName = state.accountBooks?.accountBooks?.get(index)?.info?.accountBookName ?: ""
+                        val accountBookName = state.accountBooks?.accountBooks?.get(it)?.info?.accountBookName ?: ""
 
-                        selectedAccountBook(
-                            index = index,
-                            accountBookName = accountBookName,
-                            selected = selectedIndex == index,
-                            onClick = onItemClick
-                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .padding(
+                                    horizontal = 16.dp,
+                                )
+                                .clickable {
+                                    onItemClick(it)
+                                }
+                                .border(
+                                    width = 1.dp,
+                                    color = if (selectedIndex == it) Primary else Grey500,
+                                    shape = RoundedCornerShape(5.dp)
+                                )
+                                .background(Color.White),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                modifier = Modifier.padding(start = 16.dp),
+                                text = accountBookName,
+                                color = if (selectedIndex == it) Primary else Grey500,
+                                fontFamily = pretendard,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
+
+                            Spacer(
+                                Modifier.weight(1f)
+                            )
+
+                            Image(
+                                modifier = Modifier
+                                    .padding(
+                                        top = 16.dp,
+                                        bottom = 16.dp,
+                                        end = 16.dp
+                                    )
+                                    .alpha(if (selectedIndex == it) 1f else 0f)
+                                    .size(40.dp),
+                                painter = painterResource(
+                                    id = R.drawable.ic_account_book_select
+                                ),
+                                contentDescription = "uliga logo"
+                            )
+                        }
 
                     }
 
@@ -196,6 +260,7 @@ class AccountBookGenerationActivity : ComponentActivity() {
                             shape = RoundedCornerShape(10.dp),
                             onClick = {
 
+                                viewModel.updateAccountBook(selectedIndex, state.accountBooks)
 
                             }) {
                             Text(
@@ -401,5 +466,31 @@ fun showAccountBookGenerationDropDownMenu(
         }
 
 
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+private fun handleSideEffect(
+    sideEffect: AccountBookGenerationSideEffect,
+    context: Context,
+    toastRequest: (String) -> Unit,
+) {
+    when (sideEffect) {
+        is AccountBookGenerationSideEffect.ToastMessage -> {
+            toastRequest(sideEffect.toastMessage)
+        }
+
+        is AccountBookGenerationSideEffect.NavigateToMainActivity -> {
+            val intent = Intent(context, MainActivity::class.java)
+            context.startActivity(intent)
+        }
+
+        is AccountBookGenerationSideEffect.Finish -> {
+
+        }
+
+        else -> {
+
+        }
     }
 }
