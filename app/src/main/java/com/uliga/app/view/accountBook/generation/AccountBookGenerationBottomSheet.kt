@@ -85,6 +85,11 @@ fun AccountBookGenerationBottomSheetCompose() {
         mutableStateOf("")
     }
 
+    var relationShip by remember {
+        mutableStateOf("")
+    }
+
+
     var accountBookInvitation by remember {
         mutableStateOf("")
     }
@@ -228,9 +233,9 @@ fun AccountBookGenerationBottomSheetCompose() {
                             shape = RoundedCornerShape(10.dp)
                         )
                         .fillMaxWidth(),
-                    value = accountBookName,
+                    value = relationShip,
                     onValueChange = {
-                        accountBookName = it
+                        relationShip = it
                     },
                     textStyle = TextStyle(
                         color = Color.Black, fontSize = 16.sp
