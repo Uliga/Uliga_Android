@@ -1,9 +1,11 @@
 package com.uliga.data.di
 
 import com.uliga.data.repository.AccountBookRepositoryImpl
+import com.uliga.data.repository.FinanceScheduleRepositoryImpl
 import com.uliga.data.repository.MemberRepositoryImpl
 import com.uliga.data.repository.UserAuthRepositoryImpl
 import com.uliga.domain.repository.AccountBookRepository
+import com.uliga.domain.repository.FinanceScheduleRepository
 import com.uliga.domain.repository.MemberRepository
 import com.uliga.domain.repository.UserAuthRepository
 import dagger.Binds
@@ -34,4 +36,10 @@ internal interface RepositoryModule {
     fun bindMemberRepository(
         impl: MemberRepositoryImpl
     ): MemberRepository
+
+    @Singleton
+    @Binds
+    fun bindFinanceScheduleRepository(
+        impl: FinanceScheduleRepositoryImpl
+    ): FinanceScheduleRepository
 }

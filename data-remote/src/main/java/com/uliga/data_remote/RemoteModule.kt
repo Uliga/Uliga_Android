@@ -1,9 +1,11 @@
 package com.uliga.data_remote
 
 import com.uliga.data.datasource.AccountBookRemoteDataSource
+import com.uliga.data.datasource.FinanceScheduleRemoteDataSource
 import com.uliga.data.datasource.MemberRemoteDataSource
 import com.uliga.data.datasource.UserAuthRemoteDataSource
 import com.uliga.data_remote.datasource.AccountBookRemoteDataSourceImpl
+import com.uliga.data_remote.datasource.FinanceScheduleRemoteDataSourceImpl
 import com.uliga.data_remote.datasource.MemberRemoteDataSourceImpl
 import com.uliga.data_remote.datasource.UserAuthRemoteDataSourceImpl
 import dagger.Binds
@@ -34,4 +36,10 @@ internal interface RemoteModule {
     fun bindMemberRemoteDataSource(
         impl: MemberRemoteDataSourceImpl
     ): MemberRemoteDataSource
+
+    @Singleton
+    @Binds
+    fun bindFianceScheduleRemoteDataSource(
+        impl: FinanceScheduleRemoteDataSourceImpl
+    ): FinanceScheduleRemoteDataSource
 }

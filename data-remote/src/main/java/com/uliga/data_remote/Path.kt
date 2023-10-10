@@ -28,8 +28,14 @@ object Path {
     const val ACCOUNT_BOOK = "accountBook"
 
     /**
-     * Memeber
+     * Member
      */
 
     const val MEMBER = "member"
+
+    /**
+     * Finance Schedule
+     */
+
+    const val SCHEDULE = "schedule"
 }
