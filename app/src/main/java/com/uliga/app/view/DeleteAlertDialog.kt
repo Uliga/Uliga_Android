@@ -97,7 +97,7 @@ fun DeleteAlertDialog(
                     ),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
-                        onDismissRequest
+                        onDismissRequest()
                     }) {
 
 
@@ -122,7 +122,7 @@ fun DeleteAlertDialog(
                     ),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
-                        onDismissRequest
+                        onDismissRequest()
                     }) {
 
 
