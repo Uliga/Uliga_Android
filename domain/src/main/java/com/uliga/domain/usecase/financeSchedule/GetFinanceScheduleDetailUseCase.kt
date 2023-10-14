@@ -1,5 +1,6 @@
 package com.uliga.domain.usecase.financeSchedule
 
+import com.uliga.domain.model.financeSchedule.detail.FinanceScheduleDetail
 import com.uliga.domain.model.financeSchedule.update.FinanceScheduleUpdate
 import com.uliga.domain.repository.FinanceScheduleRepository
 import javax.inject.Inject
@@ -9,7 +10,7 @@ import javax.inject.Singleton
 class GetFinanceScheduleDetailUseCase @Inject constructor(
     private val financeScheduleRepository: FinanceScheduleRepository
 ) {
-    suspend operator fun invoke(id: Long): Result<FinanceScheduleUpdate> {
+    suspend operator fun invoke(id: Long): Result<FinanceScheduleDetail> {
         return financeScheduleRepository.getFinanceScheduleDetail(id)
     }
 }
