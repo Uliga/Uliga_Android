@@ -7,5 +7,5 @@ import java.io.Serializable
 
 @Parcelize
 data class AccountBookFinanceScheduleResponse(
-    val result: AccountBookFinanceScheduleResult
+    val result: List<AccountBookFinanceScheduleResult>
 ) : Parcelable, Serializable

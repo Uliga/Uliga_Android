@@ -118,6 +118,7 @@ fun HomeScreen(
     if (isScheduleSheetStateOpen) {
         ScheduleBottomSheet(
             sheetState = scheduleSheetState,
+            viewModel = viewModel,
             onDismissRequest = {
                 isScheduleSheetStateOpen = false
             }

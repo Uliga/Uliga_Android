@@ -500,12 +500,12 @@ fun showSettingDropDownMenu(
     }
 
     if (isScheduleSheetStateOpen) {
-        ScheduleBottomSheet(
-            sheetState = scheduleSheetState,
-            onDismissRequest = {
-                isScheduleSheetStateOpen = false
-            }
-        )
+//        ScheduleBottomSheet(
+//            sheetState = scheduleSheetState,
+//            onDismissRequest = {
+//                isScheduleSheetStateOpen = false
+//            }
+//        )
     }
 
     var expanded by remember { mutableStateOf(true) }

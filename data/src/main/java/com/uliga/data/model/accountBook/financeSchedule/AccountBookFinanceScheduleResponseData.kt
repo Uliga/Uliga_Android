@@ -9,13 +9,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AccountBookFinanceScheduleResponseData(
-    val result: AccountBookFinanceScheduleResultData
+    val result: List<AccountBookFinanceScheduleResultData>
 )
 
 fun AccountBookFinanceScheduleResponse.toData() = AccountBookFinanceScheduleResponseData(
-    result = result.toData()
+    result = result.map { it.toData() }
 )
 
 fun AccountBookFinanceScheduleResponseData.toDomain() = AccountBookFinanceScheduleResponse(
-    result = result.toDomain()
+    result = result.map { it.toDomain() }
 )
