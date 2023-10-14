@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class FetchAccountBookUseCase @Inject constructor(
+class FetchCurrentAccountBookInfoUseCase @Inject constructor(
     private val accountBookRepository: AccountBookRepository
 ){
     suspend operator fun invoke(): Result<Pair<String, Long>> {
