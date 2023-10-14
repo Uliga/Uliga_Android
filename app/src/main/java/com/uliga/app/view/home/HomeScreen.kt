@@ -486,9 +486,11 @@ fun HomeScreen(
                     .clickable {
                         val financeSchedule = FinanceSchedule(
                             id = state.financeSchedules?.schedules?.get(idx)?.id ?: 0L,
-                            notificationDay = state.financeSchedules?.schedules?.get(idx)?.notificationDay ?: 0L,
-                            name =  state.financeSchedules?.schedules?.get(idx)?.name ?: "",
-                            isIncome = state.financeSchedules?.schedules?.get(idx)?.isIncome ?: false,
+                            notificationDay = state.financeSchedules?.schedules?.get(idx)?.notificationDay
+                                ?: 0L,
+                            name = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
+                            isIncome = state.financeSchedules?.schedules?.get(idx)?.isIncome
+                                ?: false,
                             value = state.financeSchedules?.schedules?.get(idx)?.value ?: 0L,
                             creatorId = 0L,
                             creator = "",
@@ -509,7 +511,12 @@ fun HomeScreen(
                         .height(48.dp)
                         .width(64.dp)
                         .clip(RoundedCornerShape(6.dp))
-                        .background(notificationDayColor(currentDay, state.financeSchedules?.schedules?.get(idx)?.notificationDay ?: 0))
+                        .background(
+                            notificationDayColor(
+                                currentDay,
+                                state.financeSchedules?.schedules?.get(idx)?.notificationDay ?: 0
+                            )
+                        )
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
@@ -545,6 +552,23 @@ fun HomeScreen(
                         fontWeight = FontWeight.Medium
                     )
                 }
+
+                Spacer(modifier = Modifier.weight(1f))
+                Image(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable {
+                            viewModel.deleteFinanceScheduleDetail(
+                                state.financeSchedules?.schedules?.get(
+                                    idx
+                                )?.id ?: 0L
+                            )
+                        },
+                    painter = painterResource(
+                        id = R.drawable.ic_cancel
+                    ),
+                    contentDescription = null
+                )
             }
         }
 
@@ -752,9 +776,9 @@ private fun VerticalBarChartRow(barChartDataModel: VerticalOneBarChartDataModel)
 
 fun notificationDayColor(currentDay: Int, notificationDay: Long): Color {
 
-    return if(currentDay - notificationDay < 3) {
+    return if (currentDay - notificationDay < 3) {
         Danger100
-    } else if(currentDay - notificationDay < 7) {
+    } else if (currentDay - notificationDay < 7) {
         Secondary
     } else {
         Success200

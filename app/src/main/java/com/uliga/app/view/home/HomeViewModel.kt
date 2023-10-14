@@ -10,6 +10,7 @@ import com.uliga.domain.model.financeSchedule.update.FinanceScheduleUpdate
 import com.uliga.domain.usecase.accountbook.GetAccountBooksUseCase
 import com.uliga.domain.usecase.accountbook.PostFinanceScheduleToAccountBookUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
+import com.uliga.domain.usecase.financeSchedule.DeleteFinanceScheduleDetailUseCase
 import com.uliga.domain.usecase.financeSchedule.GetFinanceScheduleUseCase
 import com.uliga.domain.usecase.financeSchedule.PatchFinanceScheduleUseCase
 import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
@@ -29,7 +30,8 @@ class HomeViewModel @Inject constructor(
     private val getAccountBooksUseCase: GetAccountBooksUseCase,
     private val postFinanceScheduleToAccountBookUseCase: PostFinanceScheduleToAccountBookUseCase,
     private val getFinanceScheduleUseCase: GetFinanceScheduleUseCase,
-    private val patchFinanceScheduleUseCase: PatchFinanceScheduleUseCase
+    private val patchFinanceScheduleUseCase: PatchFinanceScheduleUseCase,
+    private val deleteFinanceScheduleDetailUseCase: DeleteFinanceScheduleDetailUseCase
 ) : ContainerHost<HomeUiState, HomeSideEffect>, ViewModel() {
 
     override val container = container<HomeUiState, HomeSideEffect>(HomeUiState.empty())
@@ -198,6 +200,27 @@ class HomeViewModel @Inject constructor(
 
             }
 
+    }
+
+    fun deleteFinanceScheduleDetail(id: Long) = intent {
+        deleteFinanceScheduleDetailUseCase(id)
+            .onSuccess {
+                getFinanceScheduleUseCase()
+                    .onSuccess {
+                        reduce {
+                            state.copy(
+                                financeSchedules = it
+                            )
+                        }
+                    }
+                    .onFailure {
+                        postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
+                    }
+            }
+            .onFailure {
+                postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
+
+            }
     }
 
     override fun onCleared() {
