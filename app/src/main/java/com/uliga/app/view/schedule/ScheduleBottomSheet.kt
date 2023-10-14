@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
@@ -40,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -148,6 +150,9 @@ fun ScheduleBottomSheet(
                             onValueChange = {
                                 notificationDateTextState.value = it
                             },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number
+                            ),
                             textStyle = TextStyle(
                                 color = Color.Black, fontSize = 16.sp
                             ),
@@ -287,6 +292,9 @@ fun ScheduleBottomSheet(
                             },
                             textStyle = TextStyle(
                                 color = Color.Black, fontSize = 16.sp
+                            ),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number
                             ),
                             colors = TextFieldDefaults.textFieldColors(
                                 backgroundColor = Color.Transparent,
