@@ -23,6 +23,8 @@ interface AccountBookRepository {
 
     suspend fun postAccountBookBudget(accountBookBudgetRequest: AccountBookBudgetRequest): Result<AccountBookBudgetResponse>
 
+    suspend fun patchAccountBookBudget(accountBookBudgetRequest: AccountBookBudgetRequest): Result<AccountBookBudgetResponse>
+
     suspend fun getAccountBookMonthAsset(accountBookId: Long, year: Int, month: Int): Result<AccountBookAsset>
 
     /**

@@ -19,6 +19,8 @@ interface AccountBookRemoteDataSource {
 
     suspend fun postAccountBookBudget(accountBookBudgetRequestData: AccountBookBudgetRequestData): AccountBookBudgetResponseData
 
+    suspend fun patchAccountBookBudget(accountBookBudgetRequestData: AccountBookBudgetRequestData): AccountBookBudgetResponseData
+
     suspend fun getAccountBookMonthAsset(
         accountBookId: Long,
         year: Int,
