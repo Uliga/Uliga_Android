@@ -25,6 +25,7 @@ import com.uliga.data_remote.model.accountBook.toDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.patch
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.path
@@ -56,6 +57,13 @@ class AccountBookRemoteDataSourceImpl @Inject constructor(
     override suspend fun postAccountBookBudget(accountBookBudgetRequestData: AccountBookBudgetRequestData): AccountBookBudgetResponseData {
         return client.post {
             url.path(Path.ACCOUNT_BOOK, Path.BUDGET)
+            setBody(accountBookBudgetRequestData.toDto())
+        }.body<AccountBookBudgetResponseDto>().toData()
+    }
+
+    override suspend fun patchAccountBookBudget(accountBookBudgetRequestData: AccountBookBudgetRequestData): AccountBookBudgetResponseData {
+        return client.patch {
+            url.path(Path.BUDGET)
             setBody(accountBookBudgetRequestData.toDto())
         }.body<AccountBookBudgetResponseDto>().toData()
     }

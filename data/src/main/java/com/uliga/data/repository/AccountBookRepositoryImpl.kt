@@ -49,6 +49,12 @@ class AccountBookRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun patchAccountBookBudget(accountBookBudgetRequest: AccountBookBudgetRequest): Result<AccountBookBudgetResponse> {
+        return runCatching {
+            remote.patchAccountBookBudget(accountBookBudgetRequest.toData()).toDomain()
+        }
+    }
+
     override suspend fun getAccountBookMonthAsset(
         accountBookId: Long,
         year: Int,
