@@ -138,7 +138,10 @@ fun AccountBookForInputBottomSheetCompose() {
 
                     RadioButtonWithNoCheckBox(
                         selectedItem = accountBookTypeTextState,
-                        scheduleType = scheduleType
+                        scheduleType = scheduleType,
+                        onSelectRequest = {
+                            
+                        }
                     )
                 }
 
