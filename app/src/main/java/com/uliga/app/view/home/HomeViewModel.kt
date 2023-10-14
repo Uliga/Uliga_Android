@@ -2,12 +2,16 @@ package com.uliga.app.view.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.uliga.domain.model.accountBook.budget.AccountBookBudgetRequest
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
 import com.uliga.domain.model.accountBook.financeSchedule.common.AccountBookFinanceScheduleAssignment
 import com.uliga.domain.model.accountBook.financeSchedule.common.AccountBookFinanceScheduleResult
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
 import com.uliga.domain.model.financeSchedule.update.FinanceScheduleUpdate
+import com.uliga.domain.usecase.accountbook.GetAccountBookMonthAssetUseCase
 import com.uliga.domain.usecase.accountbook.GetAccountBooksUseCase
+import com.uliga.domain.usecase.accountbook.PatchAccountBookBudgetUseCase
+import com.uliga.domain.usecase.accountbook.PostAccountBookBudgetUseCase
 import com.uliga.domain.usecase.accountbook.PostFinanceScheduleToAccountBookUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
 import com.uliga.domain.usecase.financeSchedule.DeleteFinanceScheduleDetailUseCase
@@ -31,7 +35,10 @@ class HomeViewModel @Inject constructor(
     private val postFinanceScheduleToAccountBookUseCase: PostFinanceScheduleToAccountBookUseCase,
     private val getFinanceScheduleUseCase: GetFinanceScheduleUseCase,
     private val patchFinanceScheduleUseCase: PatchFinanceScheduleUseCase,
-    private val deleteFinanceScheduleDetailUseCase: DeleteFinanceScheduleDetailUseCase
+    private val deleteFinanceScheduleDetailUseCase: DeleteFinanceScheduleDetailUseCase,
+    private val postAccountBookBudgetUseCase: PostAccountBookBudgetUseCase,
+    private val patchAccountBookBudgetUseCase: PatchAccountBookBudgetUseCase,
+    private val getAccountBookMonthAssetUseCase: GetAccountBookMonthAssetUseCase
 ) : ContainerHost<HomeUiState, HomeSideEffect>, ViewModel() {
 
     override val container = container<HomeUiState, HomeSideEffect>(HomeUiState.empty())
@@ -95,6 +102,24 @@ class HomeViewModel @Inject constructor(
             .onFailure {
 
             }
+    }
+
+    fun getAccountBookMonthAsset(year: Int, month: Int) = intent {
+        val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
+
+        getAccountBookMonthAssetUseCase(
+            accountBookId = currentAccountBookInfo.second,
+            year = year,
+            month = month
+        ).onSuccess {
+            reduce {
+                state.copy(
+                    accountBookAsset = it
+                )
+            }
+        }.onFailure {
+
+        }
     }
 
     fun updateFinanceSchedule(financeSchedule: FinanceSchedule?) = intent {
@@ -222,6 +247,49 @@ class HomeViewModel @Inject constructor(
 
             }
     }
+
+    fun postAccountBookBudget(year: Long, month: Long, value: Long) = intent {
+        val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
+
+        val accountBookBudgetRequest = AccountBookBudgetRequest(
+            id = currentAccountBookInfo.second,
+            year = year,
+            month = month,
+            value = value,
+            category = null
+        )
+
+        postAccountBookBudgetUseCase(accountBookBudgetRequest)
+            .onSuccess {
+
+                getAccountBookMonthAsset(year.toInt(), month.toInt())
+
+            }.onFailure {
+
+            }
+
+    }
+
+    fun patchAccountBookBudget(year: Long, month: Long, value: Long) = intent {
+        val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
+
+        val accountBookBudgetRequest = AccountBookBudgetRequest(
+            id = currentAccountBookInfo.second,
+            year = year,
+            month = month,
+            value = value,
+            category = null
+        )
+
+        patchAccountBookBudgetUseCase(accountBookBudgetRequest)
+            .onSuccess {
+                getAccountBookMonthAsset(year.toInt(), month.toInt())
+            }.onFailure {
+
+            }
+
+    }
+
 
     override fun onCleared() {
         Log.d("homeViewModel", "onCleared")
