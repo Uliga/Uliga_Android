@@ -56,6 +56,7 @@ import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
 import com.uliga.app.view.schedule.ScheduleBottomSheet
 import com.uliga.chart.bar.VerticalBarChart
 import com.uliga.chart.line.LineChart
+import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
 import org.orbitmvi.orbit.compose.collectAsState
 import java.time.LocalDate
 
@@ -80,6 +81,7 @@ fun HomeScreen(
         BudgetSettingBottomSheet(
             sheetState = budgetSettingSheetState,
             onDismissRequest = {
+                viewModel.updateFinanceSchedule(null)
                 isBudgetSettingSheetOpen = false
             }
         )
@@ -478,7 +480,26 @@ fun HomeScreen(
         }
 
         items(state.financeSchedules?.schedules?.size ?: 0) { idx ->
-            Row {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        val financeSchedule = FinanceSchedule(
+                            id = state.financeSchedules?.schedules?.get(idx)?.id ?: 0L,
+                            notificationDay = state.financeSchedules?.schedules?.get(idx)?.notificationDay ?: 0L,
+                            name =  state.financeSchedules?.schedules?.get(idx)?.name ?: "",
+                            isIncome = state.financeSchedules?.schedules?.get(idx)?.isIncome ?: false,
+                            value = state.financeSchedules?.schedules?.get(idx)?.value ?: 0L,
+                            creatorId = 0L,
+                            creator = "",
+                            accountBookName = ""
+                        )
+
+                        viewModel.updateFinanceSchedule(financeSchedule)
+
+                        isScheduleSheetStateOpen = true
+                    }
+            ) {
                 Spacer(
                     modifier = Modifier.width(16.dp)
                 )

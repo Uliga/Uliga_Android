@@ -12,5 +12,5 @@ data class FinanceScheduleUpdate(
     val isIncome: Boolean,
     val notificationDate: Long,
     val value: Long,
-    val assignments: FinanceScheduleUpdateAssignment
+    val assignments: HashMap<Long, Long>
 ) : Parcelable, Serializable

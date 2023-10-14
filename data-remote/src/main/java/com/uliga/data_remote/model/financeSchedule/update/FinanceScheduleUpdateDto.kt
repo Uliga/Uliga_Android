@@ -11,7 +11,7 @@ data class FinanceScheduleUpdateDto(
     val isIncome: Boolean,
     val notificationDate: Long,
     val value: Long,
-    val assignments: FinanceScheduleUpdateAssignmentDto
+    val assignments: HashMap<Long, Long>
 )
 
 fun FinanceScheduleUpdateData.toDto() = FinanceScheduleUpdateDto(
@@ -20,7 +20,7 @@ fun FinanceScheduleUpdateData.toDto() = FinanceScheduleUpdateDto(
     isIncome = isIncome,
     notificationDate = notificationDate,
     value = value,
-    assignments = assignments.toDto()
+    assignments = assignments
 )
 
 fun FinanceScheduleUpdateDto.toData() = FinanceScheduleUpdateData(
@@ -29,5 +29,5 @@ fun FinanceScheduleUpdateDto.toData() = FinanceScheduleUpdateData(
     isIncome = isIncome,
     notificationDate = notificationDate,
     value = value,
-    assignments = assignments.toData()
+    assignments = assignments
 )

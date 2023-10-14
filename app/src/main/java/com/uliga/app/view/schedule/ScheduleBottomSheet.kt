@@ -74,11 +74,11 @@ fun ScheduleBottomSheet(
         })
     {
 
-        val notificationDateTextState = remember { mutableStateOf("") }
-        val scheduleTextState = remember { mutableStateOf("") }
-        val costTextState = remember { mutableStateOf("") }
+        val notificationDateTextState = remember { mutableStateOf(if(state.selectedSchedule?.notificationDay == null) "" else state.selectedSchedule.notificationDay.toString()) }
+        val scheduleTextState = remember { mutableStateOf(if(state.selectedSchedule?.name == null) "" else state.selectedSchedule.name) }
+        val costTextState = remember { mutableStateOf(if(state.selectedSchedule?.value == null) "" else state.selectedSchedule.value.toString()) }
         var selectedItem by remember {
-            mutableStateOf("지출")
+            mutableStateOf(if(state.selectedSchedule?.isIncome == true) "수입" else "지출")
         }
 
         viewModel.collectSideEffect { sideEffect ->
@@ -340,12 +340,21 @@ fun ScheduleBottomSheet(
                     ),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
-                        viewModel.postFinanceScheduleToAccountBook(
-                            name = scheduleTextState.value,
-                            isIncome = selectedItem == "수입",
-                            notificationDate = notificationDateTextState.value.toLong(),
-                            value = costTextState.value.toLong()
-                        )
+                        if(state.selectedSchedule != null) {
+                            viewModel.patchFinanceSchedule(
+                                name = scheduleTextState.value,
+                                isIncome = selectedItem == "수입",
+                                notificationDate = notificationDateTextState.value.toLong(),
+                                value = costTextState.value.toLong()
+                            )
+                        } else {
+                            viewModel.postFinanceScheduleToAccountBook(
+                                name = scheduleTextState.value,
+                                isIncome = selectedItem == "수입",
+                                notificationDate = notificationDateTextState.value.toLong(),
+                                value = costTextState.value.toLong()
+                            )
+                        }
 
                     }) {
                     Text(
