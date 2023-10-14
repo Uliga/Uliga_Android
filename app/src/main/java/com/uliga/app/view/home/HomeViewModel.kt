@@ -114,7 +114,28 @@ class HomeViewModel @Inject constructor(
         ).onSuccess {
             reduce {
                 state.copy(
-                    accountBookAsset = it
+                    currentMonthAccountBookAsset = it
+                )
+            }
+        }.onFailure {
+
+        }
+
+        val beforeYear = if (month == 1) {
+            year - 1
+        } else year
+        val beforeMonth = if (month == 1) {
+            12
+        } else month - 1
+
+        getAccountBookMonthAssetUseCase(
+            accountBookId = currentAccountBookInfo.second,
+            year = beforeYear,
+            month = beforeMonth
+        ).onSuccess {
+            reduce {
+                state.copy(
+                    beforeMonthAccountBookAsset = it
                 )
             }
         }.onFailure {
