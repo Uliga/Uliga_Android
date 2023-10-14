@@ -2,15 +2,14 @@ package com.uliga.app.view.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.uliga.app.view.accountBook.generation.AccountBookGenerationSideEffect
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
 import com.uliga.domain.model.accountBook.financeSchedule.common.AccountBookFinanceScheduleAssignment
 import com.uliga.domain.model.accountBook.financeSchedule.common.AccountBookFinanceScheduleResult
+import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
+import com.uliga.domain.model.financeSchedule.update.FinanceScheduleUpdate
 import com.uliga.domain.usecase.accountbook.GetAccountBooksUseCase
 import com.uliga.domain.usecase.accountbook.PostFinanceScheduleToAccountBookUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
-import com.uliga.domain.usecase.financeSchedule.DeleteFinanceScheduleDetailUseCase
-import com.uliga.domain.usecase.financeSchedule.GetFinanceScheduleDetailUseCase
 import com.uliga.domain.usecase.financeSchedule.GetFinanceScheduleUseCase
 import com.uliga.domain.usecase.financeSchedule.PatchFinanceScheduleUseCase
 import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
@@ -30,6 +29,7 @@ class HomeViewModel @Inject constructor(
     private val getAccountBooksUseCase: GetAccountBooksUseCase,
     private val postFinanceScheduleToAccountBookUseCase: PostFinanceScheduleToAccountBookUseCase,
     private val getFinanceScheduleUseCase: GetFinanceScheduleUseCase,
+    private val patchFinanceScheduleUseCase: PatchFinanceScheduleUseCase
 ) : ContainerHost<HomeUiState, HomeSideEffect>, ViewModel() {
 
     override val container = container<HomeUiState, HomeSideEffect>(HomeUiState.empty())
@@ -95,6 +95,14 @@ class HomeViewModel @Inject constructor(
             }
     }
 
+    fun updateFinanceSchedule(financeSchedule: FinanceSchedule?) = intent {
+        reduce {
+            state.copy(
+                selectedSchedule = financeSchedule
+            )
+        }
+    }
+
 
     fun postFinanceScheduleToAccountBook(
         name: String,
@@ -147,6 +155,50 @@ class HomeViewModel @Inject constructor(
 
                 }
         }
+
+    fun patchFinanceSchedule(
+        name: String,
+        isIncome: Boolean,
+        notificationDate: Long,
+        value: Long,
+    ) = intent {
+
+        val selectedSchedule = state.selectedSchedule
+        val userId = state.id ?: return@intent
+
+        val financeScheduleUpdate = FinanceScheduleUpdate(
+            id = selectedSchedule?.id ?: 0L,
+            name = name,
+            isIncome = isIncome,
+            notificationDate = notificationDate,
+            value = value,
+            assignments = hashMapOf<Long, Long>().apply {
+                this[userId] = selectedSchedule?.value ?: 0L
+            }
+        )
+
+        patchFinanceScheduleUseCase(financeScheduleUpdate)
+            .onSuccess {
+
+                getFinanceScheduleUseCase()
+                    .onSuccess {
+                        reduce {
+                            state.copy(
+                                financeSchedules = it
+                            )
+                        }
+                        postSideEffect(HomeSideEffect.FinishScheduleBottomSheet)
+                    }
+                    .onFailure {
+                        postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
+                    }
+            }
+            .onFailure {
+                postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
+
+            }
+
+    }
 
     override fun onCleared() {
         Log.d("homeViewModel", "onCleared")
