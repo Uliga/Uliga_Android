@@ -49,8 +49,11 @@ import androidx.compose.ui.unit.sp
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.accountBook.generation.AccountBookGenerationSideEffect
+import com.uliga.app.view.home.HomeSideEffect
 import com.uliga.app.view.home.HomeViewModel
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -76,6 +79,22 @@ fun ScheduleBottomSheet(
         val costTextState = remember { mutableStateOf("") }
         var selectedItem by remember {
             mutableStateOf("지출")
+        }
+
+        viewModel.collectSideEffect { sideEffect ->
+            when (sideEffect) {
+                is HomeSideEffect.ToastMessage -> {
+//                    toastRequest(sideEffect.toastMessage)
+                }
+
+                is HomeSideEffect.FinishScheduleBottomSheet -> {
+                    onDismissRequest()
+                }
+
+                else -> {
+
+                }
+            }
         }
 
         LazyColumn(
