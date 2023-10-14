@@ -2,7 +2,7 @@ package com.uliga.app.view.main
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.uliga.domain.usecase.accountbook.local.FetchAccountBookUseCase
+import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val fetchAccountBookUseCase: FetchAccountBookUseCase
+    private val fetchCurrentAccountBookInfoUseCase: FetchCurrentAccountBookInfoUseCase
 ) : ContainerHost<MainUiState, MainSideEffect>, ViewModel() {
     override val container = container<MainUiState, MainSideEffect>(
         MainUiState.empty()
@@ -22,7 +22,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun fetchAccountBook() = intent {
-        fetchAccountBookUseCase().onSuccess {
+        fetchCurrentAccountBookInfoUseCase().onSuccess {
             Log.d("fetchAccountBook", it.toString())
         }
     }

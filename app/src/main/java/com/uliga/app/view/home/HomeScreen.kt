@@ -54,6 +54,7 @@ import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
 import com.uliga.app.view.schedule.ScheduleBottomSheet
 import com.uliga.chart.bar.VerticalBarChart
 import com.uliga.chart.line.LineChart
+import org.orbitmvi.orbit.compose.collectAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -63,7 +64,9 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
 
+    val state = viewModel.collectAsState().value
     val context = LocalContext.current
+
 
     val budgetSettingSheetState = androidx.compose.material3.rememberModalBottomSheetState()
     var isBudgetSettingSheetOpen by rememberSaveable {
