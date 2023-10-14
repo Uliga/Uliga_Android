@@ -24,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,6 +51,7 @@ import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.Success200
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
 import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
@@ -103,6 +105,10 @@ fun HomeScreen(
 
     val scheduleAlertSheetState = androidx.compose.material3.rememberModalBottomSheetState()
     var isScheduleAlertSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var deleteAlertDialogVisibleState by remember {
         mutableStateOf(false)
     }
 
@@ -268,6 +274,7 @@ fun HomeScreen(
                         .wrapContentSize()
                         .clickable {
                             isBudgetSettingSheetOpen = true
+
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -558,11 +565,28 @@ fun HomeScreen(
                     modifier = Modifier
                         .size(30.dp)
                         .clickable {
-                            viewModel.deleteFinanceScheduleDetail(
-                                state.financeSchedules?.schedules?.get(
-                                    idx
-                                )?.id ?: 0L
+                            val financeSchedule = FinanceSchedule(
+                                id = state.financeSchedules?.schedules?.get(idx)?.id ?: 0L,
+                                notificationDay = state.financeSchedules?.schedules?.get(idx)?.notificationDay
+                                    ?: 0L,
+                                name = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
+                                isIncome = state.financeSchedules?.schedules?.get(idx)?.isIncome
+                                    ?: false,
+                                value = state.financeSchedules?.schedules?.get(idx)?.value ?: 0L,
+                                creatorId = 0L,
+                                creator = "",
+                                accountBookName = ""
                             )
+
+                            viewModel.updateFinanceSchedule(financeSchedule)
+
+                            deleteAlertDialogVisibleState = true
+
+//                            viewModel.deleteFinanceScheduleDetail(
+//                                state.financeSchedules?.schedules?.get(
+//                                    idx
+//                                )?.id ?: 0L
+//                            )
                         },
                     painter = painterResource(
                         id = R.drawable.ic_cancel
@@ -714,6 +738,18 @@ fun HomeScreen(
             LineChartScreenContent()
         }
 
+    }
+
+    if (deleteAlertDialogVisibleState) {
+        DeleteAlertDialog(
+            onDismissRequest = {
+                viewModel.deleteFinanceScheduleDetail(state.selectedSchedule?.id ?: 0L)
+                deleteAlertDialogVisibleState = false
+                viewModel.updateFinanceSchedule(null)
+            },
+            title = "금융 일정 삭제",
+            subTitle = "정말 선택한 금융 일정을 삭제하시겠어요?"
+        )
     }
 }
 
