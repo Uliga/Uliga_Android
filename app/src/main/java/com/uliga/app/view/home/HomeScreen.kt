@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +47,7 @@ import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.Secondary
+import com.uliga.app.ui.theme.Success200
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
@@ -55,6 +57,7 @@ import com.uliga.app.view.schedule.ScheduleBottomSheet
 import com.uliga.chart.bar.VerticalBarChart
 import com.uliga.chart.line.LineChart
 import org.orbitmvi.orbit.compose.collectAsState
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -66,7 +69,7 @@ fun HomeScreen(
 
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
-
+    val currentDay = LocalDate.now().dayOfMonth
 
     val budgetSettingSheetState = androidx.compose.material3.rememberModalBottomSheetState()
     var isBudgetSettingSheetOpen by rememberSaveable {
@@ -474,7 +477,7 @@ fun HomeScreen(
 
         }
 
-        items(5) {
+        items(state.financeSchedules?.schedules?.size ?: 0) { idx ->
             Row {
                 Spacer(
                     modifier = Modifier.width(16.dp)
@@ -485,12 +488,12 @@ fun HomeScreen(
                         .height(48.dp)
                         .width(64.dp)
                         .clip(RoundedCornerShape(6.dp))
-                        .background(Danger100)
+                        .background(notificationDayColor(currentDay, state.financeSchedules?.schedules?.get(idx)?.notificationDay ?: 0))
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
                         color = White,
-                        text = "6일",
+                        text = "${state.financeSchedules?.schedules?.get(idx)?.notificationDay ?: 0}일",
                         fontSize = 16.sp
                     )
                 }
@@ -501,14 +504,20 @@ fun HomeScreen(
 
                 Column {
                     Text(
-                        text = "넷플릭스 결제",
+                        text = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
                         color = Grey700,
                         fontSize = 18.sp,
                         fontFamily = pretendard,
                         fontWeight = FontWeight.Medium
                     )
+
                     Text(
-                        text = "4,950원 / 지출",
+                        text = "${state.financeSchedules?.schedules?.get(idx)?.value ?: ""}원 / ${
+                            if (state.financeSchedules?.schedules?.get(
+                                    idx
+                                )?.isIncome != false
+                            ) "수입" else "지출"
+                        }",
                         color = Grey400,
                         fontSize = 14.sp,
                         fontFamily = pretendard,
@@ -676,6 +685,7 @@ fun LineChartScreenContent() {
         LineChartRow(lineChartDataModel)
     }
 }
+
 @Composable
 fun LineChartRow(lineChartDataModel: LineChartDataModel) {
     Box(
@@ -719,8 +729,17 @@ private fun VerticalBarChartRow(barChartDataModel: VerticalOneBarChartDataModel)
     }
 }
 
+fun notificationDayColor(currentDay: Int, notificationDay: Long): Color {
 
+    return if(currentDay - notificationDay < 3) {
+        Danger100
+    } else if(currentDay - notificationDay < 7) {
+        Secondary
+    } else {
+        Success200
+    }
 
+}
 
 //@RequiresApi(Build.VERSION_CODES.Q)
 //@Preview

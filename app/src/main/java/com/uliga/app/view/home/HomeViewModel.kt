@@ -131,6 +131,11 @@ class HomeViewModel @Inject constructor(
 
                     getFinanceScheduleUseCase()
                         .onSuccess {
+                            reduce {
+                                state.copy(
+                                    financeSchedules = it
+                                )
+                            }
                             postSideEffect(HomeSideEffect.FinishScheduleBottomSheet)
                         }
                         .onFailure {
