@@ -9,6 +9,10 @@ import com.uliga.domain.model.accountBook.financeSchedule.common.AccountBookFina
 import com.uliga.domain.usecase.accountbook.GetAccountBooksUseCase
 import com.uliga.domain.usecase.accountbook.PostFinanceScheduleToAccountBookUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
+import com.uliga.domain.usecase.financeSchedule.DeleteFinanceScheduleDetailUseCase
+import com.uliga.domain.usecase.financeSchedule.GetFinanceScheduleDetailUseCase
+import com.uliga.domain.usecase.financeSchedule.GetFinanceScheduleUseCase
+import com.uliga.domain.usecase.financeSchedule.PatchFinanceScheduleUseCase
 import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
@@ -24,7 +28,8 @@ class HomeViewModel @Inject constructor(
     private val fetchCurrentAccountBookInfoUseCase: FetchCurrentAccountBookInfoUseCase,
     private val fetchIdUseCase: FetchIdUseCase,
     private val getAccountBooksUseCase: GetAccountBooksUseCase,
-    private val postFinanceScheduleToAccountBookUseCase: PostFinanceScheduleToAccountBookUseCase
+    private val postFinanceScheduleToAccountBookUseCase: PostFinanceScheduleToAccountBookUseCase,
+    private val getFinanceScheduleUseCase: GetFinanceScheduleUseCase,
 ) : ContainerHost<HomeUiState, HomeSideEffect>, ViewModel() {
 
     override val container = container<HomeUiState, HomeSideEffect>(HomeUiState.empty())
@@ -32,6 +37,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         getAccountBooks()
+        getFinanceSchedule()
         fetchCurrentAccountBookInfo()
         fetchId()
     }
@@ -75,6 +81,21 @@ class HomeViewModel @Inject constructor(
             }
     }
 
+    fun getFinanceSchedule() = intent {
+        getFinanceScheduleUseCase()
+            .onSuccess {
+                reduce {
+                    state.copy(
+                        financeSchedules = it
+                    )
+                }
+            }
+            .onFailure {
+
+            }
+    }
+
+
     fun postFinanceScheduleToAccountBook(
         name: String,
         isIncome: Boolean,
@@ -108,7 +129,13 @@ class HomeViewModel @Inject constructor(
             postFinanceScheduleToAccountBookUseCase(accountBookFinanceScheduleRequest)
                 .onSuccess {
 
-                    postSideEffect(HomeSideEffect.FinishScheduleBottomSheet)
+                    getFinanceScheduleUseCase()
+                        .onSuccess {
+                            postSideEffect(HomeSideEffect.FinishScheduleBottomSheet)
+                        }
+                        .onFailure {
+                            postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
+                        }
                 }
                 .onFailure {
                     postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))

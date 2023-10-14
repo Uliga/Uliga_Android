@@ -1,11 +1,11 @@
 package com.uliga.data_remote.datasource
 
 import com.uliga.data.datasource.FinanceScheduleRemoteDataSource
-import com.uliga.data.model.financeSchedule.common.FinanceScheduleData
+import com.uliga.data.model.financeSchedule.common.FinanceSchedulesData
 import com.uliga.data.model.financeSchedule.detail.FinanceScheduleDetailData
 import com.uliga.data.model.financeSchedule.update.FinanceScheduleUpdateData
 import com.uliga.data_remote.Path
-import com.uliga.data_remote.model.financeSchedule.common.FinanceScheduleDto
+import com.uliga.data_remote.model.financeSchedule.common.FinanceSchedulesDto
 import com.uliga.data_remote.model.financeSchedule.common.toData
 import com.uliga.data_remote.model.financeSchedule.detail.FinanceScheduleDetailDto
 import com.uliga.data_remote.model.financeSchedule.detail.toData
@@ -24,10 +24,10 @@ import javax.inject.Inject
 class FinanceScheduleRemoteDataSourceImpl @Inject constructor(
     private val client: HttpClient
 ) : FinanceScheduleRemoteDataSource {
-    override suspend fun getFinanceSchedule(): FinanceScheduleData {
+    override suspend fun getFinanceSchedule(): FinanceSchedulesData {
         return client.get {
             url.path(Path.SCHEDULE)
-        }.body<FinanceScheduleDto>().toData()
+        }.body<FinanceSchedulesDto>().toData()
     }
 
     override suspend fun patchFinanceSchedule(financeScheduleUpdateData: FinanceScheduleUpdateData): FinanceScheduleUpdateData {
