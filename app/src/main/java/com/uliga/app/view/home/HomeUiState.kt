@@ -1,5 +1,6 @@
 package com.uliga.app.view.home
 
+import com.uliga.domain.model.accountBook.asset.AccountBookAsset
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedules
 import javax.annotation.concurrent.Immutable
@@ -12,6 +13,7 @@ data class HomeUiState(
     val currentAccountInfo: Pair<String, Long>?= null,
     val financeSchedules: FinanceSchedules? = null,
     val selectedSchedule: FinanceSchedule? = null,
+    val accountBookAsset: AccountBookAsset? = null,
 ) {
 
     companion object {
@@ -20,7 +22,8 @@ data class HomeUiState(
             exception = null,
             id = null,
             currentAccountInfo = null,
-            financeSchedules = null
+            financeSchedules = null,
+            accountBookAsset = null
         )
     }
 }
