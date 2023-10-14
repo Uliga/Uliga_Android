@@ -27,6 +27,10 @@ object Path {
 
     const val ACCOUNT_BOOK = "accountBook"
 
+    const val ASSET = "asset"
+
+    const val BUDGET = "budget"
+
     /**
      * Member
      */
