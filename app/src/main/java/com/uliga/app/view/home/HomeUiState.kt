@@ -13,8 +13,9 @@ data class HomeUiState(
     val currentAccountInfo: Pair<String, Long>?= null,
     val financeSchedules: FinanceSchedules? = null,
     val selectedSchedule: FinanceSchedule? = null,
-    val accountBookAsset: AccountBookAsset? = null,
-) {
+    val currentMonthAccountBookAsset: AccountBookAsset? = null,
+    val beforeMonthAccountBookAsset: AccountBookAsset? = null,
+    ) {
 
     companion object {
         fun empty() = HomeUiState(
@@ -23,7 +24,7 @@ data class HomeUiState(
             id = null,
             currentAccountInfo = null,
             financeSchedules = null,
-            accountBookAsset = null
+            currentMonthAccountBookAsset = null
         )
     }
 }
