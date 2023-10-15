@@ -7,6 +7,8 @@ import com.uliga.data.model.accountBook.budget.toData
 import com.uliga.data.model.accountBook.budget.toDomain
 import com.uliga.data.model.accountBook.financeSchedule.toData
 import com.uliga.data.model.accountBook.financeSchedule.toDomain
+import com.uliga.data.model.accountBook.invitation.toData
+import com.uliga.data.model.accountBook.invitation.toDomain
 import com.uliga.data.model.accountBook.toData
 import com.uliga.data.model.accountBook.toDomain
 import com.uliga.domain.model.accountBook.AccountBookGenerationRequest
@@ -17,6 +19,7 @@ import com.uliga.domain.model.accountBook.budget.AccountBookBudgetRequest
 import com.uliga.domain.model.accountBook.budget.AccountBookBudgetResponse
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleResponse
+import com.uliga.domain.model.accountBook.invitation.AccountBookInvitationReply
 import com.uliga.domain.repository.AccountBookRepository
 import javax.inject.Inject
 
@@ -62,6 +65,12 @@ class AccountBookRepositoryImpl @Inject constructor(
     ): Result<AccountBookAsset> {
         return runCatching {
             remote.getAccountBookMonthAsset(accountBookId, year, month).toDomain()
+        }
+    }
+
+    override suspend fun postAccountBookInvitationReply(accountBookInvitationReply: AccountBookInvitationReply): Result<AccountBookInvitationReply> {
+        return runCatching {
+            remote.postAccountBookInvitationReply(accountBookInvitationReply.toData()).toDomain()
         }
     }
 

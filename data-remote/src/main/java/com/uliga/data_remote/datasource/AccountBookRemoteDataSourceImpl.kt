@@ -9,6 +9,7 @@ import com.uliga.data.model.accountBook.budget.AccountBookBudgetRequestData
 import com.uliga.data.model.accountBook.budget.AccountBookBudgetResponseData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequestData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleResponseData
+import com.uliga.data.model.accountBook.invitation.AccountBookInvitationReplyData
 import com.uliga.data_remote.Path
 import com.uliga.data_remote.model.accountBook.AccountBookGenerationResponseDto
 import com.uliga.data_remote.model.accountBook.AccountBooksDto
@@ -22,6 +23,8 @@ import com.uliga.data_remote.model.accountBook.financeSchedule.toData
 import com.uliga.data_remote.model.accountBook.financeSchedule.toDto
 import com.uliga.data_remote.model.accountBook.toData
 import com.uliga.data_remote.model.accountBook.toDto
+import com.uliga.data_remote.model.invitation.AccountBookInvitationReplyDto
+import com.uliga.data_remote.model.invitation.toData
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -74,8 +77,20 @@ class AccountBookRemoteDataSourceImpl @Inject constructor(
         month: Int
     ): AccountBookAssetData {
         return client.get {
-            url.path(Path.ACCOUNT_BOOK, accountBookId.toString(), Path.ASSET, year.toString(), month.toString())
+            url.path(
+                Path.ACCOUNT_BOOK,
+                accountBookId.toString(),
+                Path.ASSET,
+                year.toString(),
+                month.toString()
+            )
         }.body<AccountBookAssetDto>().toData()
+    }
+
+    override suspend fun postAccountBookInvitationReply(accountBookInvitationReplyData: AccountBookInvitationReplyData): AccountBookInvitationReplyData {
+        return client.post {
+            url.path(Path.ACCOUNT_BOOK, Path.INVITATION, Path.REPLY)
+        }.body<AccountBookInvitationReplyDto>().toData()
     }
 
 

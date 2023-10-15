@@ -8,6 +8,7 @@ import com.uliga.data.model.accountBook.budget.AccountBookBudgetRequestData
 import com.uliga.data.model.accountBook.budget.AccountBookBudgetResponseData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequestData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleResponseData
+import com.uliga.data.model.accountBook.invitation.AccountBookInvitationReplyData
 
 interface AccountBookRemoteDataSource {
 
@@ -26,4 +27,6 @@ interface AccountBookRemoteDataSource {
         year: Int,
         month: Int
     ): AccountBookAssetData
+
+    suspend fun postAccountBookInvitationReply(accountBookInvitationReplyData: AccountBookInvitationReplyData): AccountBookInvitationReplyData
 }

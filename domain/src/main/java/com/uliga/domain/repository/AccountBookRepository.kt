@@ -8,6 +8,7 @@ import com.uliga.domain.model.accountBook.budget.AccountBookBudgetRequest
 import com.uliga.domain.model.accountBook.budget.AccountBookBudgetResponse
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleResponse
+import com.uliga.domain.model.accountBook.invitation.AccountBookInvitationReply
 
 interface AccountBookRepository {
 
@@ -25,7 +26,13 @@ interface AccountBookRepository {
 
     suspend fun patchAccountBookBudget(accountBookBudgetRequest: AccountBookBudgetRequest): Result<AccountBookBudgetResponse>
 
-    suspend fun getAccountBookMonthAsset(accountBookId: Long, year: Int, month: Int): Result<AccountBookAsset>
+    suspend fun getAccountBookMonthAsset(
+        accountBookId: Long,
+        year: Int,
+        month: Int
+    ): Result<AccountBookAsset>
+
+    suspend fun postAccountBookInvitationReply(accountBookInvitationReply: AccountBookInvitationReply): Result<AccountBookInvitationReply>
 
     /**
      * Local

@@ -6,12 +6,14 @@ import com.uliga.domain.model.accountBook.budget.AccountBookBudgetRequest
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
 import com.uliga.domain.model.accountBook.financeSchedule.common.AccountBookFinanceScheduleAssignment
 import com.uliga.domain.model.accountBook.financeSchedule.common.AccountBookFinanceScheduleResult
+import com.uliga.domain.model.accountBook.invitation.AccountBookInvitationReply
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
 import com.uliga.domain.model.financeSchedule.update.FinanceScheduleUpdate
 import com.uliga.domain.usecase.accountbook.GetAccountBookMonthAssetUseCase
 import com.uliga.domain.usecase.accountbook.GetAccountBooksUseCase
 import com.uliga.domain.usecase.accountbook.PatchAccountBookBudgetUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookBudgetUseCase
+import com.uliga.domain.usecase.accountbook.PostAccountBookInvitationReplyUseCase
 import com.uliga.domain.usecase.accountbook.PostFinanceScheduleToAccountBookUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
 import com.uliga.domain.usecase.financeSchedule.DeleteFinanceScheduleDetailUseCase
@@ -41,7 +43,8 @@ class HomeViewModel @Inject constructor(
     private val postAccountBookBudgetUseCase: PostAccountBookBudgetUseCase,
     private val patchAccountBookBudgetUseCase: PatchAccountBookBudgetUseCase,
     private val getAccountBookMonthAssetUseCase: GetAccountBookMonthAssetUseCase,
-    private val getMemberUseCase: GetMemberUseCase
+    private val getMemberUseCase: GetMemberUseCase,
+    private val postAccountBookInvitationReplyUseCase: PostAccountBookInvitationReplyUseCase
 ) : ContainerHost<HomeUiState, HomeSideEffect>, ViewModel() {
 
     override val container = container<HomeUiState, HomeSideEffect>(HomeUiState.empty())
@@ -70,6 +73,29 @@ class HomeViewModel @Inject constructor(
                         member = it
                     )
                 }
+            }
+            .onFailure {
+
+            }
+    }
+
+    fun postAccountBookInvitationReply(
+        id: Long,
+        memberName: String,
+        accountBookName: String,
+        join: Boolean
+    ) = intent {
+
+        val accountBookInvitationReply = AccountBookInvitationReply(
+            id = id,
+            memberName = memberName,
+            accountBookName = accountBookName,
+            join = join
+        )
+
+        postAccountBookInvitationReplyUseCase(accountBookInvitationReply)
+            .onSuccess {
+                getMember()
             }
             .onFailure {
 
