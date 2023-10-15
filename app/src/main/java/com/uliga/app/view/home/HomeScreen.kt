@@ -72,7 +72,14 @@ fun HomeScreen(
 
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
-    val currentDay = LocalDate.now().dayOfMonth
+    val currentDate = LocalDate.now()
+
+    val currentDay = currentDate.dayOfMonth
+
+    val currentMonthAsset = state.currentMonthAccountBookAsset
+    val currentMonthBudget = currentMonthAsset?.budget?.value ?: 0L
+    val currentMonthRecord = currentMonthAsset?.record?.value ?: 0L
+    val currentMonthResult = currentMonthBudget - currentMonthRecord
 
     val budgetSettingSheetState = androidx.compose.material3.rememberModalBottomSheetState()
     var isBudgetSettingSheetOpen by rememberSaveable {
@@ -83,6 +90,7 @@ fun HomeScreen(
         BudgetSettingBottomSheet(
             sheetState = budgetSettingSheetState,
             viewModel = viewModel,
+            currentDate = currentDate,
             onDismissRequest = {
                 viewModel.updateFinanceSchedule(null)
                 isBudgetSettingSheetOpen = false
@@ -304,7 +312,7 @@ fun HomeScreen(
                 modifier = Modifier.padding(
                     start = 16.dp,
                 ),
-                text = "195,855원 남음",
+                text = if(currentMonthResult >= 0) "${currentMonthResult}원 남음" else "${currentMonthResult * (-1)}원 부족",
                 color = Grey600,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.Bold,
@@ -352,7 +360,7 @@ fun HomeScreen(
                 )
 
                 Text(
-                    text = "3월 설정 예산",
+                    text = "${currentDate.monthValue}월 설정 예산",
                     color = Grey700,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.Medium,
@@ -363,7 +371,7 @@ fun HomeScreen(
                     modifier = Modifier.width(24.dp)
                 )
                 Text(
-                    text = "800,000원",
+                    text = "${currentMonthBudget}원",
                     color = Grey700,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.Medium,
@@ -409,7 +417,7 @@ fun HomeScreen(
                     modifier = Modifier.width(24.dp)
                 )
                 Text(
-                    text = "11,520원",
+                    text = "${currentMonthBudget / currentDate.dayOfMonth}원",
                     color = Grey700,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.Medium,
@@ -729,7 +737,7 @@ fun HomeScreen(
                 modifier = Modifier.padding(
                     start = 16.dp,
                 ),
-                text = "10,000원",
+                text = "${currentMonthRecord}원",
                 color = Grey600,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.Bold,
