@@ -2,6 +2,7 @@ package com.uliga.app.view.finance
 
 import androidx.lifecycle.ViewModel
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
+import com.uliga.domain.usecase.accountbook.GetAccountBookMonthTransactionUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookTransactionUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
 import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
@@ -15,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FinanceViewModel @Inject constructor(
     private val fetchCurrentAccountBookInfoUseCase: FetchCurrentAccountBookInfoUseCase,
+    private val getAccountBookMonthTransactionUseCase: GetAccountBookMonthTransactionUseCase,
     private val fetchIdUseCase: FetchIdUseCase,
     private val postAccountBookTransactionUseCase: PostAccountBookTransactionUseCase
 ) : ContainerHost<FinanceUiState, FinanceSideEffect>, ViewModel() {
@@ -79,6 +81,19 @@ class FinanceViewModel @Inject constructor(
 
 
         postAccountBookTransactionUseCase(transactionType, accountBookTransactionRequest)
+            .onSuccess {
+
+            }
+            .onFailure {
+
+            }
+    }
+
+    fun getAccountBookMonthTransaction(year: Int, month: Int) = intent {
+
+        val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
+
+        getAccountBookMonthTransactionUseCase(currentAccountBookInfo.second, year, month)
             .onSuccess {
 
             }
