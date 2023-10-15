@@ -5,6 +5,7 @@ import com.uliga.data.model.accountBook.AccountBookGenerationRequestData
 import com.uliga.data.model.accountBook.AccountBookGenerationResponseData
 import com.uliga.data.model.accountBook.AccountBooksData
 import com.uliga.data.model.accountBook.asset.AccountBookAssetData
+import com.uliga.data.model.accountBook.asset.day.AccountBookAssetMonthData
 import com.uliga.data.model.accountBook.budget.AccountBookBudgetRequestData
 import com.uliga.data.model.accountBook.budget.AccountBookBudgetResponseData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequestData
@@ -16,6 +17,8 @@ import com.uliga.data_remote.Path
 import com.uliga.data_remote.model.accountBook.AccountBookGenerationResponseDto
 import com.uliga.data_remote.model.accountBook.AccountBooksDto
 import com.uliga.data_remote.model.accountBook.asset.AccountBookAssetDto
+import com.uliga.data_remote.model.accountBook.asset.day.AccountBookAssetMonthDto
+import com.uliga.data_remote.model.accountBook.asset.day.toData
 import com.uliga.data_remote.model.accountBook.asset.toData
 import com.uliga.data_remote.model.accountBook.budget.AccountBookBudgetResponseDto
 import com.uliga.data_remote.model.accountBook.budget.toData
@@ -106,6 +109,16 @@ class AccountBookRemoteDataSourceImpl @Inject constructor(
             url.path(Path.ACCOUNT_BOOK, if (transactionType == "수입") Path.INCOME else Path.RECORD)
             setBody(accountBookTransactionRequestData.toDto())
         }.body<AccountBookTransactionResponseDto>().toData()
+    }
+
+    override suspend fun getAccountBookMonthTransaction(
+        id: Long,
+        year: Int,
+        month: Int
+    ): AccountBookAssetMonthData {
+        return client.get {
+            url.path(Path.ACCOUNT_BOOK, id.toString(), Path.ITEM, year.toString(), month.toString())
+        }.body<AccountBookAssetMonthDto>().toData()
     }
 
 
