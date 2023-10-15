@@ -17,6 +17,7 @@ import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUse
 import com.uliga.domain.usecase.financeSchedule.DeleteFinanceScheduleDetailUseCase
 import com.uliga.domain.usecase.financeSchedule.GetFinanceScheduleUseCase
 import com.uliga.domain.usecase.financeSchedule.PatchFinanceScheduleUseCase
+import com.uliga.domain.usecase.member.GetMemberUseCase
 import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
@@ -39,7 +40,8 @@ class HomeViewModel @Inject constructor(
     private val deleteFinanceScheduleDetailUseCase: DeleteFinanceScheduleDetailUseCase,
     private val postAccountBookBudgetUseCase: PostAccountBookBudgetUseCase,
     private val patchAccountBookBudgetUseCase: PatchAccountBookBudgetUseCase,
-    private val getAccountBookMonthAssetUseCase: GetAccountBookMonthAssetUseCase
+    private val getAccountBookMonthAssetUseCase: GetAccountBookMonthAssetUseCase,
+    private val getMemberUseCase: GetMemberUseCase
 ) : ContainerHost<HomeUiState, HomeSideEffect>, ViewModel() {
 
     override val container = container<HomeUiState, HomeSideEffect>(HomeUiState.empty())
@@ -55,6 +57,23 @@ class HomeViewModel @Inject constructor(
         getAccountBookMonthAsset(true, currentDate.year, currentDate.monthValue)
         val beforeDate = currentDate.minusMonths(1)
         getAccountBookMonthAsset(false, beforeDate.year, beforeDate.monthValue)
+
+        getMember()
+    }
+
+    fun getMember() = intent {
+
+        getMemberUseCase()
+            .onSuccess {
+                reduce {
+                    state.copy(
+                        member = it
+                    )
+                }
+            }
+            .onFailure {
+
+            }
     }
 
     fun getAccountBooks() = intent {
