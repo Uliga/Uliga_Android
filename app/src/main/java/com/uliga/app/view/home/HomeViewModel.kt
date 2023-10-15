@@ -24,6 +24,7 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import java.time.LocalDate
 import javax.inject.Inject
 
 
@@ -49,6 +50,11 @@ class HomeViewModel @Inject constructor(
         getFinanceSchedule()
         fetchCurrentAccountBookInfo()
         fetchId()
+
+        val currentDate = LocalDate.now()
+        getAccountBookMonthAsset(true, currentDate.year, currentDate.monthValue)
+        val beforeDate = currentDate.minusMonths(1)
+        getAccountBookMonthAsset(false, beforeDate.year, beforeDate.monthValue)
     }
 
     fun getAccountBooks() = intent {
@@ -104,7 +110,7 @@ class HomeViewModel @Inject constructor(
             }
     }
 
-    fun getAccountBookMonthAsset(year: Int, month: Int) = intent {
+    fun getAccountBookMonthAsset(isCurrent: Boolean, year: Int, month: Int) = intent {
         val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
 
         getAccountBookMonthAssetUseCase(
@@ -113,30 +119,15 @@ class HomeViewModel @Inject constructor(
             month = month
         ).onSuccess {
             reduce {
-                state.copy(
-                    currentMonthAccountBookAsset = it
-                )
-            }
-        }.onFailure {
-
-        }
-
-        val beforeYear = if (month == 1) {
-            year - 1
-        } else year
-        val beforeMonth = if (month == 1) {
-            12
-        } else month - 1
-
-        getAccountBookMonthAssetUseCase(
-            accountBookId = currentAccountBookInfo.second,
-            year = beforeYear,
-            month = beforeMonth
-        ).onSuccess {
-            reduce {
-                state.copy(
-                    beforeMonthAccountBookAsset = it
-                )
+                if (isCurrent) {
+                    state.copy(
+                        currentMonthAccountBookAsset = it
+                    )
+                } else {
+                    state.copy(
+                        beforeMonthAccountBookAsset = it
+                    )
+                }
             }
         }.onFailure {
 
@@ -283,7 +274,7 @@ class HomeViewModel @Inject constructor(
         postAccountBookBudgetUseCase(accountBookBudgetRequest)
             .onSuccess {
 
-                getAccountBookMonthAsset(year.toInt(), month.toInt())
+                getAccountBookMonthAsset(true, year.toInt(), month.toInt())
 
             }.onFailure {
 
@@ -304,7 +295,7 @@ class HomeViewModel @Inject constructor(
 
         patchAccountBookBudgetUseCase(accountBookBudgetRequest)
             .onSuccess {
-                getAccountBookMonthAsset(year.toInt(), month.toInt())
+                getAccountBookMonthAsset(true, year.toInt(), month.toInt())
             }.onFailure {
 
             }
