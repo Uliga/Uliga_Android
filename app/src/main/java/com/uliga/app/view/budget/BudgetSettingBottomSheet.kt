@@ -60,13 +60,13 @@ import java.time.LocalDate
 fun BudgetSettingBottomSheet(
     sheetState: SheetState,
     viewModel: HomeViewModel = hiltViewModel(),
+    currentDate: LocalDate,
     onDismissRequest: () -> Unit
 ) {
 
     val budgetTextState = remember { mutableStateOf("") }
 
     val state = viewModel.collectAsState().value
-    val currentDate = LocalDate.now()
 
     viewModel.collectSideEffect {
         when(it) {
