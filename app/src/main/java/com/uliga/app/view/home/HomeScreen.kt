@@ -196,17 +196,17 @@ fun HomeScreen(
                     contentDescription = "tmp invitiation"
                 )
 
-                Image(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clickable {
-                            isScheduleAlertSheetOpen = true
-                        },
-                    painter = painterResource(
-                        id = R.drawable.uliga_logo
-                    ),
-                    contentDescription = "tmp schedule"
-                )
+//                Image(
+//                    modifier = Modifier
+//                        .size(40.dp)
+//                        .clickable {
+//                            isScheduleAlertSheetOpen = true
+//                        },
+//                    painter = painterResource(
+//                        id = R.drawable.uliga_logo
+//                    ),
+//                    contentDescription = "tmp schedule"
+//                )
             }
         }
 
