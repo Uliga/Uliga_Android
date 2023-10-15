@@ -58,7 +58,7 @@ fun InvitationBottomSheet(
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = {
-            onDismissRequest
+            onDismissRequest()
         })
     {
 
