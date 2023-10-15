@@ -40,7 +40,7 @@ fun ScheduleAlertBottomSheet(
     ModalBottomSheet(
         sheetState = sheetState,
         onDismissRequest = {
-            onDismissRequest
+            onDismissRequest()
         })
     {
 
