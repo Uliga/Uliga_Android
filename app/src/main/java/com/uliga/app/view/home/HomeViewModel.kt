@@ -276,6 +276,9 @@ class HomeViewModel @Inject constructor(
 
                 getAccountBookMonthAsset(true, year.toInt(), month.toInt())
 
+                postSideEffect(
+                    HomeSideEffect.FinishBudgetSettingBottomSheet
+                )
             }.onFailure {
 
             }
@@ -296,6 +299,10 @@ class HomeViewModel @Inject constructor(
         patchAccountBookBudgetUseCase(accountBookBudgetRequest)
             .onSuccess {
                 getAccountBookMonthAsset(true, year.toInt(), month.toInt())
+
+                postSideEffect(
+                    HomeSideEffect.FinishBudgetSettingBottomSheet
+                )
             }.onFailure {
 
             }
