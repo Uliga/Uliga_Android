@@ -82,6 +82,7 @@ fun HomeScreen(
     if (isBudgetSettingSheetOpen) {
         BudgetSettingBottomSheet(
             sheetState = budgetSettingSheetState,
+            viewModel = viewModel,
             onDismissRequest = {
                 viewModel.updateFinanceSchedule(null)
                 isBudgetSettingSheetOpen = false
