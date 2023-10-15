@@ -106,6 +106,7 @@ fun HomeScreen(
     if (isInvitationListSheetSheetOpen) {
         InvitationBottomSheet(
             sheetState = invitationListSheetState,
+            viewModel = viewModel,
             onDismissRequest = {
                 isInvitationListSheetSheetOpen = false
             }
