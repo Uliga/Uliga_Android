@@ -145,6 +145,14 @@ fun InvitationBottomSheet(
                             shape = RoundedCornerShape(7.dp),
                             onClick = {
 
+                                val invitation = invitation?.get(idx) ?: return@Button
+
+                                viewModel.postAccountBookInvitationReply(
+                                    id = invitation.id,
+                                    memberName = invitation.memberName,
+                                    accountBookName = invitation.accountBookName,
+                                    join = false
+                                )
                             }) {
                             Text(
                                 color = Primary,
@@ -169,7 +177,14 @@ fun InvitationBottomSheet(
                             ),
                             shape = RoundedCornerShape(7.dp),
                             onClick = {
+                                val invitation = invitation?.get(idx) ?: return@Button
 
+                                viewModel.postAccountBookInvitationReply(
+                                    id = invitation.id,
+                                    memberName = invitation.memberName,
+                                    accountBookName = invitation.accountBookName,
+                                    join = true
+                                )
                             }) {
                             Text(
                                 color = Color.White,

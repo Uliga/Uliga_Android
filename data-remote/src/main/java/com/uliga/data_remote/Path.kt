@@ -31,6 +31,10 @@ object Path {
 
     const val BUDGET = "budget"
 
+    const val INVITATION = "invitation"
+
+    const val REPLY = "reply"
+
     /**
      * Member
      */
