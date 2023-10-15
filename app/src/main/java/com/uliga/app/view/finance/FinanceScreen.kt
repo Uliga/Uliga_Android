@@ -54,6 +54,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
@@ -71,8 +72,6 @@ import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.accountBook.input.AccountBookForInputActivity
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionBottomSheet
-import com.uliga.app.view.main.MainUiState
-import com.uliga.app.view.schedule.ScheduleBottomSheet
 import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -83,6 +82,7 @@ import java.util.Locale
 @Composable
 fun FinanceScreen(
     navController: NavController,
+    viewModel: FinanceViewModel = hiltViewModel()
 ) {
 
     val context = LocalContext.current
