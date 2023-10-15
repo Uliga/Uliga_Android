@@ -10,6 +10,8 @@ import com.uliga.data.model.accountBook.budget.AccountBookBudgetResponseData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequestData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleResponseData
 import com.uliga.data.model.accountBook.invitation.AccountBookInvitationReplyData
+import com.uliga.data.model.accountBook.transaction.AccountBookTransactionRequestData
+import com.uliga.data.model.accountBook.transaction.AccountBookTransactionResponseData
 import com.uliga.data_remote.Path
 import com.uliga.data_remote.model.accountBook.AccountBookGenerationResponseDto
 import com.uliga.data_remote.model.accountBook.AccountBooksDto
@@ -23,6 +25,9 @@ import com.uliga.data_remote.model.accountBook.financeSchedule.toData
 import com.uliga.data_remote.model.accountBook.financeSchedule.toDto
 import com.uliga.data_remote.model.accountBook.toData
 import com.uliga.data_remote.model.accountBook.toDto
+import com.uliga.data_remote.model.accountBook.transaction.AccountBookTransactionResponseDto
+import com.uliga.data_remote.model.accountBook.transaction.toData
+import com.uliga.data_remote.model.accountBook.transaction.toDto
 import com.uliga.data_remote.model.invitation.AccountBookInvitationReplyDto
 import com.uliga.data_remote.model.invitation.toData
 import io.ktor.client.HttpClient
@@ -91,6 +96,16 @@ class AccountBookRemoteDataSourceImpl @Inject constructor(
         return client.post {
             url.path(Path.ACCOUNT_BOOK, Path.INVITATION, Path.REPLY)
         }.body<AccountBookInvitationReplyDto>().toData()
+    }
+
+    override suspend fun postAccountBookTransaction(
+        transactionType: String,
+        accountBookTransactionRequestData: AccountBookTransactionRequestData
+    ): AccountBookTransactionResponseData {
+        return client.post {
+            url.path(Path.ACCOUNT_BOOK, if (transactionType == "수입") Path.INCOME else Path.RECORD)
+            setBody(accountBookTransactionRequestData.toDto())
+        }.body<AccountBookTransactionResponseDto>().toData()
     }
 
 

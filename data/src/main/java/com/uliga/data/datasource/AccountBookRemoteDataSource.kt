@@ -9,6 +9,8 @@ import com.uliga.data.model.accountBook.budget.AccountBookBudgetResponseData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequestData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleResponseData
 import com.uliga.data.model.accountBook.invitation.AccountBookInvitationReplyData
+import com.uliga.data.model.accountBook.transaction.AccountBookTransactionRequestData
+import com.uliga.data.model.accountBook.transaction.AccountBookTransactionResponseData
 
 interface AccountBookRemoteDataSource {
 
@@ -29,4 +31,6 @@ interface AccountBookRemoteDataSource {
     ): AccountBookAssetData
 
     suspend fun postAccountBookInvitationReply(accountBookInvitationReplyData: AccountBookInvitationReplyData): AccountBookInvitationReplyData
+
+    suspend fun postAccountBookTransaction(transactionType: String, accountBookTransactionRequestData: AccountBookTransactionRequestData): AccountBookTransactionResponseData
 }

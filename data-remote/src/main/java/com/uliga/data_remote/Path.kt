@@ -35,6 +35,10 @@ object Path {
 
     const val REPLY = "reply"
 
+    const val RECORD = "record"
+
+    const val INCOME = "income"
+
     /**
      * Member
      */
