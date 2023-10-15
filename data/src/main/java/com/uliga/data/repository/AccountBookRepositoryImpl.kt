@@ -11,6 +11,8 @@ import com.uliga.data.model.accountBook.invitation.toData
 import com.uliga.data.model.accountBook.invitation.toDomain
 import com.uliga.data.model.accountBook.toData
 import com.uliga.data.model.accountBook.toDomain
+import com.uliga.data.model.accountBook.transaction.toData
+import com.uliga.data.model.accountBook.transaction.toDomain
 import com.uliga.domain.model.accountBook.AccountBookGenerationRequest
 import com.uliga.domain.model.accountBook.AccountBookGenerationResponse
 import com.uliga.domain.model.accountBook.AccountBooks
@@ -20,6 +22,8 @@ import com.uliga.domain.model.accountBook.budget.AccountBookBudgetResponse
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleResponse
 import com.uliga.domain.model.accountBook.invitation.AccountBookInvitationReply
+import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
+import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionResponse
 import com.uliga.domain.repository.AccountBookRepository
 import javax.inject.Inject
 
@@ -71,6 +75,18 @@ class AccountBookRepositoryImpl @Inject constructor(
     override suspend fun postAccountBookInvitationReply(accountBookInvitationReply: AccountBookInvitationReply): Result<AccountBookInvitationReply> {
         return runCatching {
             remote.postAccountBookInvitationReply(accountBookInvitationReply.toData()).toDomain()
+        }
+    }
+
+    override suspend fun postAccountBookTransaction(
+        transactionType: String,
+        accountBookTransactionRequest: AccountBookTransactionRequest
+    ): Result<AccountBookTransactionResponse> {
+        return runCatching {
+            remote.postAccountBookTransaction(
+                transactionType,
+                accountBookTransactionRequest.toData()
+            ).toDomain()
         }
     }
 

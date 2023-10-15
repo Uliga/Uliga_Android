@@ -9,6 +9,8 @@ import com.uliga.domain.model.accountBook.budget.AccountBookBudgetResponse
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleResponse
 import com.uliga.domain.model.accountBook.invitation.AccountBookInvitationReply
+import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
+import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionResponse
 
 interface AccountBookRepository {
 
@@ -33,6 +35,11 @@ interface AccountBookRepository {
     ): Result<AccountBookAsset>
 
     suspend fun postAccountBookInvitationReply(accountBookInvitationReply: AccountBookInvitationReply): Result<AccountBookInvitationReply>
+
+    suspend fun postAccountBookTransaction(
+        transactionType: String,
+        accountBookTransactionRequest: AccountBookTransactionRequest
+    ): Result<AccountBookTransactionResponse>
 
     /**
      * Local
