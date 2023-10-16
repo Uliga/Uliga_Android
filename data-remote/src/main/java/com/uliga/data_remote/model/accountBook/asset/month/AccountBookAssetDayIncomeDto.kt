@@ -1,6 +1,6 @@
-package com.uliga.data_remote.model.accountBook.asset.day
+package com.uliga.data_remote.model.accountBook.asset.month
 
-import com.uliga.data.model.accountBook.asset.day.AccountBookAssetDayIncomeData
+import com.uliga.data.model.accountBook.asset.month.AccountBookAssetDayIncomeData
 import kotlinx.serialization.Serializable
 
 @Serializable

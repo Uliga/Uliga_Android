@@ -4,7 +4,8 @@ import com.uliga.data.model.accountBook.AccountBookGenerationRequestData
 import com.uliga.data.model.accountBook.AccountBookGenerationResponseData
 import com.uliga.data.model.accountBook.AccountBooksData
 import com.uliga.data.model.accountBook.asset.AccountBookAssetData
-import com.uliga.data.model.accountBook.asset.day.AccountBookAssetMonthData
+import com.uliga.data.model.accountBook.asset.day.AccountBookAssetDayData
+import com.uliga.data.model.accountBook.asset.month.AccountBookAssetMonthData
 import com.uliga.data.model.accountBook.budget.AccountBookBudgetRequestData
 import com.uliga.data.model.accountBook.budget.AccountBookBudgetResponseData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequestData
@@ -43,4 +44,11 @@ interface AccountBookRemoteDataSource {
         year: Int,
         month: Int
     ): AccountBookAssetMonthData
+
+    suspend fun getAccountBookDayTransaction(
+        id: Long,
+        year: Int,
+        month: Int,
+        day: Int
+    ): AccountBookAssetDayData
 }
