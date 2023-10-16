@@ -4,7 +4,8 @@ import com.uliga.domain.model.accountBook.AccountBookGenerationRequest
 import com.uliga.domain.model.accountBook.AccountBookGenerationResponse
 import com.uliga.domain.model.accountBook.AccountBooks
 import com.uliga.domain.model.accountBook.asset.AccountBookAsset
-import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetMonth
+import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetDay
+import com.uliga.domain.model.accountBook.asset.month.AccountBookAssetMonth
 import com.uliga.domain.model.accountBook.budget.AccountBookBudgetRequest
 import com.uliga.domain.model.accountBook.budget.AccountBookBudgetResponse
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
@@ -47,6 +48,13 @@ interface AccountBookRepository {
         year: Int,
         month: Int
     ): Result<AccountBookAssetMonth>
+
+    suspend fun getAccountBookDayTransaction(
+        id: Long,
+        year: Int,
+        month: Int,
+        day: Int
+    ): Result<AccountBookAssetDay>
 
     /**
      * Local

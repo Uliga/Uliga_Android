@@ -3,6 +3,7 @@ package com.uliga.data.repository
 import com.uliga.data.datasource.AccountBookLocalDataSource
 import com.uliga.data.datasource.AccountBookRemoteDataSource
 import com.uliga.data.model.accountBook.asset.day.toDomain
+import com.uliga.data.model.accountBook.asset.month.toDomain
 import com.uliga.data.model.accountBook.asset.toDomain
 import com.uliga.data.model.accountBook.budget.toData
 import com.uliga.data.model.accountBook.budget.toDomain
@@ -18,7 +19,8 @@ import com.uliga.domain.model.accountBook.AccountBookGenerationRequest
 import com.uliga.domain.model.accountBook.AccountBookGenerationResponse
 import com.uliga.domain.model.accountBook.AccountBooks
 import com.uliga.domain.model.accountBook.asset.AccountBookAsset
-import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetMonth
+import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetDay
+import com.uliga.domain.model.accountBook.asset.month.AccountBookAssetMonth
 import com.uliga.domain.model.accountBook.budget.AccountBookBudgetRequest
 import com.uliga.domain.model.accountBook.budget.AccountBookBudgetResponse
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
@@ -100,6 +102,19 @@ class AccountBookRepositoryImpl @Inject constructor(
         return runCatching {
             remote.getAccountBookMonthTransaction(
                 id, year, month
+            ).toDomain()
+        }
+    }
+
+    override suspend fun getAccountBookDayTransaction(
+        id: Long,
+        year: Int,
+        month: Int,
+        day: Int
+    ): Result<AccountBookAssetDay> {
+        return runCatching {
+            remote.getAccountBookDayTransaction(
+                id, year, month, day
             ).toDomain()
         }
     }
