@@ -4,6 +4,7 @@ import com.uliga.data.datasource.AccountBookRemoteDataSource
 import com.uliga.data.model.accountBook.AccountBookGenerationRequestData
 import com.uliga.data.model.accountBook.AccountBookGenerationResponseData
 import com.uliga.data.model.accountBook.AccountBooksData
+import com.uliga.data.model.accountBook.analyze.AccountBookAnalyzeRecordByDayData
 import com.uliga.data.model.accountBook.asset.AccountBookAssetData
 import com.uliga.data.model.accountBook.asset.day.AccountBookAssetDayData
 import com.uliga.data.model.accountBook.asset.month.AccountBookAssetMonthData
@@ -17,6 +18,8 @@ import com.uliga.data.model.accountBook.transaction.AccountBookTransactionRespon
 import com.uliga.data_remote.Path
 import com.uliga.data_remote.model.accountBook.AccountBookGenerationResponseDto
 import com.uliga.data_remote.model.accountBook.AccountBooksDto
+import com.uliga.data_remote.model.accountBook.analyze.AccountBookAnalyzeRecordByDayDto
+import com.uliga.data_remote.model.accountBook.analyze.toData
 import com.uliga.data_remote.model.accountBook.asset.AccountBookAssetDto
 import com.uliga.data_remote.model.accountBook.asset.day.AccountBookAssetDayDto
 import com.uliga.data_remote.model.accountBook.asset.day.toData
@@ -140,6 +143,22 @@ class AccountBookRemoteDataSourceImpl @Inject constructor(
                 day.toString()
             )
         }.body<AccountBookAssetDayDto>().toData()
+    }
+
+    override suspend fun getAccountBookRecordByDay(
+        id: Long,
+        year: Int,
+        month: Int
+    ): AccountBookAnalyzeRecordByDayData {
+        return client.get {
+            url.path(
+                Path.ACCOUNT_BOOK,
+                id.toString(),
+                Path.ANALYZE,
+                year.toString(),
+                month.toString()
+            )
+        }.body<AccountBookAnalyzeRecordByDayDto>().toData()
     }
 
 

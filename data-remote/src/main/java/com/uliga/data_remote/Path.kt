@@ -41,6 +41,8 @@ object Path {
 
     const val ITEM = "item"
 
+    const val ANALYZE = "analyze"
+
     /**
      * Member
      */
