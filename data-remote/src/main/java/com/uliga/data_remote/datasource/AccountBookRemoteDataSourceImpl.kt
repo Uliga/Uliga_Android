@@ -5,7 +5,8 @@ import com.uliga.data.model.accountBook.AccountBookGenerationRequestData
 import com.uliga.data.model.accountBook.AccountBookGenerationResponseData
 import com.uliga.data.model.accountBook.AccountBooksData
 import com.uliga.data.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDayData
-import com.uliga.data.model.accountBook.analyze.byMonthForCompare.AccountBookAnalyzeByMonthForCompareData
+import com.uliga.data.model.accountBook.analyze.byMonth.category.AccountBookAnalyzeRecordByMonthForCategoryData
+import com.uliga.data.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompareData
 import com.uliga.data.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeekData
 import com.uliga.data.model.accountBook.asset.AccountBookAssetData
 import com.uliga.data.model.accountBook.asset.day.AccountBookAssetDayData
@@ -22,6 +23,8 @@ import com.uliga.data_remote.model.accountBook.AccountBookGenerationResponseDto
 import com.uliga.data_remote.model.accountBook.AccountBooksDto
 import com.uliga.data_remote.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDayDto
 import com.uliga.data_remote.model.accountBook.analyze.byDay.toData
+import com.uliga.data_remote.model.accountBook.analyze.byMonth.AccountBookAnalyzeRecordByMonthForCategoryDto
+import com.uliga.data_remote.model.accountBook.analyze.byMonth.toData
 import com.uliga.data_remote.model.accountBook.analyze.byMonthForCompare.AccountBookAnalyzeByMonthForCompareDto
 import com.uliga.data_remote.model.accountBook.analyze.byMonthForCompare.toData
 import com.uliga.data_remote.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeekDto
@@ -201,6 +204,24 @@ class AccountBookRemoteDataSourceImpl @Inject constructor(
                 month.toString()
             )
         }.body<AccountBookAnalyzeByMonthForCompareDto>().toData()
+
+    }
+
+    override suspend fun getAccountBookRecordByMonthForCategory(
+        id: Long,
+        year: Int,
+        month: Int
+    ): AccountBookAnalyzeRecordByMonthForCategoryData {
+        return client.get {
+            url.path(
+                Path.ACCOUNT_BOOK,
+                id.toString(),
+                Path.ANALYZE,
+                Path.CATEGORY,
+                year.toString(),
+                month.toString()
+            )
+        }.body<AccountBookAnalyzeRecordByMonthForCategoryDto>().toData()
     }
 
 
