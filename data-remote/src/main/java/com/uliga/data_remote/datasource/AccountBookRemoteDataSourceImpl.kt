@@ -4,7 +4,8 @@ import com.uliga.data.datasource.AccountBookRemoteDataSource
 import com.uliga.data.model.accountBook.AccountBookGenerationRequestData
 import com.uliga.data.model.accountBook.AccountBookGenerationResponseData
 import com.uliga.data.model.accountBook.AccountBooksData
-import com.uliga.data.model.accountBook.analyze.AccountBookAnalyzeRecordByDayData
+import com.uliga.data.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDayData
+import com.uliga.data.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeekData
 import com.uliga.data.model.accountBook.asset.AccountBookAssetData
 import com.uliga.data.model.accountBook.asset.day.AccountBookAssetDayData
 import com.uliga.data.model.accountBook.asset.month.AccountBookAssetMonthData
@@ -18,8 +19,10 @@ import com.uliga.data.model.accountBook.transaction.AccountBookTransactionRespon
 import com.uliga.data_remote.Path
 import com.uliga.data_remote.model.accountBook.AccountBookGenerationResponseDto
 import com.uliga.data_remote.model.accountBook.AccountBooksDto
-import com.uliga.data_remote.model.accountBook.analyze.AccountBookAnalyzeRecordByDayDto
-import com.uliga.data_remote.model.accountBook.analyze.toData
+import com.uliga.data_remote.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDayDto
+import com.uliga.data_remote.model.accountBook.analyze.byDay.toData
+import com.uliga.data_remote.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeekDto
+import com.uliga.data_remote.model.accountBook.analyze.byWeek.toData
 import com.uliga.data_remote.model.accountBook.asset.AccountBookAssetDto
 import com.uliga.data_remote.model.accountBook.asset.day.AccountBookAssetDayDto
 import com.uliga.data_remote.model.accountBook.asset.day.toData
@@ -159,6 +162,25 @@ class AccountBookRemoteDataSourceImpl @Inject constructor(
                 month.toString()
             )
         }.body<AccountBookAnalyzeRecordByDayDto>().toData()
+    }
+
+    override suspend fun getAccountBookRecordByWeek(
+        id: Long,
+        year: Int,
+        month: Int,
+        startDay: Int
+    ): AccountBookAnalyzeRecordByWeekData {
+        return client.get {
+            url.path(
+                Path.ACCOUNT_BOOK,
+                id.toString(),
+                Path.ANALYZE,
+                Path.WEEKLY,
+                year.toString(),
+                month.toString(),
+                startDay.toString()
+            )
+        }.body<AccountBookAnalyzeRecordByWeekDto>().toData()
     }
 
 
