@@ -1,6 +1,6 @@
 package com.uliga.domain.usecase.accountbook.remote.analyze
 
-import com.uliga.domain.model.accountBook.analyze.AccountBookAnalyzeRecordByDay
+import com.uliga.domain.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDay
 import com.uliga.domain.repository.AccountBookRepository
 import javax.inject.Inject
 import javax.inject.Singleton

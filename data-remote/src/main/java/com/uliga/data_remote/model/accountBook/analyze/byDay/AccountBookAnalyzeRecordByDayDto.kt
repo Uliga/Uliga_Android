@@ -1,11 +1,11 @@
-package com.uliga.data_remote.model.accountBook.analyze
+package com.uliga.data_remote.model.accountBook.analyze.byDay
 
-import com.uliga.data.model.accountBook.analyze.AccountBookAnalyzeRecordByDayData
+import com.uliga.data.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDayData
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class AccountBookAnalyzeRecordByDayDto(
-    val records: List<AccountBookAnalyzeRecordDto>,
+    val records: List<AccountBookAnalyzeRecordDailyDto>,
     val sum: Long,
     val diff: Long
 )

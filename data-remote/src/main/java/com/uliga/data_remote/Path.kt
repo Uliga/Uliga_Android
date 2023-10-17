@@ -43,6 +43,8 @@ object Path {
 
     const val ANALYZE = "analyze"
 
+    const val WEEKLY = "weekly"
+
     /**
      * Member
      */

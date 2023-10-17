@@ -3,7 +3,8 @@ package com.uliga.data.datasource
 import com.uliga.data.model.accountBook.AccountBookGenerationRequestData
 import com.uliga.data.model.accountBook.AccountBookGenerationResponseData
 import com.uliga.data.model.accountBook.AccountBooksData
-import com.uliga.data.model.accountBook.analyze.AccountBookAnalyzeRecordByDayData
+import com.uliga.data.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDayData
+import com.uliga.data.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeekData
 import com.uliga.data.model.accountBook.asset.AccountBookAssetData
 import com.uliga.data.model.accountBook.asset.day.AccountBookAssetDayData
 import com.uliga.data.model.accountBook.asset.month.AccountBookAssetMonthData
@@ -62,4 +63,11 @@ interface AccountBookRemoteDataSource {
         year: Int,
         month: Int
     ): AccountBookAnalyzeRecordByDayData
+
+    suspend fun getAccountBookRecordByWeek(
+        id: Long,
+        year: Int,
+        month: Int,
+        startDay: Int
+    ): AccountBookAnalyzeRecordByWeekData
 }
