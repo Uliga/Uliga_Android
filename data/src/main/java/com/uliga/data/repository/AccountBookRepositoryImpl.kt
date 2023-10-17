@@ -3,6 +3,7 @@ package com.uliga.data.repository
 import com.uliga.data.datasource.AccountBookLocalDataSource
 import com.uliga.data.datasource.AccountBookRemoteDataSource
 import com.uliga.data.model.accountBook.analyze.byDay.toDomain
+import com.uliga.data.model.accountBook.analyze.byMonthForCompare.toDomain
 import com.uliga.data.model.accountBook.analyze.byWeek.toDomain
 import com.uliga.data.model.accountBook.asset.day.toDomain
 import com.uliga.data.model.accountBook.asset.month.toDomain
@@ -21,6 +22,7 @@ import com.uliga.domain.model.accountBook.AccountBookGenerationRequest
 import com.uliga.domain.model.accountBook.AccountBookGenerationResponse
 import com.uliga.domain.model.accountBook.AccountBooks
 import com.uliga.domain.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDay
+import com.uliga.domain.model.accountBook.analyze.byMonthForCompare.AccountBookAnalyzeByMonthForCompare
 import com.uliga.domain.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeek
 import com.uliga.domain.model.accountBook.asset.AccountBookAsset
 import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetDay
@@ -141,6 +143,16 @@ class AccountBookRepositoryImpl @Inject constructor(
     ): Result<AccountBookAnalyzeRecordByWeek> {
         return runCatching {
             remote.getAccountBookRecordByWeek(id, year, month, startDay).toDomain()
+        }
+    }
+
+    override suspend fun getAccountBookRecordByMonthForCompare(
+        id: Long,
+        year: Int,
+        month: Int
+    ): Result<AccountBookAnalyzeByMonthForCompare> {
+        return runCatching {
+            remote.getAccountBookRecordByMonthForCompare(id, year, month).toDomain()
         }
     }
 

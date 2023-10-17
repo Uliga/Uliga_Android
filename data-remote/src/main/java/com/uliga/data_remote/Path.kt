@@ -45,6 +45,8 @@ object Path {
 
     const val WEEKLY = "weekly"
 
+    const val COMPARE = "compare"
+
     /**
      * Member
      */
