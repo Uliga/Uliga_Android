@@ -3,6 +3,7 @@ package com.uliga.domain.repository
 import com.uliga.domain.model.accountBook.AccountBookGenerationRequest
 import com.uliga.domain.model.accountBook.AccountBookGenerationResponse
 import com.uliga.domain.model.accountBook.AccountBooks
+import com.uliga.domain.model.accountBook.analyze.AccountBookAnalyzeRecordByDay
 import com.uliga.domain.model.accountBook.asset.AccountBookAsset
 import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetDay
 import com.uliga.domain.model.accountBook.asset.month.AccountBookAssetMonth
@@ -55,6 +56,12 @@ interface AccountBookRepository {
         month: Int,
         day: Int
     ): Result<AccountBookAssetDay>
+
+    suspend fun getAccountBookRecordByDay(
+        id: Long,
+        year: Int,
+        month: Int
+    ): Result<AccountBookAnalyzeRecordByDay>
 
     /**
      * Local

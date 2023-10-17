@@ -2,6 +2,7 @@ package com.uliga.data.repository
 
 import com.uliga.data.datasource.AccountBookLocalDataSource
 import com.uliga.data.datasource.AccountBookRemoteDataSource
+import com.uliga.data.model.accountBook.analyze.toDomain
 import com.uliga.data.model.accountBook.asset.day.toDomain
 import com.uliga.data.model.accountBook.asset.month.toDomain
 import com.uliga.data.model.accountBook.asset.toDomain
@@ -18,6 +19,7 @@ import com.uliga.data.model.accountBook.transaction.toDomain
 import com.uliga.domain.model.accountBook.AccountBookGenerationRequest
 import com.uliga.domain.model.accountBook.AccountBookGenerationResponse
 import com.uliga.domain.model.accountBook.AccountBooks
+import com.uliga.domain.model.accountBook.analyze.AccountBookAnalyzeRecordByDay
 import com.uliga.domain.model.accountBook.asset.AccountBookAsset
 import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetDay
 import com.uliga.domain.model.accountBook.asset.month.AccountBookAssetMonth
@@ -116,6 +118,16 @@ class AccountBookRepositoryImpl @Inject constructor(
             remote.getAccountBookDayTransaction(
                 id, year, month, day
             ).toDomain()
+        }
+    }
+
+    override suspend fun getAccountBookRecordByDay(
+        id: Long,
+        year: Int,
+        month: Int
+    ): Result<AccountBookAnalyzeRecordByDay> {
+        return runCatching {
+            remote.getAccountBookRecordByDay(id, year, month).toDomain()
         }
     }
 

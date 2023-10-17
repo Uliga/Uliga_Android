@@ -1,4 +1,4 @@
-package com.uliga.domain.usecase.accountbook
+package com.uliga.domain.usecase.accountbook.remote
 
 import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetDay
 import com.uliga.domain.repository.AccountBookRepository
