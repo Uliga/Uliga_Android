@@ -1,4 +1,4 @@
-package com.uliga.domain.model.accountBook.analyze.byMonthForCompare
+package com.uliga.domain.model.accountBook.analyze.byMonth.compare
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

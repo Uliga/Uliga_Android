@@ -47,6 +47,8 @@ object Path {
 
     const val COMPARE = "compare"
 
+    const val CATEGORY = "category"
+
     /**
      * Member
      */

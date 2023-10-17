@@ -1,6 +1,6 @@
 package com.uliga.domain.usecase.accountbook.remote.analyze
 
-import com.uliga.domain.model.accountBook.analyze.byMonthForCompare.AccountBookAnalyzeByMonthForCompare
+import com.uliga.domain.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompare
 import com.uliga.domain.repository.AccountBookRepository
 import javax.inject.Inject
 

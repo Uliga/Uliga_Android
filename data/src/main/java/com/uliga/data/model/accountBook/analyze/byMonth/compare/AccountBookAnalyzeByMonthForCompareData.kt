@@ -1,6 +1,6 @@
-package com.uliga.data.model.accountBook.analyze.byMonthForCompare
+package com.uliga.data.model.accountBook.analyze.byMonth.compare
 
-import com.uliga.domain.model.accountBook.analyze.byMonthForCompare.AccountBookAnalyzeByMonthForCompare
+import com.uliga.domain.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompare
 import kotlinx.serialization.Serializable
 
 @Serializable
