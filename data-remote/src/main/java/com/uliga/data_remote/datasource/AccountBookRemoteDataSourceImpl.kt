@@ -7,6 +7,7 @@ import com.uliga.data.model.accountBook.AccountBooksData
 import com.uliga.data.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDayData
 import com.uliga.data.model.accountBook.analyze.byMonth.category.AccountBookAnalyzeRecordByMonthForCategoryData
 import com.uliga.data.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompareData
+import com.uliga.data.model.accountBook.analyze.byMonth.schedule.AccountBookAnalyzeFixedRecordByMonthData
 import com.uliga.data.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeekData
 import com.uliga.data.model.accountBook.asset.AccountBookAssetData
 import com.uliga.data.model.accountBook.asset.day.AccountBookAssetDayData
@@ -27,6 +28,8 @@ import com.uliga.data_remote.model.accountBook.analyze.byMonth.category.AccountB
 import com.uliga.data_remote.model.accountBook.analyze.byMonth.category.toData
 import com.uliga.data_remote.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompareDto
 import com.uliga.data_remote.model.accountBook.analyze.byMonth.compare.toData
+import com.uliga.data_remote.model.accountBook.analyze.byMonth.schedule.AccountBookAnalyzeFixedRecordByMonthDto
+import com.uliga.data_remote.model.accountBook.analyze.byMonth.schedule.toData
 import com.uliga.data_remote.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeekDto
 import com.uliga.data_remote.model.accountBook.analyze.byWeek.toData
 import com.uliga.data_remote.model.accountBook.asset.AccountBookAssetDto
@@ -222,6 +225,17 @@ class AccountBookRemoteDataSourceImpl @Inject constructor(
                 month.toString()
             )
         }.body<AccountBookAnalyzeRecordByMonthForCategoryDto>().toData()
+    }
+
+    override suspend fun getAccountBookFixedRecordByMonth(id: Long): AccountBookAnalyzeFixedRecordByMonthData {
+        return client.get {
+            url.path(
+                Path.ACCOUNT_BOOK,
+                id.toString(),
+                Path.ANALYZE,
+                Path.SCHEDULE
+            )
+        }.body<AccountBookAnalyzeFixedRecordByMonthDto>().toData()
     }
 
 

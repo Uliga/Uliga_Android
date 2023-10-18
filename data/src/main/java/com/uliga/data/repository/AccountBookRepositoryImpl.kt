@@ -5,6 +5,7 @@ import com.uliga.data.datasource.AccountBookRemoteDataSource
 import com.uliga.data.model.accountBook.analyze.byDay.toDomain
 import com.uliga.data.model.accountBook.analyze.byMonth.category.toDomain
 import com.uliga.data.model.accountBook.analyze.byMonth.compare.toDomain
+import com.uliga.data.model.accountBook.analyze.byMonth.schedule.toDomain
 import com.uliga.data.model.accountBook.analyze.byWeek.toDomain
 import com.uliga.data.model.accountBook.asset.day.toDomain
 import com.uliga.data.model.accountBook.asset.month.toDomain
@@ -25,6 +26,7 @@ import com.uliga.domain.model.accountBook.AccountBooks
 import com.uliga.domain.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDay
 import com.uliga.domain.model.accountBook.analyze.byMonth.category.AccountBookAnalyzeRecordByMonthForCategory
 import com.uliga.domain.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompare
+import com.uliga.domain.model.accountBook.analyze.byMonth.schedule.AccountBookAnalyzeFixedRecordByMonth
 import com.uliga.domain.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeek
 import com.uliga.domain.model.accountBook.asset.AccountBookAsset
 import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetDay
@@ -165,6 +167,12 @@ class AccountBookRepositoryImpl @Inject constructor(
     ): Result<AccountBookAnalyzeRecordByMonthForCategory> {
         return runCatching {
             remote.getAccountBookRecordByMonthForCategory(id, year, month).toDomain()
+        }
+    }
+
+    override suspend fun getAccountBookFixedRecordByMonth(id: Long): Result<AccountBookAnalyzeFixedRecordByMonth> {
+        return runCatching {
+            remote.getAccountBookFixedRecordByMonth(id).toDomain()
         }
     }
 

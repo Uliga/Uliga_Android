@@ -6,6 +6,7 @@ import com.uliga.domain.model.accountBook.AccountBooks
 import com.uliga.domain.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDay
 import com.uliga.domain.model.accountBook.analyze.byMonth.category.AccountBookAnalyzeRecordByMonthForCategory
 import com.uliga.domain.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompare
+import com.uliga.domain.model.accountBook.analyze.byMonth.schedule.AccountBookAnalyzeFixedRecordByMonth
 import com.uliga.domain.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeek
 import com.uliga.domain.model.accountBook.asset.AccountBookAsset
 import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetDay
@@ -84,6 +85,10 @@ interface AccountBookRepository {
         year: Int,
         month: Int
     ): Result<AccountBookAnalyzeRecordByMonthForCategory>
+
+    suspend fun getAccountBookFixedRecordByMonth(
+        id: Long
+    ): Result<AccountBookAnalyzeFixedRecordByMonth>
 
     /**
      * Local
