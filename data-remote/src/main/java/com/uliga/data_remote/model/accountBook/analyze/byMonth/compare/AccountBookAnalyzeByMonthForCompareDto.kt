@@ -1,4 +1,4 @@
-package com.uliga.data_remote.model.accountBook.analyze.byMonthForCompare
+package com.uliga.data_remote.model.accountBook.analyze.byMonth.compare
 
 import com.uliga.data.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompareData
 import kotlinx.serialization.Serializable

@@ -23,10 +23,10 @@ import com.uliga.data_remote.model.accountBook.AccountBookGenerationResponseDto
 import com.uliga.data_remote.model.accountBook.AccountBooksDto
 import com.uliga.data_remote.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDayDto
 import com.uliga.data_remote.model.accountBook.analyze.byDay.toData
-import com.uliga.data_remote.model.accountBook.analyze.byMonth.AccountBookAnalyzeRecordByMonthForCategoryDto
-import com.uliga.data_remote.model.accountBook.analyze.byMonth.toData
-import com.uliga.data_remote.model.accountBook.analyze.byMonthForCompare.AccountBookAnalyzeByMonthForCompareDto
-import com.uliga.data_remote.model.accountBook.analyze.byMonthForCompare.toData
+import com.uliga.data_remote.model.accountBook.analyze.byMonth.category.AccountBookAnalyzeRecordByMonthForCategoryDto
+import com.uliga.data_remote.model.accountBook.analyze.byMonth.category.toData
+import com.uliga.data_remote.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompareDto
+import com.uliga.data_remote.model.accountBook.analyze.byMonth.compare.toData
 import com.uliga.data_remote.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeekDto
 import com.uliga.data_remote.model.accountBook.analyze.byWeek.toData
 import com.uliga.data_remote.model.accountBook.asset.AccountBookAssetDto

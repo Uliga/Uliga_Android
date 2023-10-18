@@ -1,4 +1,4 @@
-package com.uliga.data_remote.model.accountBook.analyze.byMonth
+package com.uliga.data_remote.model.accountBook.analyze.byMonth.category
 
 import com.uliga.data.model.accountBook.analyze.byMonth.category.AccountBookAnalyzeRecordByMonthForCategoryElementData
 import kotlinx.serialization.Serializable
