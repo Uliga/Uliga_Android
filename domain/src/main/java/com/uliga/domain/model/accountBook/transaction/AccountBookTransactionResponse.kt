@@ -7,5 +7,6 @@ import java.io.Serializable
 @Parcelize
 data class AccountBookTransactionResponse(
     val accountBookId: Long,
-    val recordInfo: AccountBookTransactionRecordInfo
+    val recordInfo: AccountBookTransactionInfo?,
+    val incomeInfo: AccountBookTransactionInfo?
 ) : Parcelable, Serializable

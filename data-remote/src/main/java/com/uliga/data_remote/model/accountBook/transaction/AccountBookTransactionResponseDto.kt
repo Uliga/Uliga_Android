@@ -6,15 +6,18 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AccountBookTransactionResponseDto(
     val accountBookId: Long,
-    val recordInfo: AccountBookTransactionRecordInfoDto
+    val recordInfo: AccountBookTransactionInfoDto?,
+    val incomeInfo: AccountBookTransactionInfoDto?
 )
 
 fun AccountBookTransactionResponseData.toDto() = AccountBookTransactionResponseDto(
     accountBookId = accountBookId,
-    recordInfo = recordInfo.toDto()
+    recordInfo = recordInfo?.toDto(),
+    incomeInfo = incomeInfo?.toDto()
 )
 
 fun AccountBookTransactionResponseDto.toData() = AccountBookTransactionResponseData(
     accountBookId = accountBookId,
-    recordInfo = recordInfo.toData()
+    recordInfo = recordInfo?.toData(),
+    incomeInfo = incomeInfo?.toData()
 )
