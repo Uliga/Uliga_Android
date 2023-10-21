@@ -26,7 +26,7 @@ import com.uliga.chart.pie.renderer.PieSliceDrawer
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun AnalyzeByCategoryScreen() {
+fun AnalyzeByCategoryScreen(viewModel: AnalyzeViewModel) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
