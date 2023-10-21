@@ -33,10 +33,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.uliga.app.customTabIndicatorOffset
 import com.uliga.app.ui.theme.pretendard
-import com.uliga.app.view.main.MainUiState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -44,6 +44,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun AnalyzeScreen(
     navController: NavController,
+    viewModel: AnalyzeViewModel = hiltViewModel()
 ) {
 
     val context = LocalContext.current
@@ -82,30 +83,30 @@ fun AnalyzeTabs(pagerState: PagerState) {
 
 
     CenterAlignedTopAppBar(
-            title = {
-                Text(
-                    modifier = Modifier
-                        .clickable {
+        title = {
+            Text(
+                modifier = Modifier
+                    .clickable {
 
-                        },
-                    text = "안세훈님의 가계부",
-                    color = Color.Black,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
+                    },
+                text = "안세훈님의 가계부",
+                color = Color.Black,
+                fontFamily = pretendard,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
+        },
+        actions = {
+            IconButton(onClick = { /* doSomething() */ }) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Localized description"
                 )
-            },
-            actions = {
-                IconButton(onClick = { /* doSomething() */ }) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Localized description"
-                    )
-                }
             }
-        )
+        }
+    )
 
 
     TabRow(
