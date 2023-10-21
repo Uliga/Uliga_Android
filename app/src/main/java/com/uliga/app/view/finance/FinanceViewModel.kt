@@ -5,6 +5,7 @@ import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequ
 import com.uliga.domain.usecase.accountbook.GetAccountBookMonthTransactionUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookTransactionUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
+import com.uliga.domain.usecase.accountbook.remote.GetAccountBookDayTransactionUseCase
 import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class FinanceViewModel @Inject constructor(
     private val fetchCurrentAccountBookInfoUseCase: FetchCurrentAccountBookInfoUseCase,
     private val getAccountBookMonthTransactionUseCase: GetAccountBookMonthTransactionUseCase,
+    private val getAccountBookDayTransactionUseCase: GetAccountBookDayTransactionUseCase,
     private val fetchIdUseCase: FetchIdUseCase,
     private val postAccountBookTransactionUseCase: PostAccountBookTransactionUseCase
 ) : ContainerHost<FinanceUiState, FinanceSideEffect>, ViewModel() {
@@ -85,6 +87,23 @@ class FinanceViewModel @Inject constructor(
                 reduce {
                     state.copy(
                         currentAccountBookTransaction = it
+                    )
+                }
+
+            }
+            .onFailure {
+
+            }
+    }
+
+    fun getAccountBookDayTransaction(year: Int, month: Int, day: Int) = intent {
+        val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
+
+        getAccountBookDayTransactionUseCase(currentAccountBookInfo.second, year, month, day)
+            .onSuccess {
+                reduce {
+                    state.copy(
+                        currentAccountBookAssetDay = it
                     )
                 }
 

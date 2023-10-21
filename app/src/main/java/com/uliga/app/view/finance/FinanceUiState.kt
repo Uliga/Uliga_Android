@@ -1,6 +1,7 @@
 package com.uliga.app.view.finance
 
 import androidx.compose.runtime.Immutable
+import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetDay
 import com.uliga.domain.model.accountBook.asset.month.AccountBookAssetMonth
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionResponse
 
@@ -11,6 +12,7 @@ data class FinanceUiState(
     val id: Long? = null,
     val currentAccountInfo: Pair<String, Long>? = null,
     val currentAccountBookAsset: AccountBookAssetMonth? = null,
+    val currentAccountBookAssetDay: AccountBookAssetDay? = null,
     val currentAccountBookTransaction: AccountBookTransactionResponse? = null
 ) {
     companion object {
@@ -20,6 +22,7 @@ data class FinanceUiState(
             id = null,
             currentAccountInfo = null,
             currentAccountBookAsset = null,
+            currentAccountBookAssetDay = null,
             currentAccountBookTransaction = null
         )
     }
