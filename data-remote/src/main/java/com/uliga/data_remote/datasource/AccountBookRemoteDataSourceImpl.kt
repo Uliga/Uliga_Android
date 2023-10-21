@@ -17,6 +17,7 @@ import com.uliga.data.model.accountBook.budget.AccountBookBudgetResponseData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequestData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleResponseData
 import com.uliga.data.model.accountBook.invitation.AccountBookInvitationReplyData
+import com.uliga.data.model.accountBook.transaction.AccountBookTransactionIdsData
 import com.uliga.data.model.accountBook.transaction.AccountBookTransactionRequestData
 import com.uliga.data.model.accountBook.transaction.AccountBookTransactionResponseData
 import com.uliga.data_remote.Path
@@ -53,6 +54,7 @@ import com.uliga.data_remote.model.invitation.AccountBookInvitationReplyDto
 import com.uliga.data_remote.model.invitation.toData
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
@@ -155,6 +157,16 @@ class AccountBookRemoteDataSourceImpl @Inject constructor(
                 day.toString()
             )
         }.body<AccountBookAssetDayDto>().toData()
+    }
+
+    override suspend fun deleteAccountBookDayTransaction(accountBookTransactionIdsBookIds: AccountBookTransactionIdsData): String {
+        return client.delete {
+            url.path(
+                Path.ACCOUNT_BOOK,
+                Path.DATA
+            )
+            setBody(accountBookTransactionIdsBookIds.toDto())
+        }.body()
     }
 
     override suspend fun getAccountBookRecordByDay(

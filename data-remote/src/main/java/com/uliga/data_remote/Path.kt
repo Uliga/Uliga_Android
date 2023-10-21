@@ -49,6 +49,8 @@ object Path {
 
     const val CATEGORY = "category"
 
+    const val DATA = "data"
+
     /**
      * Member
      */

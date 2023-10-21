@@ -36,6 +36,7 @@ import com.uliga.domain.model.accountBook.budget.AccountBookBudgetResponse
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleResponse
 import com.uliga.domain.model.accountBook.invitation.AccountBookInvitationReply
+import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionIds
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionResponse
 import com.uliga.domain.repository.AccountBookRepository
@@ -173,6 +174,12 @@ class AccountBookRepositoryImpl @Inject constructor(
     override suspend fun getAccountBookFixedRecordByMonth(id: Long): Result<AccountBookAnalyzeFixedRecordByMonth> {
         return runCatching {
             remote.getAccountBookFixedRecordByMonth(id).toDomain()
+        }
+    }
+
+    override suspend fun deleteAccountBookDayTransaction(accountBookTransactionIdsBookIds: AccountBookTransactionIds): Result<String> {
+        return runCatching {
+            remote.deleteAccountBookDayTransaction(accountBookTransactionIdsBookIds.toData())
         }
     }
 
