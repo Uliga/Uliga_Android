@@ -73,11 +73,13 @@ import com.uliga.app.ui.theme.LightBlue
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.accountBook.input.AccountBookForInputActivity
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionBottomSheet
 import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetItem
 import com.uliga.domain.model.accountBook.asset.month.AccountBookAssetMonth
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -156,14 +158,35 @@ fun FinanceScreen(
     var showDialog by remember {
         mutableStateOf(false)
     }
-    
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(), onResult = {
-        when(it.resultCode) {
-            Activity.RESULT_OK -> {
-                viewModel.getAccountBookMonthTransaction(
-                    calendarState.firstVisibleMonth.yearMonth.year,
-                    calendarState.firstVisibleMonth.yearMonth.monthValue
-                )
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = {
+            when (it.resultCode) {
+                Activity.RESULT_OK -> {
+                    viewModel.getAccountBookMonthTransaction(
+                        calendarState.firstVisibleMonth.yearMonth.year,
+                        calendarState.firstVisibleMonth.yearMonth.monthValue
+                    )
+                    viewModel.getAccountBookDayTransaction(
+                        calendarState.firstVisibleMonth.yearMonth.year,
+                        calendarState.firstVisibleMonth.yearMonth.monthValue,
+                        selectedDate.value.split("월 ")[1].replace("일", "").toInt()
+                    )
+
+                }
+            }
+        })
+
+    if (showDialog) {
+        showSettingDropDownMenu(
+            showDialog = showDialog,
+        )
+    }
+
+    viewModel.collectSideEffect { sideEffect ->
+        when (sideEffect) {
+            is FinanceSideEffect.DismissDeleteAlert -> {
                 viewModel.getAccountBookDayTransaction(
                     calendarState.firstVisibleMonth.yearMonth.year,
                     calendarState.firstVisibleMonth.yearMonth.monthValue,
@@ -171,15 +194,33 @@ fun FinanceScreen(
                 )
 
             }
-        }
-    })
 
-    if (showDialog) {
-        showSettingDropDownMenu(
-            showDialog = showDialog,
+            is FinanceSideEffect.ToastMessage -> {
+
+            }
+        }
+    }
+
+    var deleteAlertDialogVisibleState by remember {
+        mutableStateOf(false)
+    }
+
+    var selectedDeleteItemId by remember {
+        mutableStateOf(0L)
+    }
+
+    if (deleteAlertDialogVisibleState) {
+        DeleteAlertDialog(
+            onDismissRequest = {
+                viewModel.deleteAccountBookDayTransaction(selectedDeleteItemId)
+                deleteAlertDialogVisibleState = false
+            },
+            title = "거래 내역 삭제",
+            subTitle = "정말 선택한 거래 내역을 삭제하시겠어요?"
         )
     }
-    
+
+
     val accountBookForInputSheet = androidx.compose.material3.rememberModalBottomSheetState()
 //    var isAccountBookForInputSheetOpen by rememberSaveable {
 //        mutableStateOf(false)
@@ -333,7 +374,10 @@ fun FinanceScreen(
             val currentAccountBookAssetDay =
                 state.currentAccountBookAssetDay?.items?.get(idx) ?: return@items
 
-            TransactionItem(viewModel, currentAccountBookAssetDay)
+            TransactionItem(viewModel, currentAccountBookAssetDay) {
+                deleteAlertDialogVisibleState = true
+                selectedDeleteItemId = it.id
+            }
 
 //            Spacer(
 //                modifier = Modifier.height(16.dp)
@@ -431,7 +475,8 @@ fun Day(
 @Composable
 fun TransactionItem(
     viewModel: FinanceViewModel,
-    currentAccountBookAssetDay: AccountBookAssetItem
+    currentAccountBookAssetDay: AccountBookAssetItem,
+    onDeleteRequest: (AccountBookAssetItem) -> Unit
 ) {
     Spacer(
         modifier = Modifier.height(8.dp)
@@ -497,7 +542,7 @@ fun TransactionItem(
             )
 
             Text(
-                text = if(currentAccountBookAssetDay.type == "INCOME") "수입" else "지출",
+                text = if (currentAccountBookAssetDay.type == "INCOME") "수입" else "지출",
                 color = LightBlue,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.SemiBold,
@@ -548,7 +593,8 @@ fun TransactionItem(
                 .size(16.dp)
                 .weight(1f)
                 .clickable {
-                    viewModel.deleteAccountBookDayTransaction(currentAccountBookAssetDay)
+                    onDeleteRequest(currentAccountBookAssetDay)
+//                    viewModel.deleteAccountBookDayTransaction(currentAccountBookAssetDay)
                 },
             painter = painterResource(
                 id = R.drawable.ic_delete
