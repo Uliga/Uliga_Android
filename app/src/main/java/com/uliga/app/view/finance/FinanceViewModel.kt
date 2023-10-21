@@ -82,6 +82,11 @@ class FinanceViewModel @Inject constructor(
 
         postAccountBookTransactionUseCase(transactionType, accountBookTransactionRequest)
             .onSuccess {
+                reduce {
+                    state.copy(
+                        currentAccountBookTransaction = it
+                    )
+                }
 
             }
             .onFailure {
@@ -95,7 +100,11 @@ class FinanceViewModel @Inject constructor(
 
         getAccountBookMonthTransactionUseCase(currentAccountBookInfo.second, year, month)
             .onSuccess {
-
+                reduce {
+                    state.copy(
+                        currentAccountBookAsset = it
+                    )
+                }
             }
             .onFailure {
 

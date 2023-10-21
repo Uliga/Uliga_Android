@@ -36,6 +36,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -72,7 +74,11 @@ import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.accountBook.input.AccountBookForInputActivity
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionBottomSheet
+import com.uliga.domain.model.accountBook.asset.month.AccountBookAssetMonth
+import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionResponse
+import org.orbitmvi.orbit.compose.collectAsState
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
@@ -85,7 +91,11 @@ fun FinanceScreen(
     viewModel: FinanceViewModel = hiltViewModel()
 ) {
 
+    val state = viewModel.collectAsState().value
+
     val context = LocalContext.current
+
+    val currentDate = LocalDate.now()
 
     val currentMonth = remember { YearMonth.now() }
     val startMonth = remember { currentMonth.minusMonths(100) }
@@ -95,12 +105,24 @@ fun FinanceScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val state = rememberCalendarState(
+    val calendarState = rememberCalendarState(
         startMonth = startMonth,
         endMonth = endMonth,
         firstVisibleMonth = currentMonth,
         firstDayOfWeek = daysOfWeek.first()
     )
+
+    var selectedDate =
+        remember { mutableStateOf("${currentDate.monthValue}월 ${currentDate.dayOfMonth}일") }
+
+    LaunchedEffect(key1 = calendarState.firstVisibleMonth) {
+        viewModel.getAccountBookMonthTransaction(
+            calendarState.firstVisibleMonth.yearMonth.year,
+            calendarState.firstVisibleMonth.yearMonth.monthValue
+        )
+
+    }
+
 
 //    val accountBookSelectionSheetState = rememberModalBottomSheetState(
 //        ModalBottomSheetValue.Expanded,
@@ -201,7 +223,7 @@ fun FinanceScreen(
                         end = 32.dp,
                         top = 8.dp
                     ),
-                text = "7월",
+                text = "${calendarState.firstVisibleMonth.yearMonth.monthValue.toString()}월",
                 color = Grey700,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.Medium,
@@ -214,12 +236,13 @@ fun FinanceScreen(
                         vertical = 16.dp,
                         horizontal = 16.dp
                     ),
-                state = state,
+                state = calendarState,
                 dayContent = {
                     Day(
                         day = it,
+                        accountBookAssetMonth = state.currentAccountBookAsset,
                         onClick = {
-
+                            selectedDate.value = "${it.date.monthValue}월 ${it.date.dayOfMonth}일"
                         }
                     )
                 },
@@ -240,7 +263,7 @@ fun FinanceScreen(
                     modifier = Modifier.padding(
                         start = 16.dp
                     ),
-                    text = "9월 23일",
+                    text = selectedDate.value,
                     color = Grey700,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.Medium,
@@ -343,19 +366,37 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
 }
 
 @Composable
-fun Day(day: CalendarDay, onClick: (CalendarDay) -> Unit) {
-    Box(
+fun Day(day: CalendarDay, accountBookAssetMonth: AccountBookAssetMonth? ,onClick: (CalendarDay) -> Unit) {
+
+    val income = accountBookAssetMonth?.incomes?.filter { it.day.toInt() == day.date.dayOfMonth }
+    val record = accountBookAssetMonth?.records?.filter { it.day.toInt() == day.date.dayOfMonth }
+    Log.d("income", income.toString())
+
+    Column(
         modifier = Modifier
             .aspectRatio(1f)
             .clickable(
                 enabled = day.position == DayPosition.MonthDate,
                 onClick = { onClick(day) }
             ),
-        contentAlignment = Alignment.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         Text(
             text = day.date.dayOfMonth.toString(),
             color = if (day.position == DayPosition.MonthDate) Color.Black else Color.Gray
+        )
+
+        Text(
+            text = if(income.isNullOrEmpty()) "" else "+${income[0].value}",
+            color = Color.Green,
+            fontSize = 8.sp
+        )
+
+        Text(
+            text = if(record.isNullOrEmpty()) "" else "-${record[0].value}",
+            color = Color.Red,
+            fontSize = 8.sp
         )
     }
 }
