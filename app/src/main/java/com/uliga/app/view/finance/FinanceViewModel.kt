@@ -1,6 +1,7 @@
 package com.uliga.app.view.finance
 
 import androidx.lifecycle.ViewModel
+import com.uliga.app.view.accountBook.input.AccountBookForInputSideEffect
 import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetItem
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionIds
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
@@ -13,6 +14,7 @@ import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -134,11 +136,14 @@ class FinanceViewModel @Inject constructor(
             }
     }
 
-    fun deleteAccountBookDayTransaction(accountBookAssetItem: AccountBookAssetItem) = intent {
+    fun deleteAccountBookDayTransaction(accountBookAssetItemId: Long) = intent {
 
-        deleteAccountBookDayTransactionUseCase(AccountBookTransactionIds(listOf(accountBookAssetItem.id)))
+        deleteAccountBookDayTransactionUseCase(AccountBookTransactionIds(listOf(accountBookAssetItemId)))
             .onSuccess {
-                getAccountBookDayTransaction(accountBookAssetItem.year.toInt(), accountBookAssetItem.month.toInt(), accountBookAssetItem.day.toInt())
+                postSideEffect(
+                    FinanceSideEffect.DismissDeleteAlert
+                )
+
             }
             .onFailure {
 
