@@ -10,7 +10,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -48,7 +47,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -74,8 +72,8 @@ import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.accountBook.input.AccountBookForInputActivity
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionBottomSheet
+import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetItem
 import com.uliga.domain.model.accountBook.asset.month.AccountBookAssetMonth
-import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionResponse
 import org.orbitmvi.orbit.compose.collectAsState
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -243,6 +241,11 @@ fun FinanceScreen(
                         accountBookAssetMonth = state.currentAccountBookAsset,
                         onClick = {
                             selectedDate.value = "${it.date.monthValue}월 ${it.date.dayOfMonth}일"
+                            viewModel.getAccountBookDayTransaction(
+                                it.date.year,
+                                it.date.monthValue,
+                                it.date.dayOfMonth
+                            )
                         }
                     )
                 },
@@ -305,16 +308,16 @@ fun FinanceScreen(
             }
         }
 
-        item {
+        items(state.currentAccountBookAssetDay?.items?.size ?: 0) { idx ->
 
-            TransactionItem()
-            TransactionItem()
-            TransactionItem()
-            TransactionItem()
+            val currentAccountBookAssetDay =
+                state.currentAccountBookAssetDay?.items?.get(idx) ?: return@items
 
-            Spacer(
-                modifier = Modifier.height(16.dp)
-            )
+            TransactionItem(currentAccountBookAssetDay)
+
+//            Spacer(
+//                modifier = Modifier.height(16.dp)
+//            )
         }
 
     }
@@ -366,11 +369,14 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
 }
 
 @Composable
-fun Day(day: CalendarDay, accountBookAssetMonth: AccountBookAssetMonth? ,onClick: (CalendarDay) -> Unit) {
+fun Day(
+    day: CalendarDay,
+    accountBookAssetMonth: AccountBookAssetMonth?,
+    onClick: (CalendarDay) -> Unit
+) {
 
     val income = accountBookAssetMonth?.incomes?.filter { it.day.toInt() == day.date.dayOfMonth }
     val record = accountBookAssetMonth?.records?.filter { it.day.toInt() == day.date.dayOfMonth }
-    Log.d("income", income.toString())
 
     Column(
         modifier = Modifier
@@ -388,13 +394,13 @@ fun Day(day: CalendarDay, accountBookAssetMonth: AccountBookAssetMonth? ,onClick
         )
 
         Text(
-            text = if(income.isNullOrEmpty()) "" else "+${income[0].value}",
+            text = if (income.isNullOrEmpty()) "" else "+${income[0].value}",
             color = Color.Green,
             fontSize = 8.sp
         )
 
         Text(
-            text = if(record.isNullOrEmpty()) "" else "-${record[0].value}",
+            text = if (record.isNullOrEmpty()) "" else "-${record[0].value}",
             color = Color.Red,
             fontSize = 8.sp
         )
@@ -403,7 +409,9 @@ fun Day(day: CalendarDay, accountBookAssetMonth: AccountBookAssetMonth? ,onClick
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun TransactionItem() {
+fun TransactionItem(
+    currentAccountBookAssetDay: AccountBookAssetItem
+) {
     Spacer(
         modifier = Modifier.height(8.dp)
     )
@@ -468,7 +476,7 @@ fun TransactionItem() {
             )
 
             Text(
-                text = "지출",
+                text = if(currentAccountBookAssetDay.type == "INCOME") "수입" else "지출",
                 color = LightBlue,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.SemiBold,
@@ -483,7 +491,7 @@ fun TransactionItem() {
             modifier = Modifier.weight(3f)
         ) {
             Text(
-                text = "식비 / sdf",
+                text = "${currentAccountBookAssetDay.category} / ${currentAccountBookAssetDay.account}",
                 color = Grey700,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.SemiBold,
@@ -493,7 +501,7 @@ fun TransactionItem() {
             )
 
             Text(
-                text = "1,000원 / 현금 / by. 안세훈",
+                text = "${currentAccountBookAssetDay.value}원 / ${currentAccountBookAssetDay.payment} / by. ${currentAccountBookAssetDay.creator}",
                 color = CustomGray9B9B9B,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.SemiBold,
@@ -503,7 +511,7 @@ fun TransactionItem() {
             )
 
             Text(
-                text = "메모메모메모메모메모메모메모",
+                text = currentAccountBookAssetDay.memo,
                 color = LightBlue,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.SemiBold,
