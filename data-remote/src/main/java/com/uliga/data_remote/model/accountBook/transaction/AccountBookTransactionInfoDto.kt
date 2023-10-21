@@ -1,10 +1,10 @@
-package com.uliga.data.model.accountBook.transaction
+package com.uliga.data_remote.model.accountBook.transaction
 
-import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRecordInfo
+import com.uliga.data.model.accountBook.transaction.AccountBookTransactionInfoData
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AccountBookTransactionRecordInfoData(
+data class AccountBookTransactionInfoDto(
     val id: Long,
     val value: Long,
     val payment: String,
@@ -18,7 +18,7 @@ data class AccountBookTransactionRecordInfoData(
     val category: String
 )
 
-fun AccountBookTransactionRecordInfo.toData() = AccountBookTransactionRecordInfoData(
+fun AccountBookTransactionInfoData.toDto() = AccountBookTransactionInfoDto(
     id = id,
     value = value,
     payment = payment,
@@ -32,7 +32,7 @@ fun AccountBookTransactionRecordInfo.toData() = AccountBookTransactionRecordInfo
     category = category
 )
 
-fun AccountBookTransactionRecordInfoData.toDomain() = AccountBookTransactionRecordInfo(
+fun AccountBookTransactionInfoDto.toData() = AccountBookTransactionInfoData(
     id = id,
     value = value,
     payment = payment,

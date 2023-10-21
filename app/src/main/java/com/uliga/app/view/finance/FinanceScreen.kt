@@ -1,9 +1,12 @@
 package com.uliga.app.view.finance
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -111,7 +114,7 @@ fun FinanceScreen(
     )
 
     var selectedDate =
-        remember { mutableStateOf("${currentDate.monthValue}월 ${currentDate.dayOfMonth}일") }
+        remember { mutableStateOf("${currentDate.year}년 ${currentDate.monthValue}월 ${currentDate.dayOfMonth}일") }
 
     LaunchedEffect(key1 = calendarState.firstVisibleMonth) {
         viewModel.getAccountBookMonthTransaction(
@@ -153,13 +156,30 @@ fun FinanceScreen(
     var showDialog by remember {
         mutableStateOf(false)
     }
+    
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult(), onResult = {
+        when(it.resultCode) {
+            Activity.RESULT_OK -> {
+                viewModel.getAccountBookMonthTransaction(
+                    calendarState.firstVisibleMonth.yearMonth.year,
+                    calendarState.firstVisibleMonth.yearMonth.monthValue
+                )
+                viewModel.getAccountBookDayTransaction(
+                    calendarState.firstVisibleMonth.yearMonth.year,
+                    calendarState.firstVisibleMonth.yearMonth.monthValue,
+                    selectedDate.value.split("월 ")[1].replace("일", "").toInt()
+                )
+
+            }
+        }
+    })
 
     if (showDialog) {
         showSettingDropDownMenu(
             showDialog = showDialog,
         )
     }
-
+    
     val accountBookForInputSheet = androidx.compose.material3.rememberModalBottomSheetState()
 //    var isAccountBookForInputSheetOpen by rememberSaveable {
 //        mutableStateOf(false)
@@ -281,8 +301,8 @@ fun FinanceScreen(
                         .wrapContentSize()
                         .clickable {
                             val intent = Intent(context, AccountBookForInputActivity::class.java)
-                            context.startActivity(intent)
-
+                            intent.putExtra("selectedDate", selectedDate.value)
+                            launcher.launch(intent)
                         },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

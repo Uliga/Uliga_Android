@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 
 @Parcelize
-data class AccountBookTransactionRecordInfo(
+data class AccountBookTransactionInfo(
     val id: Long,
     val value: Long,
     val payment: String,
