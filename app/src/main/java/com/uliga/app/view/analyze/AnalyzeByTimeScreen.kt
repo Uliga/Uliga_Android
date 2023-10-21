@@ -28,7 +28,7 @@ import com.uliga.chart.bar.VerticalBarChart
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun AnalyzeByTimeScreen() {
+fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
 
     LazyColumn(
         modifier = Modifier

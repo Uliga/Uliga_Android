@@ -55,7 +55,10 @@ fun AnalyzeScreen(
         modifier = Modifier.background(Color.White)
     ) {
         AnalyzeTabs(pagerState = pagerState)
-        AnalyzeTabsContent(pagerState = pagerState)
+        AnalyzeTabsContent(
+            pagerState = pagerState,
+            viewModel = viewModel
+        )
     }
 
 
@@ -159,14 +162,17 @@ fun AnalyzeTabs(pagerState: PagerState) {
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AnalyzeTabsContent(pagerState: PagerState) {
+fun AnalyzeTabsContent(
+    pagerState: PagerState,
+    viewModel: AnalyzeViewModel
+) {
     HorizontalPager(
         state = pagerState,
         pageCount = analyzeScreenList.size
     ) { page ->
         when (page) {
-            0 -> AnalyzeByTimeScreen()
-            1 -> AnalyzeByCategoryScreen()
+            0 -> AnalyzeByTimeScreen(viewModel)
+            1 -> AnalyzeByCategoryScreen(viewModel)
         }
     }
 }
