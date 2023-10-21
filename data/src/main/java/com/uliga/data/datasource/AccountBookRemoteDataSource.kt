@@ -16,6 +16,7 @@ import com.uliga.data.model.accountBook.budget.AccountBookBudgetResponseData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequestData
 import com.uliga.data.model.accountBook.financeSchedule.AccountBookFinanceScheduleResponseData
 import com.uliga.data.model.accountBook.invitation.AccountBookInvitationReplyData
+import com.uliga.data.model.accountBook.transaction.AccountBookTransactionIdsData
 import com.uliga.data.model.accountBook.transaction.AccountBookTransactionRequestData
 import com.uliga.data.model.accountBook.transaction.AccountBookTransactionResponseData
 
@@ -56,6 +57,10 @@ interface AccountBookRemoteDataSource {
         month: Int,
         day: Int
     ): AccountBookAssetDayData
+
+    suspend fun deleteAccountBookDayTransaction(
+        accountBookTransactionIdsBookIds: AccountBookTransactionIdsData
+    ): String
 
     /**
      * Analyze

@@ -333,7 +333,7 @@ fun FinanceScreen(
             val currentAccountBookAssetDay =
                 state.currentAccountBookAssetDay?.items?.get(idx) ?: return@items
 
-            TransactionItem(currentAccountBookAssetDay)
+            TransactionItem(viewModel, currentAccountBookAssetDay)
 
 //            Spacer(
 //                modifier = Modifier.height(16.dp)
@@ -430,6 +430,7 @@ fun Day(
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun TransactionItem(
+    viewModel: FinanceViewModel,
     currentAccountBookAssetDay: AccountBookAssetItem
 ) {
     Spacer(
@@ -547,7 +548,7 @@ fun TransactionItem(
                 .size(16.dp)
                 .weight(1f)
                 .clickable {
-
+                    viewModel.deleteAccountBookDayTransaction(currentAccountBookAssetDay)
                 },
             painter = painterResource(
                 id = R.drawable.ic_delete

@@ -1,10 +1,13 @@
 package com.uliga.app.view.finance
 
 import androidx.lifecycle.ViewModel
+import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetItem
+import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionIds
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
 import com.uliga.domain.usecase.accountbook.GetAccountBookMonthTransactionUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookTransactionUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
+import com.uliga.domain.usecase.accountbook.remote.DeleteAccountBookDayTransactionUseCase
 import com.uliga.domain.usecase.accountbook.remote.GetAccountBookDayTransactionUseCase
 import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +23,8 @@ class FinanceViewModel @Inject constructor(
     private val getAccountBookMonthTransactionUseCase: GetAccountBookMonthTransactionUseCase,
     private val getAccountBookDayTransactionUseCase: GetAccountBookDayTransactionUseCase,
     private val fetchIdUseCase: FetchIdUseCase,
-    private val postAccountBookTransactionUseCase: PostAccountBookTransactionUseCase
+    private val postAccountBookTransactionUseCase: PostAccountBookTransactionUseCase,
+    private val deleteAccountBookDayTransactionUseCase: DeleteAccountBookDayTransactionUseCase
 ) : ContainerHost<FinanceUiState, FinanceSideEffect>, ViewModel() {
 
     override val container = container<FinanceUiState, FinanceSideEffect>(FinanceUiState.empty())
@@ -124,6 +128,17 @@ class FinanceViewModel @Inject constructor(
                         currentAccountBookAsset = it
                     )
                 }
+            }
+            .onFailure {
+
+            }
+    }
+
+    fun deleteAccountBookDayTransaction(accountBookAssetItem: AccountBookAssetItem) = intent {
+
+        deleteAccountBookDayTransactionUseCase(AccountBookTransactionIds(listOf(accountBookAssetItem.id)))
+            .onSuccess {
+                getAccountBookDayTransaction(accountBookAssetItem.year.toInt(), accountBookAssetItem.month.toInt(), accountBookAssetItem.day.toInt())
             }
             .onFailure {
 

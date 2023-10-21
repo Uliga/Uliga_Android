@@ -16,6 +16,7 @@ import com.uliga.domain.model.accountBook.budget.AccountBookBudgetResponse
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleResponse
 import com.uliga.domain.model.accountBook.invitation.AccountBookInvitationReply
+import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionIds
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionResponse
 
@@ -89,6 +90,10 @@ interface AccountBookRepository {
     suspend fun getAccountBookFixedRecordByMonth(
         id: Long
     ): Result<AccountBookAnalyzeFixedRecordByMonth>
+
+    suspend fun deleteAccountBookDayTransaction(
+        accountBookTransactionIdsBookIds: AccountBookTransactionIds
+    ): Result<String>
 
     /**
      * Local
