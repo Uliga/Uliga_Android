@@ -97,7 +97,11 @@ class AnalyzeViewModel @Inject constructor(
             month,
             startDay
         ).onSuccess {
-
+            reduce {
+                state.copy(
+                    accountBookAnalyzeRecordByWeek = it
+                )
+            }
         }.onFailure {
 
 

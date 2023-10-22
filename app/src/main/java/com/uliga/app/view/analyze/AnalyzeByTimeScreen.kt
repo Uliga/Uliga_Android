@@ -1,7 +1,6 @@
 package com.uliga.app.view.analyze
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +25,7 @@ import com.uliga.app.ui.theme.pretendard
 import com.uliga.chart.bar.HorizontalBarChart
 import com.uliga.chart.bar.VerticalBarChart
 import com.uliga.domain.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompare
+import com.uliga.domain.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeek
 import org.orbitmvi.orbit.compose.collectAsState
 import java.lang.Math.abs
 import java.time.LocalDate
@@ -41,7 +41,7 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
     val currentDate = LocalDate.now()
 
     var differenceValueWithLastMonth = 0L
-    if(compareList != null) {
+    if (compareList != null) {
         differenceValueWithLastMonth = compareList.compare[2].value - compareList.compare[1].value
     }
 
@@ -61,7 +61,7 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
                         top = 8.dp
                     ),
                 text = "${currentDate.monthValue}월 분석",
-                color =Grey700,
+                color = Grey700,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
@@ -75,7 +75,7 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
                         end = 32.dp,
                         top = 8.dp
                     ),
-                text = "이번 달에는 지난 달보다 ${abs(differenceValueWithLastMonth)}원 ${if(differenceValueWithLastMonth >= 0) "더" else "덜"} 쓰셨어요!",
+                text = "이번 달에는 지난 달보다 ${abs(differenceValueWithLastMonth)}원 ${if (differenceValueWithLastMonth >= 0) "더" else "덜"} 쓰셨어요!",
                 color = Grey500,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.Light,
@@ -97,7 +97,7 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
                         end = 32.dp,
                         top = 8.dp
                     ),
-                text = "주간별 분석",
+                text = "${currentDate.monthValue}월 주간별 분석",
                 color = Grey700,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.Bold,
@@ -112,40 +112,20 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
                         end = 32.dp,
                         top = 8.dp
                     ),
-                text = "이번 달에는 살장힌 예산보다 ㅇ러ㅐㄴ어래너애런앨!",
+                text = "이번 달 지출을 주간별로 확인해보세요!",
                 color = Grey500,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.Light,
                 fontSize = 15.sp,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 2,
-
-                )
-
-
-            VerticalBarChartScreenContent()
-        }
-
-
-
-        item {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 32.dp,
-                        end = 32.dp,
-                        top = 8.dp
-                    ),
-                text = "4월 고정 지출",
-                color = Grey700,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
+                maxLines = 2
             )
 
-
+            VerticalBarChartScreenContent(
+                currentDate.monthValue,
+                state.accountBookAnalyzeRecordByWeek)
         }
+
     }
 }
 
@@ -153,16 +133,16 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
 private fun HorizontalBarChartScreenContent(
     accountBookAnalyzeByMonthForCompare: AccountBookAnalyzeByMonthForCompare?
 ) {
-    if(accountBookAnalyzeByMonthForCompare == null) return
+    if (accountBookAnalyzeByMonthForCompare == null) return
 
     val compareList = accountBookAnalyzeByMonthForCompare.compare
-    if(compareList.size != 3) return
+    if (compareList.size != 3) return
 
     val barChartDataModel = HorizontalBarChartDataModel(
         recordCurrentMonthLabel = "${compareList[0].month}월 지출",
         recordCurrentMonthValue = compareList[0].value,
         recordBeforeOneMonthLabel = "${compareList[1].month}월 지출",
-        recordBeforeOneMonthValue =  compareList[1].value,
+        recordBeforeOneMonthValue = compareList[1].value,
         recordBeforeTwoMonthLabel = "${compareList[2].month}월 지출",
         recordBeforeTwoMonthValue = compareList[2].value
     )
@@ -178,8 +158,17 @@ private fun HorizontalBarChartScreenContent(
 }
 
 @Composable
-private fun VerticalBarChartScreenContent() {
-    val barChartDataModel = VerticalBarChartDataModel()
+private fun VerticalBarChartScreenContent(
+    currentMonth: Int,
+    accountBookAnalyzeRecordByWeek: AccountBookAnalyzeRecordByWeek?
+) {
+
+    if(accountBookAnalyzeRecordByWeek == null) return
+
+    val barChartDataModel = VerticalBarChartDataModel(
+        currentMonth,
+        accountBookAnalyzeRecordByWeek.weeklySums
+    )
 
     Column(
         modifier = Modifier.padding(
@@ -208,7 +197,8 @@ private fun HorizonBarChartRow(barChartDataModel: HorizontalBarChartDataModel) {
 }
 
 @Composable
-private fun VerticalBarChartRow(barChartDataModel: VerticalBarChartDataModel) {
+private fun VerticalBarChartRow(
+    barChartDataModel: VerticalBarChartDataModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
