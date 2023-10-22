@@ -33,6 +33,7 @@ import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.main.MainUiState
+import org.orbitmvi.orbit.compose.collectAsState
 
 @SuppressLint("NewApi")
 @Composable
@@ -42,7 +43,15 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
 
+    viewModel.initializeBaseInfo(
+        id = mainUiState.id,
+        currentAccountInfo = mainUiState.currentAccountInfo,
+        member = mainUiState.member
+    )
+
     val context = LocalContext.current
+
+    val state = viewModel.collectAsState().value
 
     LazyColumn(
         modifier = Modifier
@@ -78,7 +87,7 @@ fun ProfileScreen(
                         modifier = Modifier.padding(
                             end = 12.dp
                         ),
-                        text = "안세훈님",
+                        text = state.member?.memberInfo?.userName ?: "",
                         color = Black,
                         fontFamily = pretendard,
                         fontWeight = FontWeight.Medium,
@@ -89,7 +98,7 @@ fun ProfileScreen(
                         modifier = Modifier.padding(
                             end = 12.dp
                         ),
-                        text = "ansehoon1999@gmail.com",
+                        text = state.member?.memberInfo?.email ?: "",
                         color = Black,
                         fontFamily = pretendard,
                         fontWeight = FontWeight.Medium,
