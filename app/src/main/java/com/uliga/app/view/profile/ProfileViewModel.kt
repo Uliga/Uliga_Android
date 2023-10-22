@@ -2,6 +2,7 @@ package com.uliga.app.view.profile
 
 import androidx.lifecycle.ViewModel
 import com.uliga.domain.model.member.Member
+import com.uliga.domain.usecase.member.DeleteMemberUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -11,6 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
+    private val deleteMemberUseCase: DeleteMemberUseCase
 ) : ContainerHost<ProfileUiState, ProfileSideEffect>, ViewModel() {
     override val container = container<ProfileUiState, ProfileSideEffect>(ProfileUiState.empty())
 
@@ -28,4 +30,15 @@ class ProfileViewModel @Inject constructor(
                 )
             }
         }
+
+    fun deleteMember() = intent {
+        deleteMemberUseCase()
+            .onSuccess {
+
+            }
+            .onFailure {
+
+            }
+    }
+
 }
