@@ -201,7 +201,7 @@ private fun DrawScope.drawLine(
                     }
                 )
 
-                canvas.nativeCanvas.drawText("최대\n 4500원", calculateNewPointLocation(
+                canvas.nativeCanvas.drawText(if(point == maxPoint) "최대 ${maxPoint.value.toInt()}원" else "최소 ${minPoint.value.toInt()}원", calculateNewPointLocation(
                     drawableArea = chartDrawableArea,
                     lineChartData = lineChartData,
                     point = point,

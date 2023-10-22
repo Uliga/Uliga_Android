@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class AccountBookAnalyzeRecordByDayData(
     val records: List<AccountBookAnalyzeRecordDailyData>,
     val sum: Long,
-    val diff: Long
+    val diff: Long?
 )
 
 fun AccountBookAnalyzeRecordByDay.toData() = AccountBookAnalyzeRecordByDayData(

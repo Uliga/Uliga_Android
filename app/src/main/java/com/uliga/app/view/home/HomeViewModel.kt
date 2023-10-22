@@ -16,6 +16,7 @@ import com.uliga.domain.usecase.accountbook.PostAccountBookBudgetUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookInvitationReplyUseCase
 import com.uliga.domain.usecase.accountbook.PostFinanceScheduleToAccountBookUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
+import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookRecordByDayUseCase
 import com.uliga.domain.usecase.financeSchedule.DeleteFinanceScheduleDetailUseCase
 import com.uliga.domain.usecase.financeSchedule.GetFinanceScheduleUseCase
 import com.uliga.domain.usecase.financeSchedule.PatchFinanceScheduleUseCase
@@ -44,7 +45,8 @@ class HomeViewModel @Inject constructor(
     private val patchAccountBookBudgetUseCase: PatchAccountBookBudgetUseCase,
     private val getAccountBookMonthAssetUseCase: GetAccountBookMonthAssetUseCase,
     private val getMemberUseCase: GetMemberUseCase,
-    private val postAccountBookInvitationReplyUseCase: PostAccountBookInvitationReplyUseCase
+    private val postAccountBookInvitationReplyUseCase: PostAccountBookInvitationReplyUseCase,
+    private val getAccountBOokAnalyzeRecordByDayUseCase: GetAccountBookRecordByDayUseCase
 ) : ContainerHost<HomeUiState, HomeSideEffect>, ViewModel() {
 
     override val container = container<HomeUiState, HomeSideEffect>(HomeUiState.empty())
@@ -62,6 +64,9 @@ class HomeViewModel @Inject constructor(
         getAccountBookMonthAsset(false, beforeDate.year, beforeDate.monthValue)
 
         getMember()
+
+        getAccountBookAnalyzeRecordByDay(currentDate.year, currentDate.monthValue)
+
     }
 
     fun getMember() = intent {
@@ -71,6 +76,22 @@ class HomeViewModel @Inject constructor(
                 reduce {
                     state.copy(
                         member = it
+                    )
+                }
+            }
+            .onFailure {
+
+            }
+    }
+
+    fun getAccountBookAnalyzeRecordByDay(year: Int, month: Int) = intent {
+        val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
+
+        getAccountBOokAnalyzeRecordByDayUseCase(currentAccountBookInfo.second, year, month)
+            .onSuccess {
+                reduce {
+                    state.copy(
+                        accountBookAnalyzeRecordByDay = it
                     )
                 }
             }
