@@ -9,6 +9,6 @@ import java.io.Serializable
 data class AccountBookAnalyzeRecordByDay(
     val records: List<AccountBookAnalyzeRecordDaily>,
     val sum: Long,
-    val diff: Long
+    val diff: Long?
 ) : Parcelable, Serializable
 

@@ -58,6 +58,7 @@ import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
 import com.uliga.app.view.schedule.ScheduleBottomSheet
 import com.uliga.chart.bar.VerticalBarChart
 import com.uliga.chart.line.LineChart
+import com.uliga.domain.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDay
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
 import org.orbitmvi.orbit.compose.collectAsState
 import java.time.LocalDate
@@ -745,7 +746,7 @@ fun HomeScreen(
                 fontSize = 28.sp
             )
 
-            LineChartScreenContent()
+            LineChartScreenContent(state.accountBookAnalyzeRecordByDay)
         }
 
     }
@@ -764,8 +765,12 @@ fun HomeScreen(
 }
 
 @Composable
-fun LineChartScreenContent() {
-    val lineChartDataModel = LineChartDataModel()
+fun LineChartScreenContent(
+    accountBookAnalyzeRecordByDay: AccountBookAnalyzeRecordByDay?
+) {
+    if(accountBookAnalyzeRecordByDay == null) return
+
+    val lineChartDataModel = LineChartDataModel(accountBookAnalyzeRecordByDay.records)
 
     Column(
         modifier = Modifier.padding(
