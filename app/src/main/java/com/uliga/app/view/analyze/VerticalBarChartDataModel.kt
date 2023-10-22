@@ -50,44 +50,7 @@ class VerticalBarChartDataModel {
         )
     )
 
-    val bars: List<Bar>
-        get() = barChartData.bars
-    var labelLocation: VerticalValueDrawer.DrawLocation = VerticalValueDrawer.DrawLocation.Inside
-        set(value) {
-            val color = when (value) {
-                VerticalValueDrawer.DrawLocation.Inside -> White
-                VerticalValueDrawer.DrawLocation.Outside, VerticalValueDrawer.DrawLocation.XAxis -> Black
-            }
 
-            labelDrawer = VerticalValueDrawer(
-                drawLocation = value,
-                labelTextColor = color
-            )
-            field = value
-        }
-
-    fun addBar() {
-        barChartData = barChartData
-            .copy(bars = bars.toMutableList().apply {
-                add(
-                    Bar(
-                        label = "Bar${bars.size + 1}",
-                        value = randomValue(),
-                        color = randomColor()
-                    )
-                )
-            })
-    }
-
-    fun removeBar() {
-        // Remove last.
-        barChartData = barChartData.copy(bars = bars.toMutableList().apply {
-            val lastBar = bars[bars.size - 1]
-            colors.add(lastBar.color)
-
-            remove(lastBar)
-        })
-    }
 
     private fun randomValue(): Float = (100 * Math.random() + 25).toFloat()
 

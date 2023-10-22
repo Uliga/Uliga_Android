@@ -24,11 +24,15 @@ import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.chart.bar.HorizontalBarChart
 import com.uliga.chart.bar.VerticalBarChart
+import com.uliga.domain.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompare
+import org.orbitmvi.orbit.compose.collectAsState
 
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
+
+    val state = viewModel.collectAsState().value
 
     LazyColumn(
         modifier = Modifier
@@ -70,7 +74,7 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
 
                 )
 
-            HorizontalBarChartScreenContent()
+            HorizontalBarChartScreenContent(state.accountBookAnalyzeByMonthForCompare)
         }
 
         item {
@@ -135,8 +139,22 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
 }
 
 @Composable
-private fun HorizontalBarChartScreenContent() {
-    val barChartDataModel = HorizontalBarChartDataModel()
+private fun HorizontalBarChartScreenContent(
+    accountBookAnalyzeByMonthForCompare: AccountBookAnalyzeByMonthForCompare?
+) {
+    if(accountBookAnalyzeByMonthForCompare == null) return
+
+    val compareList = accountBookAnalyzeByMonthForCompare.compare
+    if(compareList.size != 3) return
+
+    val barChartDataModel = HorizontalBarChartDataModel(
+        recordCurrentMonthLabel = "${compareList[0].month}월 지출",
+        recordCurrentMonthValue = compareList[0].value,
+        recordBeforeOneMonthLabel = "${compareList[1].month}월 지출",
+        recordBeforeOneMonthValue =  compareList[1].value,
+        recordBeforeTwoMonthLabel = "${compareList[2].month}월 지출",
+        recordBeforeTwoMonthValue = compareList[2].value
+    )
 
     Column(
         modifier = Modifier.padding(
