@@ -1,25 +1,33 @@
 package com.uliga.app.view.analyze
 
 import android.os.Build
+import android.widget.Space
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.White
+import com.uliga.app.ui.theme.pieChartColor
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.chart.pie.PieChart
 import com.uliga.chart.pie.renderer.PieSliceDrawer
@@ -59,6 +67,41 @@ fun AnalyzeByCategoryScreen(viewModel: AnalyzeViewModel) {
 
         item {
             PieChartScreenContent(state.accountBookAnalyzeRecordByMonthForCategory?.categories)
+        }
+
+        items(state.accountBookAnalyzeRecordByMonthForCategory?.categories?.size ?: 0) {idx ->
+
+            if(state.accountBookAnalyzeRecordByMonthForCategory?.categories == null) return@items
+
+            Row {
+                Box(
+                    modifier = Modifier.size(20.dp)
+                        .background(
+                            color = pieChartColor(state.accountBookAnalyzeRecordByMonthForCategory.categories[idx].name),
+                            shape = RoundedCornerShape(4.dp)
+                        )
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Text(
+                    text = state.accountBookAnalyzeRecordByMonthForCategory.categories[idx].name,
+                    color = Grey700,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 18.sp
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = "${state.accountBookAnalyzeRecordByMonthForCategory.categories[idx].value}원",
+                    color = Grey700,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 18.sp
+                )
+            }
         }
     }
 }

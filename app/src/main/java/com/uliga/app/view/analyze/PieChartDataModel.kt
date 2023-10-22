@@ -3,9 +3,7 @@ package com.uliga.app.view.analyze
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-import com.uliga.app.ui.theme.Primary
-import com.uliga.app.ui.theme.Secondary
+import com.uliga.app.ui.theme.pieChartColor
 import com.uliga.chart.pie.PieChartData
 import com.uliga.domain.model.accountBook.analyze.byMonth.category.AccountBookAnalyzeRecordByMonthForCategoryElement
 
@@ -33,19 +31,4 @@ class PieChartDataModel(
 
         pieChartData = PieChartData(list)
     }
-
-    fun pieChartColor(categoryName: String): Color {
-        when(categoryName) {
-            "\uD83C\uDF7D️ 식비" -> {
-                return Primary
-            }
-            "\uD83C\uDF59 편의점,마트,잡화" -> {
-                return Secondary
-            }
-            else -> {
-                return Color.Black
-            }
-        }
-    }
-
 }
