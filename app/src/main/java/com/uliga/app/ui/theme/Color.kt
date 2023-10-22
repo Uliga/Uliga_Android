@@ -27,3 +27,31 @@ val Success200 = Color(0xFF1BBF83)
 
 val Danger100 = Color(0xFFFF8E89)
 val Danger200 = Color(0xFFF24147)
+
+fun pieChartColor(categoryName: String): Color {
+    when (categoryName) {
+        "\uD83C\uDF7D️ 식비" -> {
+            return Primary
+        }
+
+        "\uD83C\uDF59 편의점,마트,잡화" -> {
+            return Secondary
+        }
+
+        "\uD83D\uDC55 쇼핑" -> {
+            return Success100
+        }
+
+        "\uD83C\uDFE0 생활" -> {
+            return Danger100
+        }
+
+        "☕ 카페 · 간식" -> {
+            return Grey700
+        }
+
+        else -> {
+            return Grey200
+        }
+    }
+}
