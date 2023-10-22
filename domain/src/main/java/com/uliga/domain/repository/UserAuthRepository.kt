@@ -17,6 +17,8 @@ interface UserAuthRepository {
 
     suspend fun postNormalLogin(normalLoginRequest: NormalLoginRequest): Result<LoginResponse>
 
+    suspend fun getLogoutRedirect(): Result<String>
+
     /**
      * Local
      */

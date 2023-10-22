@@ -12,8 +12,8 @@ import com.uliga.domain.repository.UserAuthRepository
 import javax.inject.Inject
 
 class UserAuthRepositoryImpl @Inject constructor(
-    private val userAuthRemoteDataSource: UserAuthRemoteDataSource,
-    private val userAuthLocalDataSource: UserAuthLocalDataSource
+    private val remote: UserAuthRemoteDataSource,
+    private val local: UserAuthLocalDataSource
 ) : UserAuthRepository {
 
 
@@ -26,19 +26,25 @@ class UserAuthRepositoryImpl @Inject constructor(
         data: String
     ): Result<UserAuthDataExisted> {
         return runCatching {
-            userAuthRemoteDataSource.getUserAuthDataExisted(type, data).toDomain()
+            remote.getUserAuthDataExisted(type, data).toDomain()
         }
     }
 
     override suspend fun postSocialLogin(socialLoginRequest: SocialLoginRequest): Result<LoginResponse> {
         return runCatching {
-            userAuthRemoteDataSource.postSocialLogin(socialLoginRequest.toData()).toDomain()
+            remote.postSocialLogin(socialLoginRequest.toData()).toDomain()
         }
     }
 
     override suspend fun postNormalLogin(normalLoginRequest: NormalLoginRequest): Result<LoginResponse> {
         return runCatching {
-            userAuthRemoteDataSource.postNormalLogin(normalLoginRequest.toData()).toDomain()
+            remote.postNormalLogin(normalLoginRequest.toData()).toDomain()
+        }
+    }
+
+    override suspend fun getLogoutRedirect(): Result<String> {
+        return runCatching {
+            remote.getLogoutRedirect()
         }
     }
 
@@ -48,25 +54,25 @@ class UserAuthRepositoryImpl @Inject constructor(
 
     override suspend fun updateToken(accessToken: String): Result<Unit> {
         return runCatching {
-            userAuthLocalDataSource.updateToken(accessToken)
+            local.updateToken(accessToken)
         }
     }
 
     override suspend fun getToken(): Result<String> {
         return runCatching {
-            userAuthLocalDataSource.getToken()
+            local.getToken()
         }
     }
 
     override suspend fun updateId(id: Long): Result<Unit> {
         return runCatching {
-            userAuthLocalDataSource.updateId(id)
+            local.updateId(id)
         }
     }
 
     override suspend fun getId(): Result<Long> {
         return runCatching {
-            userAuthLocalDataSource.getId()
+            local.getId()
         }
     }
 }

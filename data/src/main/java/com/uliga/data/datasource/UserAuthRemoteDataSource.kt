@@ -13,4 +13,6 @@ interface UserAuthRemoteDataSource {
 
     suspend fun postNormalLogin(normalLoginRequestData: NormalLoginRequestData): LoginResponseData
 
+    suspend fun getLogoutRedirect(): String
+
 }
