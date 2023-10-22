@@ -7,5 +7,5 @@ import java.io.Serializable
 @Parcelize
 data class AccountBookAnalyzeFixedRecordByMonth(
     val schedules: List<AccountBookAnalyzeFixedRecordByMonthElement>,
-    val sum: Long
+    val sum: Long?
 ) : Parcelable, Serializable

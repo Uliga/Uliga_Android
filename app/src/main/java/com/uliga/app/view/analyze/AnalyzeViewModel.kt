@@ -2,6 +2,7 @@ package com.uliga.app.view.analyze
 
 import androidx.lifecycle.ViewModel
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
+import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookFixedRecordByMonthUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookRecordByMonthForCategoryUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookRecordByMonthForCompareUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookRecordByWeekUseCase
@@ -20,7 +21,8 @@ class AnalyzeViewModel @Inject constructor(
     private val fetchCurrentAccountBookInfoUseCase: FetchCurrentAccountBookInfoUseCase,
     private val getAccountBookRecordByMonthForCategoryUseCase: GetAccountBookRecordByMonthForCategoryUseCase,
     private val getAccountBookRecordByMonthForCompareUseCase: GetAccountBookRecordByMonthForCompareUseCase,
-    private val getAccountBookRecordByWeekUseCase: GetAccountBookRecordByWeekUseCase
+    private val getAccountBookRecordByWeekUseCase: GetAccountBookRecordByWeekUseCase,
+    private val getAccountBookFixedRecordByMonthUseCase: GetAccountBookFixedRecordByMonthUseCase
 ) : ContainerHost<AnalyzeUiState, AnalyzeSideEffect>, ViewModel() {
 
     override val container = container<AnalyzeUiState, AnalyzeSideEffect>(AnalyzeUiState.empty())
@@ -36,6 +38,7 @@ class AnalyzeViewModel @Inject constructor(
         getAccountBookRecordByWeek(currentYear, currentMonth, 1)
         getAccountBookRecordByMonthForCategory(currentYear, currentMonth)
         getAccountBookRecordByMonthForCompare(currentYear, currentMonth)
+        getAccountBookFixedRecordByMonth()
     }
 
     fun fetchCurrentAccountBookInfo() = intent {
@@ -124,6 +127,22 @@ class AnalyzeViewModel @Inject constructor(
         }.onFailure {
 
         }
+    }
+
+    fun getAccountBookFixedRecordByMonth() = intent {
+        val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
+
+        getAccountBookFixedRecordByMonthUseCase(currentAccountBookInfo.second)
+            .onSuccess {
+                reduce {
+                    state.copy(
+                        accountBookAnalyzeFixedRecordByMonth = it
+                    )
+                }
+            }
+            .onFailure {
+
+            }
     }
 
 }

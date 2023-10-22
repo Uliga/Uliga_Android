@@ -75,7 +75,8 @@ fun AnalyzeByCategoryScreen(viewModel: AnalyzeViewModel) {
 
             Row {
                 Box(
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier
+                        .size(20.dp)
                         .background(
                             color = pieChartColor(state.accountBookAnalyzeRecordByMonthForCategory.categories[idx].name),
                             shape = RoundedCornerShape(4.dp)
@@ -103,6 +104,61 @@ fun AnalyzeByCategoryScreen(viewModel: AnalyzeViewModel) {
                 )
             }
         }
+
+        item {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 32.dp,
+                        end = 32.dp,
+                        top = 8.dp
+                    ),
+                text = "나의 고정 지출",
+                color = Grey700,
+                fontFamily = pretendard,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        }
+
+        items(state.accountBookAnalyzeFixedRecordByMonth?.schedules?.size ?: 0) { idx ->
+
+            val fixedRecordList = state.accountBookAnalyzeFixedRecordByMonth?.schedules ?: return@items
+
+            Row {
+                Text(
+                    text = "${fixedRecordList[idx].day}일",
+                    color = Grey700,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 18.sp
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = fixedRecordList[idx].name,
+                    color = Grey700,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 18.sp
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = "${fixedRecordList[idx].value}원",
+                    color = Grey700,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 18.sp
+                )
+            }
+
+        }
+
+
     }
 }
 
