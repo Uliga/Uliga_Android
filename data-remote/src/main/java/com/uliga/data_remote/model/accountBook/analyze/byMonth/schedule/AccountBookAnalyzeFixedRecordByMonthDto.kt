@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AccountBookAnalyzeFixedRecordByMonthDto(
     val schedules: List<AccountBookAnalyzeFixedRecordByMonthElementDto>,
-    val sum: Long
+    val sum: Long?
 )
 
 fun AccountBookAnalyzeFixedRecordByMonthData.toDto() = AccountBookAnalyzeFixedRecordByMonthDto(
