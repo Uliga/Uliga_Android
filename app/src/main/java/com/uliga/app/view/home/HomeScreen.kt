@@ -159,7 +159,7 @@ fun HomeScreen(
     var recordValue = state.currentMonthAccountBookAsset?.record?.value?.toFloat()
     if(recordValue == null) recordValue = 0f
     var budgetValue = state.currentMonthAccountBookAsset?.budget?.value?.toFloat()
-    if(budgetValue == null) budgetValue = 1f
+    if(budgetValue == null || budgetValue == 0f) budgetValue = 1f
 
     val animationDuration: Int = 1000
     val animationDelay: Int = 0

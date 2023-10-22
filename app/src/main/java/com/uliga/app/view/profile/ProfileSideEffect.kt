@@ -6,6 +6,10 @@ sealed class ProfileSideEffect {
 
     object DismissLogoutAlert: ProfileSideEffect()
 
+    object Finish: ProfileSideEffect()
+
+    object MoveToAuthActivity: ProfileSideEffect()
+
     data class ToastMessage(val toastMessage: String) : ProfileSideEffect()
 
 }

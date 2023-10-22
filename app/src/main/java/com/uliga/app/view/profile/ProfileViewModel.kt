@@ -40,6 +40,12 @@ class ProfileViewModel @Inject constructor(
                 postSideEffect(
                     ProfileSideEffect.DismissSignOutAlert
                 )
+                postSideEffect(
+                    ProfileSideEffect.MoveToAuthActivity
+                )
+                postSideEffect(
+                    ProfileSideEffect.Finish
+                )
             }
             .onFailure {
 
@@ -50,7 +56,13 @@ class ProfileViewModel @Inject constructor(
         getLogoutRedirectUseCase()
             .onSuccess {
                 postSideEffect(
-                    ProfileSideEffect.DismissLogoutAlert
+                    ProfileSideEffect.DismissSignOutAlert
+                )
+                postSideEffect(
+                    ProfileSideEffect.MoveToAuthActivity
+                )
+                postSideEffect(
+                    ProfileSideEffect.Finish
                 )
             }
             .onFailure {
