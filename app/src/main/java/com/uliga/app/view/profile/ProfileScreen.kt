@@ -1,6 +1,7 @@
 package com.uliga.app.view.profile
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,6 +38,8 @@ import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.DeleteAlertDialog
+import com.uliga.app.view.auth.AuthActivity
+import com.uliga.app.view.main.MainActivity
 import com.uliga.app.view.main.MainUiState
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -77,6 +80,13 @@ fun ProfileScreen(
             }
             ProfileSideEffect.ToastMessage("") -> {
 
+            }
+            ProfileSideEffect.MoveToAuthActivity -> {
+                val intent = Intent(context, AuthActivity::class.java)
+                context.startActivity(intent)
+            }
+            ProfileSideEffect.Finish -> {
+                (context as MainActivity).finish()
             }
             else -> {}
         }
