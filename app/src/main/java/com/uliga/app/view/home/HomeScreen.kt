@@ -1,7 +1,11 @@
 package com.uliga.app.view.home
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,9 +34,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.unit.dp
@@ -42,6 +50,7 @@ import androidx.navigation.NavController
 import com.uliga.app.R
 import com.uliga.app.ui.theme.CustomGrey100
 import com.uliga.app.ui.theme.Danger100
+import com.uliga.app.ui.theme.Grey200
 import com.uliga.app.ui.theme.Grey300
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey600
@@ -146,6 +155,23 @@ fun HomeScreen(
             }
         )
     }
+
+    var recordValue = state.currentMonthAccountBookAsset?.record?.value?.toFloat()
+    if(recordValue == null) recordValue = 0f
+    var budgetValue = state.currentMonthAccountBookAsset?.budget?.value?.toFloat()
+    if(budgetValue == null) budgetValue = 1f
+
+    val animationDuration: Int = 1000
+    val animationDelay: Int = 0
+    val animateNumber = animateFloatAsState(
+        targetValue = recordValue / budgetValue,
+        animationSpec = tween(
+            durationMillis = animationDuration,
+            delayMillis = animationDelay
+        ), label = ""
+    )
+
+    Log.d("target", state.currentMonthAccountBookAsset?.record?.value?.toFloat().toString())
 
     LazyColumn(
         modifier = Modifier
@@ -321,7 +347,36 @@ fun HomeScreen(
                 fontSize = 28.sp
             )
 
-            VerticalBarChartScreenContent()
+            val indicatorHeight = 24.dp
+            val indicatorPadding = 24.dp
+
+            Canvas(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(indicatorHeight)
+                    .padding(start = indicatorPadding, end = indicatorPadding)
+            ) {
+
+                drawLine(
+                    color = Color.LightGray.copy(alpha = 0.3f),
+                    cap = StrokeCap.Round,
+                    strokeWidth = size.height,
+                    start = Offset(x = 0f, y = 0f),
+                    end = Offset(x = size.width, y = 0f)
+                )
+
+                val progress =
+                    (animateNumber.value) * size.width
+
+                drawLine(
+                    color = Danger100,
+                    cap = StrokeCap.Round,
+                    strokeWidth = size.height,
+                    start = Offset(x = 0f, y = 0f),
+                    end = Offset(x = progress, y = 0f)
+                )
+
+            }
 
             Spacer(
                 modifier = Modifier.height(
@@ -793,34 +848,6 @@ fun LineChartRow(lineChartDataModel: LineChartDataModel) {
         LineChart(
             linesChartData = listOf(lineChartDataModel.lineChartData),
             horizontalOffset = lineChartDataModel.horizontalOffset,
-        )
-    }
-}
-
-@Composable
-private fun VerticalBarChartScreenContent() {
-    val barChartDataModel = VerticalOneBarChartDataModel()
-
-    Column(
-        modifier = Modifier.padding(
-            horizontal = 12.dp,
-            vertical = 12.dp
-        )
-    ) {
-        VerticalBarChartRow(barChartDataModel)
-    }
-}
-
-@Composable
-private fun VerticalBarChartRow(barChartDataModel: VerticalOneBarChartDataModel) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-    ) {
-        VerticalBarChart(
-            barChartData = barChartDataModel.barChartData,
-            labelDrawer = barChartDataModel.labelDrawer
         )
     }
 }
