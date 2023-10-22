@@ -277,7 +277,7 @@ fun ProfileScreen(
                         horizontal = 16.dp
                     )
                     .clickable {
-
+                        viewModel.deleteMember()
                     },
                 text = "탈퇴하기",
                 color = Grey700,
