@@ -46,5 +46,11 @@ class UserAuthRemoteDataSourceImpl @Inject constructor(
         }.body<LoginResponseDto>().toData()
     }
 
+    override suspend fun getLogoutRedirect(): String {
+        return client.get {
+            url.path(Path.AUTH, Path.LOGOUT_REDIRECT)
+        }.body()
+    }
+
 
 }

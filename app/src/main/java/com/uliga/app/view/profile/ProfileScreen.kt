@@ -249,7 +249,7 @@ fun ProfileScreen(
                         horizontal = 16.dp
                     )
                     .clickable {
-
+                        viewModel.getLogoutRedirect()
                     },
                 text = "로그아웃",
                 color = Grey700,

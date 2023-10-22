@@ -21,6 +21,8 @@ object Path {
 
     const val REISSUE = "reissue"
 
+    const val LOGOUT_REDIRECT = "logout-redirect"
+
     /**
      * AccountBook
      */
