@@ -1,6 +1,7 @@
 package com.uliga.app.view.analyze
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,8 @@ import com.uliga.chart.bar.HorizontalBarChart
 import com.uliga.chart.bar.VerticalBarChart
 import com.uliga.domain.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompare
 import org.orbitmvi.orbit.compose.collectAsState
+import java.lang.Math.abs
+import java.time.LocalDate
 
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -33,6 +36,14 @@ import org.orbitmvi.orbit.compose.collectAsState
 fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
 
     val state = viewModel.collectAsState().value
+
+    val compareList = state.accountBookAnalyzeByMonthForCompare
+    val currentDate = LocalDate.now()
+
+    var differenceValueWithLastMonth = 0L
+    if(compareList != null) {
+        differenceValueWithLastMonth = compareList.compare[2].value - compareList.compare[1].value
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -49,8 +60,8 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
                         end = 32.dp,
                         top = 8.dp
                     ),
-                text = "4월 분석",
-                color = Grey700,
+                text = "${currentDate.monthValue}월 분석",
+                color =Grey700,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
@@ -64,7 +75,7 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
                         end = 32.dp,
                         top = 8.dp
                     ),
-                text = "이번 달에는 지난 달보다dfsdfsdfsdfsdfsdfsdfsdfsfsdfsdfsd 451,549원 덜 쓰셨어요!",
+                text = "이번 달에는 지난 달보다 ${abs(differenceValueWithLastMonth)}원 ${if(differenceValueWithLastMonth >= 0) "더" else "덜"} 쓰셨어요!",
                 color = Grey500,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.Light,
@@ -74,7 +85,7 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
 
                 )
 
-            HorizontalBarChartScreenContent(state.accountBookAnalyzeByMonthForCompare)
+            HorizontalBarChartScreenContent(compareList)
         }
 
         item {

@@ -51,6 +51,17 @@ class VerticalValueDrawer(
         canvas.nativeCanvas.drawText(label, xCenter, yCenter, paint(drawScope))
     }
 
+    override fun drawLabelWithValue(
+        drawScope: DrawScope,
+        canvas: Canvas,
+        label: String,
+        value: Float,
+        barArea: Rect,
+        xAxisArea: Rect
+    ) {
+        TODO("Not yet implemented")
+    }
+
     private fun labelTextHeight(drawScope: DrawScope) = with(drawScope) {
         _labelTextArea ?: ((3f / 2f) * labelTextSize.toPx())
     }
