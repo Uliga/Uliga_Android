@@ -15,4 +15,13 @@ interface LabelDrawer {
         barArea: Rect,
         xAxisArea: Rect
     )
+
+    fun drawLabelWithValue(
+        drawScope: DrawScope,
+        canvas: Canvas,
+        label: String,
+        value: Float,
+        barArea: Rect,
+        xAxisArea: Rect
+    )
 }

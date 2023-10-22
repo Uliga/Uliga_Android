@@ -103,10 +103,11 @@ fun HorizontalBarChart(
         progress,
         labelDrawer
       ) { barArea, bar ->
-        labelDrawer.drawLabel(
+        labelDrawer.drawLabelWithValue(
           drawScope = this,
           canvas = canvas,
           label = bar.label,
+          value = bar.value,
           barArea = barArea,
           xAxisArea = xAxisArea
         )

@@ -50,9 +50,29 @@ class HorizontalValueDrawer(
             Outside -> (barArea.top) - labelTextSize.toPx() / 2
             XAxis -> barArea.bottom + labelTextHeight(drawScope)
         }
-        Log.d("label", label.toString())
 
         canvas.nativeCanvas.drawText(label, xCenter, yCenter, paint(drawScope))
+        canvas.nativeCanvas.drawText(label, xCenter, yCenter + labelTextHeight(drawScope), paint(drawScope))
+    }
+
+    override fun drawLabelWithValue(
+        drawScope: DrawScope,
+        canvas: Canvas,
+        label: String,
+        value: Float,
+        barArea: Rect,
+        xAxisArea: Rect
+    )  = with(drawScope) {
+        val xCenter = barArea.left + (barArea.width / 2)
+
+        val yCenter = when (drawLocation) {
+            Inside -> (barArea.top + barArea.bottom) / 2
+            Outside -> (barArea.top) - labelTextSize.toPx() / 2
+            XAxis -> barArea.bottom + labelTextHeight(drawScope)
+        }
+
+        canvas.nativeCanvas.drawText("${value.toInt()}원", xCenter, yCenter, paint(drawScope))
+        canvas.nativeCanvas.drawText(label, xCenter, yCenter + labelTextHeight(drawScope), paint(drawScope))
     }
 
     private fun labelTextHeight(drawScope: DrawScope) = with(drawScope) {
