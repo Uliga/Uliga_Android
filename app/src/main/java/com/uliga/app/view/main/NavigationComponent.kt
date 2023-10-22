@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -27,7 +26,8 @@ import com.uliga.app.R
 import com.uliga.app.view.analyze.AnalyzeScreen
 import com.uliga.app.view.finance.FinanceScreen
 import com.uliga.app.view.home.HomeScreen
-import com.uliga.app.view.profile.MyScreen
+import com.uliga.app.view.profile.ProfileScreen
+import org.orbitmvi.orbit.compose.collectAsState
 
 enum class MainRoute(
     @StringRes val title: Int,
@@ -58,6 +58,8 @@ fun MainNavigationComponent(
     navController: NavHostController,
     viewModel: MainViewModel,
 ) {
+
+    val state = viewModel.collectAsState().value
 
     Scaffold(
         bottomBar = {
@@ -105,11 +107,12 @@ fun MainNavigationComponent(
                 AnalyzeScreen(
                     navController = navController,
 
-                )
+                    )
             }
             composable(MainRoute.PROFILE.route) {
-                MyScreen(
+                ProfileScreen(
                     navController = navController,
+                    mainUiState = state
                 )
             }
         }
