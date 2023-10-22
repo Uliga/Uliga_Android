@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.uliga.app.R
 import com.uliga.app.ui.theme.Black
@@ -35,8 +36,10 @@ import com.uliga.app.view.main.MainUiState
 
 @SuppressLint("NewApi")
 @Composable
-fun MyScreen(
+fun ProfileScreen(
     navController: NavController,
+    mainUiState: MainUiState,
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
 
     val context = LocalContext.current
