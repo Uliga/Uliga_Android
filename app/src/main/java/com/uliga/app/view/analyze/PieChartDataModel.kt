@@ -4,74 +4,48 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import com.uliga.app.ui.theme.Primary
+import com.uliga.app.ui.theme.Secondary
 import com.uliga.chart.pie.PieChartData
+import com.uliga.domain.model.accountBook.analyze.byMonth.category.AccountBookAnalyzeRecordByMonthForCategoryElement
 
-class PieChartDataModel {
-  private var colors = mutableListOf(
-    Color(0XFFF44336),
-    Color(0XFFE91E63),
-    Color(0XFF9C27B0),
-    Color(0XFF673AB7),
-    Color(0XFF3F51B5),
-    Color(0XFF03A9F4),
-    Color(0XFF009688),
-    Color(0XFFCDDC39),
-    Color(0XFFFFC107),
-    Color(0XFFFF5722),
-    Color(0XFF795548),
-    Color(0XFF9E9E9E),
-    Color(0XFF607D8B)
-  )
+class PieChartDataModel(
+    accountBookAnalyzeRecordByMonthForCategoryList: List<AccountBookAnalyzeRecordByMonthForCategoryElement>
+) {
 
-  var sliceThickness by mutableStateOf(25f)
-  var pieChartData by mutableStateOf(
-    PieChartData(
-      slices = listOf(
-        PieChartData.Slice(
-          randomLength(),
-          randomColor()
-        ),
-        PieChartData.Slice(
-          randomLength(),
-          randomColor()
-        ),
-        PieChartData.Slice(
-          randomLength(),
-          randomColor()
+    var sliceThickness by mutableStateOf(25f)
+    var pieChartData by mutableStateOf(
+        PieChartData(
+            slices = emptyList()
         )
-      )
     )
-  )
 
-  val slices
-    get() = pieChartData.slices
+    init {
+        val list = mutableListOf<PieChartData.Slice>()
+        accountBookAnalyzeRecordByMonthForCategoryList.forEach {
+            list.add(
+                PieChartData.Slice(
+                    value = it.value.toFloat(),
+                    color = pieChartColor(it.name)
+                )
+            )
+        }
 
-  fun addSlice() {
-    pieChartData = pieChartData.copy(
-      slices = slices.toMutableList().apply {
-        add(PieChartData.Slice(randomLength(), randomColor()))
-      }.toList()
-    )
-  }
+        pieChartData = PieChartData(list)
+    }
 
-  fun removeSlice() {
-    pieChartData = pieChartData.copy(
-      slices = slices.toMutableList().apply {
-        val lastSlice = slices[slices.size - 1]
-        colors.add(lastSlice.color)
+    fun pieChartColor(categoryName: String): Color {
+        when(categoryName) {
+            "\uD83C\uDF7D️ 식비" -> {
+                return Primary
+            }
+            "\uD83C\uDF59 편의점,마트,잡화" -> {
+                return Secondary
+            }
+            else -> {
+                return Color.Black
+            }
+        }
+    }
 
-        remove(lastSlice)
-      }.toList()
-    )
-  }
-
-  private fun randomColor(): Color {
-    val randomIndex = (Math.random() * colors.size).toInt()
-    val color = colors[randomIndex]
-    colors.removeAt(randomIndex)
-
-    return color
-  }
-
-  private fun randomLength(): Float = (20 * Math.random() + 10).toFloat()
 }

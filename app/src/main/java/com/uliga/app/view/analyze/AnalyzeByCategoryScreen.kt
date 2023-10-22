@@ -23,10 +23,16 @@ import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.chart.pie.PieChart
 import com.uliga.chart.pie.renderer.PieSliceDrawer
+import com.uliga.domain.model.accountBook.analyze.byMonth.category.AccountBookAnalyzeRecordByMonthForCategory
+import com.uliga.domain.model.accountBook.analyze.byMonth.category.AccountBookAnalyzeRecordByMonthForCategoryElement
+import org.orbitmvi.orbit.compose.collectAsState
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun AnalyzeByCategoryScreen(viewModel: AnalyzeViewModel) {
+
+    val state = viewModel.collectAsState().value
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -52,14 +58,17 @@ fun AnalyzeByCategoryScreen(viewModel: AnalyzeViewModel) {
         }
 
         item {
-            PieChartScreenContent()
+            PieChartScreenContent(state.accountBookAnalyzeRecordByMonthForCategory?.categories)
         }
     }
 }
 
 @Composable
-private fun PieChartScreenContent() {
-    val pieChartDataModel = remember { PieChartDataModel() }
+private fun PieChartScreenContent(accountBookAnalyzeRecordByMonthForCategoryList: List<AccountBookAnalyzeRecordByMonthForCategoryElement>?) {
+
+    if(accountBookAnalyzeRecordByMonthForCategoryList == null) return
+
+    val pieChartDataModel = remember { PieChartDataModel(accountBookAnalyzeRecordByMonthForCategoryList) }
 
     Column(
         modifier = Modifier.padding(
