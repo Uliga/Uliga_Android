@@ -95,7 +95,7 @@ fun CheckAlertDialog(
                     ),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
-                        onDismissRequest
+                        onDismissRequest()
                     }) {
                     Text(
                         color = Color.White,

@@ -16,6 +16,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,8 +36,10 @@ import com.uliga.app.ui.theme.Grey300
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.main.MainUiState
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 
 @SuppressLint("NewApi")
 @Composable
@@ -52,6 +58,51 @@ fun ProfileScreen(
     val context = LocalContext.current
 
     val state = viewModel.collectAsState().value
+
+    var logoutAlertDialogVisibleState by remember {
+        mutableStateOf(false)
+    }
+
+    var signOutAlertDialogVisibleState by remember {
+        mutableStateOf(false)
+    }
+
+    viewModel.collectSideEffect { sideEffect ->
+        when(sideEffect) {
+            ProfileSideEffect.DismissLogoutAlert -> {
+                logoutAlertDialogVisibleState = false
+            }
+            ProfileSideEffect.DismissSignOutAlert -> {
+                signOutAlertDialogVisibleState = false
+            }
+            ProfileSideEffect.ToastMessage("") -> {
+
+            }
+            else -> {}
+        }
+    }
+
+
+
+    if (logoutAlertDialogVisibleState) {
+        DeleteAlertDialog(
+            onDismissRequest = {
+                viewModel.getLogoutRedirect()
+            },
+            title = "정말로 로그아웃 하시겠습니까?",
+            subTitle = ""
+        )
+    }
+
+    if (signOutAlertDialogVisibleState) {
+        DeleteAlertDialog(
+            onDismissRequest = {
+                viewModel.deleteMember()
+            },
+            title = "정말로 회원탈퇴를 하시겠습니까?",
+            subTitle = "지금까지 사용하셨던 정보들이 모두 삭제될 수 있어요."
+        )
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -249,7 +300,7 @@ fun ProfileScreen(
                         horizontal = 16.dp
                     )
                     .clickable {
-                        viewModel.getLogoutRedirect()
+                        logoutAlertDialogVisibleState = true
                     },
                 text = "로그아웃",
                 color = Grey700,
@@ -277,7 +328,7 @@ fun ProfileScreen(
                         horizontal = 16.dp
                     )
                     .clickable {
-                        viewModel.deleteMember()
+                        signOutAlertDialogVisibleState = true
                     },
                 text = "탈퇴하기",
                 color = Grey700,
