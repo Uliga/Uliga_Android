@@ -1,6 +1,7 @@
 package com.uliga.app.view.analyze
 
 import androidx.compose.runtime.Immutable
+import com.uliga.domain.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompare
 
 @Immutable
 data class AnalyzeUiState(
@@ -8,6 +9,7 @@ data class AnalyzeUiState(
     val exception: Exception? = null,
     val id: Long? = null,
     val currentAccountInfo: Pair<String, Long>? = null,
+    val accountBookAnalyzeByMonthForCompare: AccountBookAnalyzeByMonthForCompare? = null
 ) {
     companion object {
         fun empty() = AnalyzeUiState(
@@ -15,6 +17,7 @@ data class AnalyzeUiState(
             exception = null,
             id = null,
             currentAccountInfo = null,
+            accountBookAnalyzeByMonthForCompare = null
         )
     }
 }
