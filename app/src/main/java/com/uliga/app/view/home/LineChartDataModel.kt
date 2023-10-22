@@ -9,19 +9,11 @@ import com.uliga.chart.line.renderer.line.SolidLineDrawer
 import com.uliga.domain.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordDaily
 
 class LineChartDataModel(
-    val recordList: List<AccountBookAnalyzeRecordDaily>
+    recordList: List<AccountBookAnalyzeRecordDaily>
 ) {
     var lineChartData by mutableStateOf(
         LineChartData(
-            points = listOf(
-//                Point(randomYValue(), "Label1"),
-//                Point(randomYValue(), "Label2"),
-//                Point(randomYValue(), "Label3"),
-//                Point(randomYValue(), "Label4"),
-//                Point(randomYValue(), "Label5"),
-//                Point(randomYValue(), "Label6"),
-//                Point(randomYValue(), "Label7")
-            ),
+            points = emptyList(),
             lineDrawer = SolidLineDrawer(),
         )
     )
