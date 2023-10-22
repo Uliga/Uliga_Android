@@ -1,6 +1,7 @@
 package com.uliga.app.view.analyze
 
 import androidx.compose.runtime.Immutable
+import com.uliga.domain.model.accountBook.analyze.byMonth.category.AccountBookAnalyzeRecordByMonthForCategory
 import com.uliga.domain.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompare
 import com.uliga.domain.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeek
 
@@ -11,7 +12,8 @@ data class AnalyzeUiState(
     val id: Long? = null,
     val currentAccountInfo: Pair<String, Long>? = null,
     val accountBookAnalyzeByMonthForCompare: AccountBookAnalyzeByMonthForCompare? = null,
-    val accountBookAnalyzeRecordByWeek: AccountBookAnalyzeRecordByWeek? = null
+    val accountBookAnalyzeRecordByWeek: AccountBookAnalyzeRecordByWeek? = null,
+    val accountBookAnalyzeRecordByMonthForCategory: AccountBookAnalyzeRecordByMonthForCategory? = null
 ) {
     companion object {
         fun empty() = AnalyzeUiState(
@@ -20,7 +22,8 @@ data class AnalyzeUiState(
             id = null,
             currentAccountInfo = null,
             accountBookAnalyzeByMonthForCompare = null,
-            accountBookAnalyzeRecordByWeek = null
+            accountBookAnalyzeRecordByWeek = null,
+            accountBookAnalyzeRecordByMonthForCategory = null
         )
     }
 }

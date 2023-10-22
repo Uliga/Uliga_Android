@@ -116,7 +116,11 @@ class AnalyzeViewModel @Inject constructor(
             year,
             month
         ).onSuccess {
-
+            reduce {
+                state.copy(
+                    accountBookAnalyzeRecordByMonthForCategory = it
+                )
+            }
         }.onFailure {
 
         }
