@@ -14,6 +14,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,10 +35,14 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -61,6 +66,7 @@ import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.MyApplicationTheme
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.finance.showSettingDropDownMenu
 import com.uliga.app.view.main.MainActivity
 import com.uliga.app.view.schedule.ScheduleBottomSheet
@@ -74,7 +80,7 @@ class AccountBookGenerationActivity : ComponentActivity() {
 
     private val viewModel: AccountBookGenerationViewModel by viewModels()
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
     @SuppressLint("UnrememberedMutableState")
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,7 +116,8 @@ class AccountBookGenerationActivity : ComponentActivity() {
 
 
                 viewModel.collectSideEffect {
-                    handleSideEffect(it, this,
+                    handleSideEffect(
+                        it, this,
                         toastRequest = { toastMessage ->
                             isAnimating = true
                             label = toastMessage
@@ -118,168 +125,191 @@ class AccountBookGenerationActivity : ComponentActivity() {
                     )
                 }
 
-                LazyColumn(
-                    state = rememberLazyListState(),
+                val pullRefreshState = rememberPullRefreshState(
+                    refreshing = state.isLoading,
+                    onRefresh = {
+                        viewModel.getAccountBooks()
+                    }
+                )
+
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.White),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .wrapContentSize()
+                        .pullRefresh(pullRefreshState),
+                    contentAlignment = Alignment.TopCenter
                 ) {
+                    LazyColumn(
+                        state = rememberLazyListState(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.White),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
 
-                    item {
+                        item {
 
-                        CenterAlignedTopAppBar(
-                            modifier = Modifier.background(Color.White),
-                            title = {
-                                Row {
-                                    Image(
-                                        modifier = Modifier
-                                            .size(40.dp),
-                                        painter = painterResource(
-                                            id = R.drawable.uliga_logo
-                                        ),
-                                        contentDescription = "uliga logo"
-                                    )
+                            CenterAlignedTopAppBar(
+                                modifier = Modifier.background(Color.White),
+                                title = {
+                                    Row {
+                                        Image(
+                                            modifier = Modifier
+                                                .size(40.dp),
+                                            painter = painterResource(
+                                                id = R.drawable.uliga_logo
+                                            ),
+                                            contentDescription = "uliga logo"
+                                        )
 
-                                    Text(
-                                        modifier = Modifier.padding(
-                                            end = 12.dp
-                                        ),
-                                        text = "우리가",
-                                        color = Primary,
-                                        fontFamily = pretendard,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 24.sp
-                                    )
-                                }
-                            },
-                            actions = {
-                                IconButton(onClick = {
-                                    isAccountBookGenerationState = true
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Add,
-                                        contentDescription = "Localized description"
-                                    )
-                                }
-                            }
-                        )
-
-                    }
-
-                    item {
-                        Text(
-                            modifier = Modifier
-                                .padding(
-                                    horizontal = 16.dp
-                                )
-                                .clickable {
-
+                                        Text(
+                                            modifier = Modifier.padding(
+                                                end = 12.dp
+                                            ),
+                                            text = "우리가",
+                                            color = Primary,
+                                            fontFamily = pretendard,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 24.sp
+                                        )
+                                    }
                                 },
-                            text = "가계부 목록",
-                            color = Color.Black,
-                            fontFamily = pretendard,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
-
-                        Spacer(
-                            modifier = Modifier
-                                .height(16.dp)
-                        )
-                    }
-
-                    items(state.accountBooks?.accountBooks?.size ?: 0) {
-
-                        val accountBookName = state.accountBooks?.accountBooks?.get(it)?.info?.accountBookName ?: ""
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .padding(
-                                    horizontal = 16.dp,
-                                )
-                                .clickable {
-                                    onItemClick(it)
+                                actions = {
+                                    IconButton(onClick = {
+                                        isAccountBookGenerationState = true
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Add,
+                                            contentDescription = "Localized description"
+                                        )
+                                    }
                                 }
-                                .border(
-                                    width = 1.dp,
-                                    color = if (selectedIndex == it) Primary else Grey500,
-                                    shape = RoundedCornerShape(5.dp)
-                                )
-                                .background(Color.White),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                            )
+
+                        }
+
+                        item {
                             Text(
-                                modifier = Modifier.padding(start = 16.dp),
-                                text = accountBookName,
-                                color = if (selectedIndex == it) Primary else Grey500,
+                                modifier = Modifier
+                                    .padding(
+                                        horizontal = 16.dp
+                                    )
+                                    .clickable {
+
+                                    },
+                                text = "가계부 목록",
+                                color = Color.Black,
                                 fontFamily = pretendard,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
+                                fontSize = 20.sp,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1
                             )
 
                             Spacer(
-                                Modifier.weight(1f)
-                            )
-
-                            Image(
                                 modifier = Modifier
+                                    .height(16.dp)
+                            )
+                        }
+
+                        items(state.accountBooks?.accountBooks?.size ?: 0) {
+
+                            val accountBookName =
+                                state.accountBooks?.accountBooks?.get(it)?.info?.accountBookName
+                                    ?: ""
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
                                     .padding(
-                                        top = 16.dp,
-                                        bottom = 16.dp,
-                                        end = 16.dp
+                                        horizontal = 16.dp,
                                     )
-                                    .alpha(if (selectedIndex == it) 1f else 0f)
-                                    .size(40.dp),
-                                painter = painterResource(
-                                    id = R.drawable.ic_account_book_select
+                                    .clickable {
+                                        onItemClick(it)
+                                    }
+                                    .border(
+                                        width = 1.dp,
+                                        color = if (selectedIndex == it) Primary else Grey500,
+                                        shape = RoundedCornerShape(5.dp)
+                                    )
+                                    .background(Color.White),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(start = 16.dp),
+                                    text = accountBookName,
+                                    color = if (selectedIndex == it) Primary else Grey500,
+                                    fontFamily = pretendard,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1
+                                )
+
+                                Spacer(
+                                    Modifier.weight(1f)
+                                )
+
+                                Image(
+                                    modifier = Modifier
+                                        .padding(
+                                            top = 16.dp,
+                                            bottom = 16.dp,
+                                            end = 16.dp
+                                        )
+                                        .alpha(if (selectedIndex == it) 1f else 0f)
+                                        .size(40.dp),
+                                    painter = painterResource(
+                                        id = R.drawable.ic_account_book_select
+                                    ),
+                                    contentDescription = "uliga logo"
+                                )
+                            }
+
+                        }
+
+                        item {
+                            Button(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(),
+                                contentPadding = PaddingValues(
+                                    vertical = 16.dp
                                 ),
-                                contentDescription = "uliga logo"
-                            )
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Primary,
+                                ),
+                                shape = RoundedCornerShape(10.dp),
+                                onClick = {
+
+                                    viewModel.updateAccountBook(selectedIndex, state.accountBooks)
+
+                                }) {
+                                Text(
+                                    color = Color.White,
+                                    fontFamily = pretendard,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp,
+                                    text = "우리가 시작하기"
+                                )
+                            }
                         }
+                    }
+
+                    Button(onClick = { viewModel.deleteMember() }) {
 
                     }
 
-                    item {
-                        Button(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight(),
-                            contentPadding = PaddingValues(
-                                vertical = 16.dp
-                            ),
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Primary,
-                            ),
-                            shape = RoundedCornerShape(10.dp),
-                            onClick = {
-
-                                viewModel.updateAccountBook(selectedIndex, state.accountBooks)
-
-                            }) {
-                            Text(
-                                color = Color.White,
-                                fontFamily = pretendard,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                text = "우리가 시작하기"
-                            )
-                        }
-                    }
+                    PullRefreshIndicator(
+                        refreshing = state.isLoading,
+                        state = pullRefreshState
+                    )
                 }
-                
-                Button(onClick = { viewModel.deleteMember() }) {
-                    
+
+                if(state.isLoading) {
+                    CircularProgress()
                 }
             }
-
-
         }
     }
 }
