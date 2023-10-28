@@ -52,6 +52,8 @@ class AccountBookForInputViewModel @Inject constructor(
             sharedAccountBook = listOf()
         )
 
+        reduce { state.copy(isLoading = true) }
+
         postAccountBookTransactionUseCase(transactionType, accountBookTransactionRequest)
             .onSuccess {
                 postSideEffect(AccountBookForInputSideEffect.Finish)
@@ -60,9 +62,14 @@ class AccountBookForInputViewModel @Inject constructor(
                 postSideEffect(AccountBookForInputSideEffect.Finish)
 
             }
+
+        reduce { state.copy(isLoading = false) }
+
     }
 
     fun fetchCurrentAccountBookInfo() = intent {
+        reduce { state.copy(isLoading = true) }
+
         fetchCurrentAccountBookInfoUseCase()
             .onSuccess {
                 reduce {
@@ -74,6 +81,9 @@ class AccountBookForInputViewModel @Inject constructor(
             .onFailure {
 
             }
+
+        reduce { state.copy(isLoading = false) }
+
     }
 
     fun fetchId() = intent {
