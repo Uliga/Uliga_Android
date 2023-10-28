@@ -32,13 +32,9 @@ class FinanceViewModel @Inject constructor(
 
     override val container = container<FinanceUiState, FinanceSideEffect>(FinanceUiState.empty())
 
-    init {
-        fetchCurrentAccountBookInfo()
-        fetchId()
-    }
-
     fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
         intent {
+            reduce { state.copy(isLoading = true) }
             reduce {
                 state.copy(
                     id = id,
@@ -46,35 +42,9 @@ class FinanceViewModel @Inject constructor(
                     member = member
                 )
             }
+            reduce { state.copy(isLoading = false) }
+
         }
-
-    fun fetchCurrentAccountBookInfo() = intent {
-        fetchCurrentAccountBookInfoUseCase()
-            .onSuccess {
-                reduce {
-                    state.copy(
-                        currentAccountInfo = it
-                    )
-                }
-            }
-            .onFailure {
-
-            }
-    }
-
-    fun fetchId() = intent {
-        fetchIdUseCase()
-            .onSuccess {
-                reduce {
-                    state.copy(
-                        id = it
-                    )
-                }
-            }
-            .onFailure {
-
-            }
-    }
 
     fun postAccountBookTransaction(
         transactionType: String,
@@ -117,6 +87,8 @@ class FinanceViewModel @Inject constructor(
     fun getAccountBookDayTransaction(year: Int, month: Int, day: Int) = intent {
         val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
 
+        reduce { state.copy(isLoading = true) }
+
         getAccountBookDayTransactionUseCase(currentAccountBookInfo.second, year, month, day)
             .onSuccess {
                 reduce {
@@ -129,11 +101,15 @@ class FinanceViewModel @Inject constructor(
             .onFailure {
 
             }
+        reduce { state.copy(isLoading = false) }
+
     }
 
     fun getAccountBookMonthTransaction(year: Int, month: Int) = intent {
 
         val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
+
+        reduce { state.copy(isLoading = true) }
 
         getAccountBookMonthTransactionUseCase(currentAccountBookInfo.second, year, month)
             .onSuccess {
@@ -146,9 +122,13 @@ class FinanceViewModel @Inject constructor(
             .onFailure {
 
             }
+
+        reduce { state.copy(isLoading = false) }
+
     }
 
     fun deleteAccountBookDayTransaction(accountBookAssetItemId: Long) = intent {
+        reduce { state.copy(isLoading = true) }
 
         deleteAccountBookDayTransactionUseCase(AccountBookTransactionIds(listOf(accountBookAssetItemId)))
             .onSuccess {
@@ -160,6 +140,8 @@ class FinanceViewModel @Inject constructor(
             .onFailure {
 
             }
+        reduce { state.copy(isLoading = false) }
+
     }
 
 }
