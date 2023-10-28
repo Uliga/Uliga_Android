@@ -27,6 +27,10 @@ class AnalyzeViewModel @Inject constructor(
     override val container = container<AnalyzeUiState, AnalyzeSideEffect>(AnalyzeUiState.empty())
 
     init {
+        initialize()
+    }
+
+    fun initialize() = intent {
         val currentDate = LocalDate.now()
         val currentYear = currentDate.year
         val currentMonth = currentDate.monthValue

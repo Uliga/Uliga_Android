@@ -4,15 +4,22 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -22,6 +29,8 @@ import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.CircularProgress
+import com.uliga.app.view.main.MainUiState
 import com.uliga.chart.bar.HorizontalBarChart
 import com.uliga.chart.bar.VerticalBarChart
 import com.uliga.domain.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompare
@@ -31,9 +40,10 @@ import java.lang.Math.abs
 import java.time.LocalDate
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
+fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel, mainUiState: MainUiState) {
 
     val state = viewModel.collectAsState().value
 
@@ -45,87 +55,111 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
         differenceValueWithLastMonth = compareList.compare[2].value - compareList.compare[1].value
     }
 
-    LazyColumn(
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = {
+            viewModel.initialize()
+        }
+    )
+
+    Box(
         modifier = Modifier
-            .fillMaxSize()
-            .background(White),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .wrapContentSize()
+            .pullRefresh(pullRefreshState),
+        contentAlignment = Alignment.TopCenter
     ) {
-        item {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 32.dp,
-                        end = 32.dp,
-                        top = 8.dp
-                    ),
-                text = "${currentDate.monthValue}월 분석",
-                color = Grey700,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 32.dp,
-                        end = 32.dp,
-                        top = 8.dp
-                    ),
-                text = "이번 달에는 지난 달보다 ${abs(differenceValueWithLastMonth)}원 ${if (differenceValueWithLastMonth >= 0) "더" else "덜"} 쓰셨어요!",
-                color = Grey500,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Light,
-                fontSize = 15.sp,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 2,
-
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(White),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            item {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 32.dp,
+                            end = 32.dp,
+                            top = 8.dp
+                        ),
+                    text = "${currentDate.monthValue}월 분석",
+                    color = Grey700,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
                 )
 
-            HorizontalBarChartScreenContent(compareList)
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 32.dp,
+                            end = 32.dp,
+                            top = 8.dp
+                        ),
+                    text = "이번 달에는 지난 달보다 ${abs(differenceValueWithLastMonth)}원 ${if (differenceValueWithLastMonth >= 0) "더" else "덜"} 쓰셨어요!",
+                    color = Grey500,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.Light,
+                    fontSize = 15.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
+
+                    )
+
+                HorizontalBarChartScreenContent(compareList)
+            }
+
+            item {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 32.dp,
+                            end = 32.dp,
+                            top = 8.dp
+                        ),
+                    text = "${currentDate.monthValue}월 주간별 분석",
+                    color = Grey700,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 32.dp,
+                            end = 32.dp,
+                            top = 8.dp
+                        ),
+                    text = "이번 달 지출을 주간별로 확인해보세요!",
+                    color = Grey500,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.Light,
+                    fontSize = 15.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2
+                )
+
+                VerticalBarChartScreenContent(
+                    currentDate.monthValue,
+                    state.accountBookAnalyzeRecordByWeek
+                )
+            }
+
         }
 
-        item {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 32.dp,
-                        end = 32.dp,
-                        top = 8.dp
-                    ),
-                text = "${currentDate.monthValue}월 주간별 분석",
-                color = Grey700,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
+        PullRefreshIndicator(
+            refreshing = state.isLoading,
+            state = pullRefreshState
+        )
+    }
 
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 32.dp,
-                        end = 32.dp,
-                        top = 8.dp
-                    ),
-                text = "이번 달 지출을 주간별로 확인해보세요!",
-                color = Grey500,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Light,
-                fontSize = 15.sp,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 2
-            )
-
-            VerticalBarChartScreenContent(
-                currentDate.monthValue,
-                state.accountBookAnalyzeRecordByWeek)
-        }
-
+    if(state.isLoading) {
+        CircularProgress()
     }
 }
 

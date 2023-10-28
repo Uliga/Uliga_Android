@@ -81,15 +81,14 @@ fun AnalyzeScreen(
     )
 
 
-    Box(
+    Column(
         modifier = Modifier
             .wrapContentSize()
-            .pullRefresh(pullRefreshState),
-        contentAlignment = Alignment.TopCenter
     ) {
         AnalyzeTabs(pagerState = pagerState)
         AnalyzeTabsContent(
             pagerState = pagerState,
+            mainUiState = mainUiState,
             viewModel = viewModel
         )
 
@@ -97,10 +96,6 @@ fun AnalyzeScreen(
             refreshing = state.isLoading,
             state = pullRefreshState
         )
-    }
-
-    if(state.isLoading) {
-        CircularProgress()
     }
 }
 
@@ -204,6 +199,7 @@ fun AnalyzeTabs(pagerState: PagerState) {
 @Composable
 fun AnalyzeTabsContent(
     pagerState: PagerState,
+    mainUiState: MainUiState,
     viewModel: AnalyzeViewModel
 ) {
     HorizontalPager(
@@ -211,8 +207,8 @@ fun AnalyzeTabsContent(
         pageCount = analyzeScreenList.size
     ) { page ->
         when (page) {
-            0 -> AnalyzeByTimeScreen(viewModel)
-            1 -> AnalyzeByCategoryScreen(viewModel)
+            0 -> AnalyzeByTimeScreen(viewModel, mainUiState)
+            1 -> AnalyzeByCategoryScreen(viewModel, mainUiState)
         }
     }
 }
