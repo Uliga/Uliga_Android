@@ -21,9 +21,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -60,6 +67,7 @@ import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.Success200
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
@@ -70,10 +78,11 @@ import com.uliga.chart.bar.VerticalBarChart
 import com.uliga.chart.line.LineChart
 import com.uliga.domain.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDay
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
+import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.compose.collectAsState
 import java.time.LocalDate
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun HomeScreen(
@@ -90,6 +99,7 @@ fun HomeScreen(
     )
 
     val state = viewModel.collectAsState().value
+
     val currentDate = LocalDate.now()
 
     val currentDay = currentDate.dayOfMonth
@@ -179,57 +189,69 @@ fun HomeScreen(
         ), label = ""
     )
 
-    Log.d("target", state.currentMonthAccountBookAsset?.record?.value?.toFloat().toString())
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = {
+            viewModel.initialize()
+        }
+    )
 
-    LazyColumn(
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = 16.dp,
-                vertical = 16.dp
-            )
-            .background(White),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .wrapContentSize()
+            .pullRefresh(pullRefreshState),
+        contentAlignment = Alignment.TopCenter
+    ) {
 
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 16.dp
+                )
+                .background(White),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-        item {
+            item {
 
-            Row {
-                Image(
-                    modifier = Modifier
-                        .size(40.dp),
-                    painter = painterResource(
-                        id = R.drawable.uliga_logo
-                    ),
-                    contentDescription = "uliga logo"
-                )
+                Row {
+                    Image(
+                        modifier = Modifier
+                            .size(40.dp),
+                        painter = painterResource(
+                            id = R.drawable.uliga_logo
+                        ),
+                        contentDescription = "uliga logo"
+                    )
 
-                Text(
-                    modifier = Modifier.padding(
-                        end = 12.dp
-                    ),
-                    text = "우리가",
-                    color = Primary,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp
-                )
+                    Text(
+                        modifier = Modifier.padding(
+                            end = 12.dp
+                        ),
+                        text = "우리가",
+                        color = Primary,
+                        fontFamily = pretendard,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp
+                    )
 
-                Spacer(
-                    Modifier.weight(1f)
-                )
+                    Spacer(
+                        Modifier.weight(1f)
+                    )
 
-                Image(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clickable {
-                            isInvitationListSheetSheetOpen = true
-                        },
-                    painter = painterResource(
-                        id = R.drawable.uliga_logo
-                    ),
-                    contentDescription = "tmp invitiation"
-                )
+                    Image(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clickable {
+                                isInvitationListSheetSheetOpen = true
+                            },
+                        painter = painterResource(
+                            id = R.drawable.uliga_logo
+                        ),
+                        contentDescription = "tmp invitiation"
+                    )
 
 //                Image(
 //                    modifier = Modifier
@@ -242,258 +264,258 @@ fun HomeScreen(
 //                    ),
 //                    contentDescription = "tmp schedule"
 //                )
-            }
-        }
-
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 16.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    modifier = Modifier.padding(
-                        start = 16.dp
-                    ),
-                    text = "현재 가계부",
-                    color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = Medium,
-                    fontSize = 20.sp
-                )
-
-                Row {
-                    Text(
-                        modifier = Modifier.padding(
-                            start = 16.dp,
-                        ),
-                        text = "안세훈님의 가계부",
-                        color = Grey600,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 28.sp
-                    )
-
-                    Spacer(Modifier.weight(1f))
-
-                    Text(
-                        modifier = Modifier.padding(
-                            start = 16.dp,
-                        ),
-                        text = "변경 버튼",
-                        color = Grey600,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 28.sp
-                    )
                 }
-
             }
-        }
 
-        item {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 16.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        modifier = Modifier.padding(
+                            start = 16.dp
+                        ),
+                        text = "현재 가계부",
+                        color = Grey700,
+                        fontFamily = pretendard,
+                        fontWeight = Medium,
+                        fontSize = 20.sp
+                    )
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier.padding(
-                        start = 16.dp
-                    ),
-                    text = "이번 달 예산",
-                    color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = Medium,
-                    fontSize = 20.sp
-                )
+                    Row {
+                        Text(
+                            modifier = Modifier.padding(
+                                start = 16.dp,
+                            ),
+                            text = "안세훈님의 가계부",
+                            color = Grey600,
+                            fontFamily = pretendard,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 28.sp
+                        )
 
-                Spacer(modifier = Modifier.weight(1f))
+                        Spacer(Modifier.weight(1f))
 
+                        Text(
+                            modifier = Modifier.padding(
+                                start = 16.dp,
+                            ),
+                            text = "변경 버튼",
+                            color = Grey600,
+                            fontFamily = pretendard,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 28.sp
+                        )
+                    }
+
+                }
+            }
+
+            item {
 
                 Row(
                     modifier = Modifier
-                        .wrapContentSize()
-                        .clickable {
-                            isBudgetSettingSheetOpen = true
-
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
+                        .fillMaxWidth()
+                        .padding(end = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        modifier = Modifier
-                            .size(16.dp),
-                        painter = painterResource(
-                            id = R.drawable.ic_adding_budget
-                        ),
-                        contentDescription = null
-                    )
-
-                    Spacer(modifier = Modifier.width(4.dp))
-
                     Text(
-                        text = "예산 설정하러 가기",
-                        color = Secondary,
+                        modifier = Modifier.padding(
+                            start = 16.dp
+                        ),
+                        text = "이번 달 예산",
+                        color = Grey700,
                         fontFamily = pretendard,
                         fontWeight = Medium,
-                        fontSize = 14.sp
+                        fontSize = 20.sp
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+
+                    Row(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .clickable {
+                                isBudgetSettingSheetOpen = true
+
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(16.dp),
+                            painter = painterResource(
+                                id = R.drawable.ic_adding_budget
+                            ),
+                            contentDescription = null
+                        )
+
+                        Spacer(modifier = Modifier.width(4.dp))
+
+                        Text(
+                            text = "예산 설정하러 가기",
+                            color = Secondary,
+                            fontFamily = pretendard,
+                            fontWeight = Medium,
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+
+                Text(
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                    ),
+                    text = if (currentMonthResult >= 0) "${currentMonthResult}원 남음" else "${currentMonthResult * (-1)}원 부족",
+                    color = Grey600,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 28.sp
+                )
+
+                val indicatorHeight = 24.dp
+                val indicatorPadding = 24.dp
+
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(indicatorHeight)
+                        .padding(start = indicatorPadding, end = indicatorPadding)
+                ) {
+
+                    drawLine(
+                        color = Color.LightGray.copy(alpha = 0.3f),
+                        cap = StrokeCap.Round,
+                        strokeWidth = size.height,
+                        start = Offset(x = 0f, y = 0f),
+                        end = Offset(x = size.width, y = 0f)
+                    )
+
+                    val progress =
+                        (animateNumber.value) * size.width
+
+                    drawLine(
+                        color = Danger100,
+                        cap = StrokeCap.Round,
+                        strokeWidth = size.height,
+                        start = Offset(x = 0f, y = 0f),
+                        end = Offset(x = progress, y = 0f)
+                    )
+
+                }
+
+                Spacer(
+                    modifier = Modifier.height(
+                        16.dp
+                    )
+                )
+
+                Divider(
+                    modifier = Modifier.padding(
+                        horizontal = 8.dp,
+                    ),
+                    color = Grey300,
+                    thickness = 1.dp
+                )
+
+                Spacer(
+                    modifier = Modifier.height(
+                        12.dp
+                    )
+                )
+
+                Row(
+                    modifier = Modifier.padding(
+                        start = 16.dp
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        modifier = Modifier,
+                        painter = painterResource(
+                            id = R.drawable.ic_gray_dot
+                        ),
+                        contentDescription = "gary dot"
+                    )
+
+                    Spacer(
+                        modifier = Modifier.width(8.dp)
+                    )
+
+                    Text(
+                        text = "${currentDate.monthValue}월 설정 예산",
+                        color = Grey700,
+                        fontFamily = pretendard,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 15.sp
+                    )
+
+                    Spacer(
+                        modifier = Modifier.width(24.dp)
+                    )
+                    Text(
+                        text = "${currentMonthBudget}원",
+                        color = Grey700,
+                        fontFamily = pretendard,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 15.sp
+                    )
+
+                }
+
+                Spacer(
+                    modifier = Modifier.height(
+                        12.dp
+                    )
+                )
+
+
+                Row(
+                    modifier = Modifier.padding(
+                        start = 16.dp
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        modifier = Modifier,
+                        painter = painterResource(
+                            id = R.drawable.ic_gray_dot
+                        ),
+                        contentDescription = "gary dot"
+                    )
+
+                    Spacer(
+                        modifier = Modifier.width(8.dp)
+                    )
+
+                    Text(
+                        text = "남은 1일 예산",
+                        color = Grey700,
+                        fontFamily = pretendard,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 15.sp
+                    )
+
+                    Spacer(
+                        modifier = Modifier.width(24.dp)
+                    )
+                    Text(
+                        text = "${currentMonthBudget / currentDate.dayOfMonth}원",
+                        color = Grey700,
+                        fontFamily = pretendard,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 15.sp
                     )
                 }
-            }
-
-            Text(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                ),
-                text = if(currentMonthResult >= 0) "${currentMonthResult}원 남음" else "${currentMonthResult * (-1)}원 부족",
-                color = Grey600,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Bold,
-                fontSize = 28.sp
-            )
-
-            val indicatorHeight = 24.dp
-            val indicatorPadding = 24.dp
-
-            Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(indicatorHeight)
-                    .padding(start = indicatorPadding, end = indicatorPadding)
-            ) {
-
-                drawLine(
-                    color = Color.LightGray.copy(alpha = 0.3f),
-                    cap = StrokeCap.Round,
-                    strokeWidth = size.height,
-                    start = Offset(x = 0f, y = 0f),
-                    end = Offset(x = size.width, y = 0f)
-                )
-
-                val progress =
-                    (animateNumber.value) * size.width
-
-                drawLine(
-                    color = Danger100,
-                    cap = StrokeCap.Round,
-                    strokeWidth = size.height,
-                    start = Offset(x = 0f, y = 0f),
-                    end = Offset(x = progress, y = 0f)
-                )
-
-            }
-
-            Spacer(
-                modifier = Modifier.height(
-                    16.dp
-                )
-            )
-
-            Divider(
-                modifier = Modifier.padding(
-                    horizontal = 8.dp,
-                ),
-                color = Grey300,
-                thickness = 1.dp
-            )
-
-            Spacer(
-                modifier = Modifier.height(
-                    12.dp
-                )
-            )
-
-            Row(
-                modifier = Modifier.padding(
-                    start = 16.dp
-                ),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    modifier = Modifier,
-                    painter = painterResource(
-                        id = R.drawable.ic_gray_dot
-                    ),
-                    contentDescription = "gary dot"
-                )
 
                 Spacer(
-                    modifier = Modifier.width(8.dp)
+                    modifier = Modifier
+                        .height(16.dp)
                 )
-
-                Text(
-                    text = "${currentDate.monthValue}월 설정 예산",
-                    color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp
-                )
-
-                Spacer(
-                    modifier = Modifier.width(24.dp)
-                )
-                Text(
-                    text = "${currentMonthBudget}원",
-                    color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp
-                )
-
-            }
-
-            Spacer(
-                modifier = Modifier.height(
-                    12.dp
-                )
-            )
-
-
-            Row(
-                modifier = Modifier.padding(
-                    start = 16.dp
-                ),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    modifier = Modifier,
-                    painter = painterResource(
-                        id = R.drawable.ic_gray_dot
-                    ),
-                    contentDescription = "gary dot"
-                )
-
-                Spacer(
-                    modifier = Modifier.width(8.dp)
-                )
-
-                Text(
-                    text = "남은 1일 예산",
-                    color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp
-                )
-
-                Spacer(
-                    modifier = Modifier.width(24.dp)
-                )
-                Text(
-                    text = "${currentMonthBudget / currentDate.dayOfMonth}원",
-                    color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 15.sp
-                )
-            }
-
-            Spacer(
-                modifier = Modifier
-                    .height(16.dp)
-            )
 
 //            Column(
 //                modifier = Modifier
@@ -506,138 +528,64 @@ fun HomeScreen(
 //            ) {
 //
 //            }
-        }
-
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier.padding(
-                        start = 16.dp
-                    ),
-                    text = "다가오는 금융 일정",
-                    color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = Medium,
-                    fontSize = 20.sp
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-
-                Row(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .clickable {
-                            isScheduleSheetStateOpen = true
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .size(16.dp),
-                        painter = painterResource(
-                            id = R.drawable.ic_adding_budget
-                        ),
-                        contentDescription = null
-                    )
-
-                    Spacer(modifier = Modifier.width(4.dp))
-
-                    Text(
-                        text = "금융 일정 추가하기",
-                        color = Secondary,
-                        fontFamily = pretendard,
-                        fontWeight = Medium,
-                        fontSize = 14.sp
-                    )
-                }
             }
 
-        }
-
-        items(state.financeSchedules?.schedules?.size ?: 0) { idx ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        val financeSchedule = FinanceSchedule(
-                            id = state.financeSchedules?.schedules?.get(idx)?.id ?: 0L,
-                            notificationDay = state.financeSchedules?.schedules?.get(idx)?.notificationDay
-                                ?: 0L,
-                            name = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
-                            isIncome = state.financeSchedules?.schedules?.get(idx)?.isIncome
-                                ?: false,
-                            value = state.financeSchedules?.schedules?.get(idx)?.value ?: 0L,
-                            creatorId = 0L,
-                            creator = "",
-                            accountBookName = ""
-                        )
-
-                        viewModel.updateFinanceSchedule(financeSchedule)
-
-                        isScheduleSheetStateOpen = true
-                    }
-            ) {
-                Spacer(
-                    modifier = Modifier.width(16.dp)
-                )
-
-                Box(
+            item {
+                Row(
                     modifier = Modifier
-                        .height(48.dp)
-                        .width(64.dp)
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(
-                            notificationDayColor(
-                                currentDay,
-                                state.financeSchedules?.schedules?.get(idx)?.notificationDay ?: 0
-                            )
-                        )
+                        .fillMaxWidth()
+                        .padding(end = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = White,
-                        text = "${state.financeSchedules?.schedules?.get(idx)?.notificationDay ?: 0}일",
-                        fontSize = 16.sp
-                    )
-                }
-
-                Spacer(
-                    modifier = Modifier.width(16.dp)
-                )
-
-                Column {
-                    Text(
-                        text = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
+                        modifier = Modifier.padding(
+                            start = 16.dp
+                        ),
+                        text = "다가오는 금융 일정",
                         color = Grey700,
-                        fontSize = 18.sp,
                         fontFamily = pretendard,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = Medium,
+                        fontSize = 20.sp
                     )
 
-                    Text(
-                        text = "${state.financeSchedules?.schedules?.get(idx)?.value ?: ""}원 / ${
-                            if (state.financeSchedules?.schedules?.get(
-                                    idx
-                                )?.isIncome != false
-                            ) "수입" else "지출"
-                        }",
-                        color = Grey400,
-                        fontSize = 14.sp,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Medium
-                    )
+                    Spacer(modifier = Modifier.weight(1f))
+
+
+                    Row(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .clickable {
+                                isScheduleSheetStateOpen = true
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(16.dp),
+                            painter = painterResource(
+                                id = R.drawable.ic_adding_budget
+                            ),
+                            contentDescription = null
+                        )
+
+                        Spacer(modifier = Modifier.width(4.dp))
+
+                        Text(
+                            text = "금융 일정 추가하기",
+                            color = Secondary,
+                            fontFamily = pretendard,
+                            fontWeight = Medium,
+                            fontSize = 14.sp
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.weight(1f))
-                Image(
+            }
+
+            items(state.financeSchedules?.schedules?.size ?: 0) { idx ->
+                Row(
                     modifier = Modifier
-                        .size(30.dp)
+                        .fillMaxWidth()
                         .clickable {
                             val financeSchedule = FinanceSchedule(
                                 id = state.financeSchedules?.schedules?.get(idx)?.id ?: 0L,
@@ -654,164 +602,250 @@ fun HomeScreen(
 
                             viewModel.updateFinanceSchedule(financeSchedule)
 
-                            deleteAlertDialogVisibleState = true
+                            isScheduleSheetStateOpen = true
+                        }
+                ) {
+                    Spacer(
+                        modifier = Modifier.width(16.dp)
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .height(48.dp)
+                            .width(64.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(
+                                notificationDayColor(
+                                    currentDay,
+                                    state.financeSchedules?.schedules?.get(idx)?.notificationDay
+                                        ?: 0
+                                )
+                            )
+                    ) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Center),
+                            color = White,
+                            text = "${state.financeSchedules?.schedules?.get(idx)?.notificationDay ?: 0}일",
+                            fontSize = 16.sp
+                        )
+                    }
+
+                    Spacer(
+                        modifier = Modifier.width(16.dp)
+                    )
+
+                    Column {
+                        Text(
+                            text = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
+                            color = Grey700,
+                            fontSize = 18.sp,
+                            fontFamily = pretendard,
+                            fontWeight = FontWeight.Medium
+                        )
+
+                        Text(
+                            text = "${state.financeSchedules?.schedules?.get(idx)?.value ?: ""}원 / ${
+                                if (state.financeSchedules?.schedules?.get(
+                                        idx
+                                    )?.isIncome != false
+                                ) "수입" else "지출"
+                            }",
+                            color = Grey400,
+                            fontSize = 14.sp,
+                            fontFamily = pretendard,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+                    Image(
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clickable {
+                                val financeSchedule = FinanceSchedule(
+                                    id = state.financeSchedules?.schedules?.get(idx)?.id ?: 0L,
+                                    notificationDay = state.financeSchedules?.schedules?.get(idx)?.notificationDay
+                                        ?: 0L,
+                                    name = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
+                                    isIncome = state.financeSchedules?.schedules?.get(idx)?.isIncome
+                                        ?: false,
+                                    value = state.financeSchedules?.schedules?.get(idx)?.value
+                                        ?: 0L,
+                                    creatorId = 0L,
+                                    creator = "",
+                                    accountBookName = ""
+                                )
+
+                                viewModel.updateFinanceSchedule(financeSchedule)
+
+                                deleteAlertDialogVisibleState = true
 
 //                            viewModel.deleteFinanceScheduleDetail(
 //                                state.financeSchedules?.schedules?.get(
 //                                    idx
 //                                )?.id ?: 0L
 //                            )
-                        },
-                    painter = painterResource(
-                        id = R.drawable.ic_cancel
-                    ),
-                    contentDescription = null
-                )
+                            },
+                        painter = painterResource(
+                            id = R.drawable.ic_cancel
+                        ),
+                        contentDescription = null
+                    )
+                }
             }
-        }
 
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
 
-                    .background(
-                        color = CustomGrey100,
-                        shape = RoundedCornerShape(8.dp)
-                    ),
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Spacer(
-                    modifier = Modifier.height(8.dp)
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .size(8.dp),
-                        painter = painterResource(
-                            id = R.drawable.ic_red_dot
+                        .background(
+                            color = CustomGrey100,
+                            shape = RoundedCornerShape(8.dp)
                         ),
-                        contentDescription = "red dot"
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Spacer(
+                        modifier = Modifier.height(8.dp)
                     )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(8.dp),
+                            painter = painterResource(
+                                id = R.drawable.ic_red_dot
+                            ),
+                            contentDescription = "red dot"
+                        )
+
+                        Spacer(
+                            modifier = Modifier
+                                .width(8.dp)
+                        )
+
+                        Text(
+                            text = "3일 미만의 기간이 남음",
+                            color = Grey600,
+                            fontFamily = pretendard,
+                            fontWeight = Medium,
+                            fontSize = 11.sp
+                        )
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                    }
+
+                    //
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(8.dp),
+                            painter = painterResource(
+                                id = R.drawable.ic_orange_dot
+                            ),
+                            contentDescription = "orange dot"
+                        )
+
+                        Spacer(
+                            modifier = Modifier
+                                .width(8.dp)
+                        )
+
+                        Text(
+                            text = "일주일 미만의 기간이 남음",
+                            color = Grey600,
+                            fontFamily = pretendard,
+                            fontWeight = Medium,
+                            fontSize = 11.sp
+                        )
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                    }
+
+                    //
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(8.dp),
+                            painter = painterResource(
+                                id = R.drawable.ic_green_dot
+                            ),
+                            contentDescription = "red dot"
+                        )
+
+                        Spacer(
+                            modifier = Modifier
+                                .width(8.dp)
+                        )
+
+                        Text(
+                            text = "일주일 이상의 기간이 남음",
+                            color = Grey600,
+                            fontFamily = pretendard,
+                            fontWeight = Medium,
+                            fontSize = 11.sp
+                        )
+
+                        Spacer(modifier = Modifier.width(16.dp))
+                    }
+
+                    //
 
                     Spacer(
-                        modifier = Modifier
-                            .width(8.dp)
+                        modifier = Modifier.height(8.dp)
                     )
-
-                    Text(
-                        text = "3일 미만의 기간이 남음",
-                        color = Grey600,
-                        fontFamily = pretendard,
-                        fontWeight = Medium,
-                        fontSize = 11.sp
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
                 }
-
-                //
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .size(8.dp),
-                        painter = painterResource(
-                            id = R.drawable.ic_orange_dot
-                        ),
-                        contentDescription = "orange dot"
-                    )
-
-                    Spacer(
-                        modifier = Modifier
-                            .width(8.dp)
-                    )
-
-                    Text(
-                        text = "일주일 미만의 기간이 남음",
-                        color = Grey600,
-                        fontFamily = pretendard,
-                        fontWeight = Medium,
-                        fontSize = 11.sp
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                }
-
-                //
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .size(8.dp),
-                        painter = painterResource(
-                            id = R.drawable.ic_green_dot
-                        ),
-                        contentDescription = "red dot"
-                    )
-
-                    Spacer(
-                        modifier = Modifier
-                            .width(8.dp)
-                    )
-
-                    Text(
-                        text = "일주일 이상의 기간이 남음",
-                        color = Grey600,
-                        fontFamily = pretendard,
-                        fontWeight = Medium,
-                        fontSize = 11.sp
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-                }
-
-                //
-
-                Spacer(
-                    modifier = Modifier.height(8.dp)
-                )
             }
+
+            item {
+                Text(
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        top = 8.dp
+                    ),
+                    text = "이번 달 총 지출",
+                    color = Grey700,
+                    fontFamily = pretendard,
+                    fontWeight = Medium,
+                    fontSize = 20.sp
+                )
+
+                Text(
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                    ),
+                    text = "${currentMonthRecord}원",
+                    color = Grey600,
+                    fontFamily = pretendard,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 28.sp
+                )
+
+                LineChartScreenContent(state.accountBookAnalyzeRecordByDay)
+            }
+
         }
 
-        item {
-            Text(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    top = 8.dp
-                ),
-                text = "이번 달 총 지출",
-                color = Grey700,
-                fontFamily = pretendard,
-                fontWeight = Medium,
-                fontSize = 20.sp
-            )
+        PullRefreshIndicator(
+            refreshing = state.isLoading,
+            state = pullRefreshState
+        )
+    }
 
-            Text(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                ),
-                text = "${currentMonthRecord}원",
-                color = Grey600,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Bold,
-                fontSize = 28.sp
-            )
-
-            LineChartScreenContent(state.accountBookAnalyzeRecordByDay)
-        }
-
+    if(state.isLoading) {
+        CircularProgress()
     }
 
     if (deleteAlertDialogVisibleState) {
