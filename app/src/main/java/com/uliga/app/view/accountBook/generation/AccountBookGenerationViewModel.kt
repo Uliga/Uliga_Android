@@ -49,6 +49,8 @@ class AccountBookGenerationViewModel @Inject constructor(
                         accountBooks = it
                     )
                 }
+                reduce { state.copy(isLoading = false) }
+
             }
             .onFailure {
 
@@ -66,6 +68,7 @@ class AccountBookGenerationViewModel @Inject constructor(
 
                 if (it.exists == null) return@intent
 
+                reduce { state.copy(isLoading = true) }
                 reduce {
                     state.copy(
                         isLoading = true,
@@ -117,6 +120,7 @@ class AccountBookGenerationViewModel @Inject constructor(
 
         postAccountBookUseCase(accountBookGenerationRequest)
             .onSuccess {
+                reduce { state.copy(isLoading = true) }
 
                 getAccountBooksUseCase()
                     .onSuccess {
@@ -133,6 +137,7 @@ class AccountBookGenerationViewModel @Inject constructor(
                     .onFailure {
 
                     }
+                reduce { state.copy(isLoading = false) }
             }
             .onFailure {
 
@@ -167,6 +172,8 @@ class AccountBookGenerationViewModel @Inject constructor(
             .onFailure {
 
             }
+        reduce { state.copy(isLoading = false) }
+
 
     }
 
