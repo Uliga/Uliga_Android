@@ -5,6 +5,7 @@ import com.uliga.app.view.accountBook.input.AccountBookForInputSideEffect
 import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetItem
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionIds
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
+import com.uliga.domain.model.member.Member
 import com.uliga.domain.usecase.accountbook.GetAccountBookMonthTransactionUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookTransactionUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
@@ -35,6 +36,17 @@ class FinanceViewModel @Inject constructor(
         fetchCurrentAccountBookInfo()
         fetchId()
     }
+
+    fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
+        intent {
+            reduce {
+                state.copy(
+                    id = id,
+                    currentAccountInfo = currentAccountInfo,
+                    member = member
+                )
+            }
+        }
 
     fun fetchCurrentAccountBookInfo() = intent {
         fetchCurrentAccountBookInfoUseCase()

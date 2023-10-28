@@ -5,6 +5,7 @@ import com.uliga.domain.model.accountBook.analyze.byMonth.category.AccountBookAn
 import com.uliga.domain.model.accountBook.analyze.byMonth.compare.AccountBookAnalyzeByMonthForCompare
 import com.uliga.domain.model.accountBook.analyze.byMonth.schedule.AccountBookAnalyzeFixedRecordByMonth
 import com.uliga.domain.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeek
+import com.uliga.domain.model.member.Member
 
 @Immutable
 data class AnalyzeUiState(
@@ -12,6 +13,7 @@ data class AnalyzeUiState(
     val exception: Exception? = null,
     val id: Long? = null,
     val currentAccountInfo: Pair<String, Long>? = null,
+    val member: Member? = null,
     val accountBookAnalyzeByMonthForCompare: AccountBookAnalyzeByMonthForCompare? = null,
     val accountBookAnalyzeRecordByWeek: AccountBookAnalyzeRecordByWeek? = null,
     val accountBookAnalyzeRecordByMonthForCategory: AccountBookAnalyzeRecordByMonthForCategory? = null,
@@ -23,6 +25,7 @@ data class AnalyzeUiState(
             exception = null,
             id = null,
             currentAccountInfo = null,
+            member = null,
             accountBookAnalyzeByMonthForCompare = null,
             accountBookAnalyzeRecordByWeek = null,
             accountBookAnalyzeRecordByMonthForCategory = null,

@@ -51,6 +51,7 @@ fun ProfileScreen(
     mainUiState: MainUiState,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
 
     viewModel.initializeBaseInfo(
         id = mainUiState.id,
@@ -58,7 +59,6 @@ fun ProfileScreen(
         member = mainUiState.member
     )
 
-    val context = LocalContext.current
 
     val state = viewModel.collectAsState().value
 

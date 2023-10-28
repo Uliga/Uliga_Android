@@ -37,17 +37,27 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.uliga.app.customTabIndicatorOffset
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.main.MainUiState
 import kotlinx.coroutines.launch
+import org.orbitmvi.orbit.compose.collectAsState
 
 @OptIn(ExperimentalFoundationApi::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun AnalyzeScreen(
     navController: NavController,
+    mainUiState: MainUiState,
     viewModel: AnalyzeViewModel = hiltViewModel()
 ) {
-
     val context = LocalContext.current
+
+    viewModel.initializeBaseInfo(
+        id = mainUiState.id,
+        currentAccountInfo = mainUiState.currentAccountInfo,
+        member = mainUiState.member
+    )
+
+    val state = viewModel.collectAsState().value
 
     val pagerState = rememberPagerState()
 

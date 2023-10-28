@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetDay
 import com.uliga.domain.model.accountBook.asset.month.AccountBookAssetMonth
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionResponse
+import com.uliga.domain.model.member.Member
 
 @Immutable
 data class FinanceUiState(
@@ -11,6 +12,7 @@ data class FinanceUiState(
     val exception: Exception? = null,
     val id: Long? = null,
     val currentAccountInfo: Pair<String, Long>? = null,
+    val member: Member? = null,
     val currentAccountBookAsset: AccountBookAssetMonth? = null,
     val currentAccountBookAssetDay: AccountBookAssetDay? = null,
     val currentAccountBookTransaction: AccountBookTransactionResponse? = null
@@ -21,6 +23,7 @@ data class FinanceUiState(
             exception = null,
             id = null,
             currentAccountInfo = null,
+            member = null,
             currentAccountBookAsset = null,
             currentAccountBookAssetDay = null,
             currentAccountBookTransaction = null

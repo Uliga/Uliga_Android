@@ -1,6 +1,7 @@
 package com.uliga.app.view.analyze
 
 import androidx.lifecycle.ViewModel
+import com.uliga.domain.model.member.Member
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookFixedRecordByMonthUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookRecordByMonthForCategoryUseCase
@@ -40,6 +41,17 @@ class AnalyzeViewModel @Inject constructor(
         getAccountBookRecordByMonthForCompare(currentYear, currentMonth)
         getAccountBookFixedRecordByMonth()
     }
+
+    fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
+        intent {
+            reduce {
+                state.copy(
+                    id = id,
+                    currentAccountInfo = currentAccountInfo,
+                    member = member
+                )
+            }
+        }
 
     fun fetchCurrentAccountBookInfo() = intent {
         fetchCurrentAccountBookInfoUseCase()

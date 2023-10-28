@@ -13,11 +13,11 @@ data class HomeUiState(
     val exception: Exception? = null,
     val id: Long? = null,
     val currentAccountInfo: Pair<String, Long>? = null,
+    val member: Member? = null,
     val financeSchedules: FinanceSchedules? = null,
     val selectedSchedule: FinanceSchedule? = null,
     val currentMonthAccountBookAsset: AccountBookAsset? = null,
     val beforeMonthAccountBookAsset: AccountBookAsset? = null,
-    val member: Member? = null,
     val accountBookAnalyzeRecordByDay: AccountBookAnalyzeRecordByDay? = null
 ) {
 
@@ -26,10 +26,10 @@ data class HomeUiState(
             isLoading = false,
             exception = null,
             id = null,
+            member = null,
             currentAccountInfo = null,
             financeSchedules = null,
             currentMonthAccountBookAsset = null,
-            member = null,
             accountBookAnalyzeRecordByDay = null
         )
     }

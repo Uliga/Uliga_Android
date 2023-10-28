@@ -76,6 +76,7 @@ import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.accountBook.input.AccountBookForInputActivity
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionBottomSheet
+import com.uliga.app.view.main.MainUiState
 import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetItem
 import com.uliga.domain.model.accountBook.asset.month.AccountBookAssetMonth
 import org.orbitmvi.orbit.compose.collectAsState
@@ -91,12 +92,18 @@ import java.util.Locale
 @Composable
 fun FinanceScreen(
     navController: NavController,
+    mainUiState: MainUiState,
     viewModel: FinanceViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
+    viewModel.initializeBaseInfo(
+        id = mainUiState.id,
+        currentAccountInfo = mainUiState.currentAccountInfo,
+        member = mainUiState.member
+    )
 
     val state = viewModel.collectAsState().value
-
-    val context = LocalContext.current
 
     val currentDate = LocalDate.now()
 

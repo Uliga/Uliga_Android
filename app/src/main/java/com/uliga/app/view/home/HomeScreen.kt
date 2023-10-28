@@ -63,6 +63,7 @@ import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
+import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
 import com.uliga.app.view.schedule.ScheduleBottomSheet
 import com.uliga.chart.bar.VerticalBarChart
@@ -77,11 +78,18 @@ import java.time.LocalDate
 @Composable
 fun HomeScreen(
     navController: NavController,
+    mainUiState: MainUiState,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
+
+    viewModel.initializeBaseInfo(
+        id = mainUiState.id,
+        currentAccountInfo = mainUiState.currentAccountInfo,
+        member = mainUiState.member
+    )
 
     val state = viewModel.collectAsState().value
-    val context = LocalContext.current
     val currentDate = LocalDate.now()
 
     val currentDay = currentDate.dayOfMonth

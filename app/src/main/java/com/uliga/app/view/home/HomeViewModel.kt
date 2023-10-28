@@ -9,6 +9,7 @@ import com.uliga.domain.model.accountBook.financeSchedule.common.AccountBookFina
 import com.uliga.domain.model.accountBook.invitation.AccountBookInvitationReply
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
 import com.uliga.domain.model.financeSchedule.update.FinanceScheduleUpdate
+import com.uliga.domain.model.member.Member
 import com.uliga.domain.usecase.accountbook.GetAccountBookMonthAssetUseCase
 import com.uliga.domain.usecase.accountbook.GetAccountBooksUseCase
 import com.uliga.domain.usecase.accountbook.PatchAccountBookBudgetUseCase
@@ -68,6 +69,17 @@ class HomeViewModel @Inject constructor(
         getAccountBookAnalyzeRecordByDay(currentDate.year, currentDate.monthValue)
 
     }
+
+    fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
+        intent {
+            reduce {
+                state.copy(
+                    id = id,
+                    currentAccountInfo = currentAccountInfo,
+                    member = member
+                )
+            }
+        }
 
     fun getMember() = intent {
 

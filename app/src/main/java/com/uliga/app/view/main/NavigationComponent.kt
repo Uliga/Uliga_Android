@@ -96,18 +96,20 @@ fun MainNavigationComponent(
             composable(MainRoute.HOME.route) {
                 HomeScreen(
                     navController = navController,
+                    mainUiState = state
                 )
             }
             composable(MainRoute.FINANCE.route) {
                 FinanceScreen(
                     navController = navController,
+                    mainUiState = state
                 )
             }
             composable(MainRoute.ANALYZE.route) {
                 AnalyzeScreen(
                     navController = navController,
-
-                    )
+                    mainUiState = state
+                )
             }
             composable(MainRoute.PROFILE.route) {
                 ProfileScreen(
