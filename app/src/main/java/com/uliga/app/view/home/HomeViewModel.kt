@@ -24,6 +24,7 @@ import com.uliga.domain.usecase.financeSchedule.PatchFinanceScheduleUseCase
 import com.uliga.domain.usecase.member.GetMemberUseCase
 import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -35,9 +36,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val fetchCurrentAccountBookInfoUseCase: FetchCurrentAccountBookInfoUseCase,
-    private val fetchIdUseCase: FetchIdUseCase,
-    private val getAccountBooksUseCase: GetAccountBooksUseCase,
     private val postFinanceScheduleToAccountBookUseCase: PostFinanceScheduleToAccountBookUseCase,
     private val getFinanceScheduleUseCase: GetFinanceScheduleUseCase,
     private val patchFinanceScheduleUseCase: PatchFinanceScheduleUseCase,
@@ -54,20 +52,17 @@ class HomeViewModel @Inject constructor(
 
 
     init {
-        getAccountBooks()
-        getFinanceSchedule()
-        fetchCurrentAccountBookInfo()
-        fetchId()
+        initialize()
+    }
+
+    fun initialize() = intent {
 
         val currentDate = LocalDate.now()
         getAccountBookMonthAsset(true, currentDate.year, currentDate.monthValue)
         val beforeDate = currentDate.minusMonths(1)
         getAccountBookMonthAsset(false, beforeDate.year, beforeDate.monthValue)
 
-        getMember()
-
         getAccountBookAnalyzeRecordByDay(currentDate.year, currentDate.monthValue)
-
     }
 
     fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
@@ -85,15 +80,18 @@ class HomeViewModel @Inject constructor(
 
         getMemberUseCase()
             .onSuccess {
+                reduce { state.copy(isLoading = true) }
                 reduce {
                     state.copy(
                         member = it
                     )
                 }
+                reduce { state.copy(isLoading = false) }
             }
             .onFailure {
 
             }
+
     }
 
     fun getAccountBookAnalyzeRecordByDay(year: Int, month: Int) = intent {
@@ -101,11 +99,14 @@ class HomeViewModel @Inject constructor(
 
         getAccountBOokAnalyzeRecordByDayUseCase(currentAccountBookInfo.second, year, month)
             .onSuccess {
+                reduce { state.copy(isLoading = true) }
                 reduce {
                     state.copy(
                         accountBookAnalyzeRecordByDay = it
                     )
                 }
+                reduce { state.copy(isLoading = false) }
+
             }
             .onFailure {
 
@@ -128,60 +129,9 @@ class HomeViewModel @Inject constructor(
 
         postAccountBookInvitationReplyUseCase(accountBookInvitationReply)
             .onSuccess {
+                reduce { state.copy(isLoading = true) }
                 getMember()
-            }
-            .onFailure {
-
-            }
-    }
-
-    fun getAccountBooks() = intent {
-
-        getAccountBooksUseCase()
-            .onSuccess {
-                Log.d("getAccountBooks", it.toString())
-            }
-            .onFailure {
-
-            }
-    }
-
-    fun fetchCurrentAccountBookInfo() = intent {
-        fetchCurrentAccountBookInfoUseCase()
-            .onSuccess {
-                reduce {
-                    state.copy(
-                        currentAccountInfo = it
-                    )
-                }
-            }
-            .onFailure {
-
-            }
-    }
-
-    fun fetchId() = intent {
-        fetchIdUseCase()
-            .onSuccess {
-                reduce {
-                    state.copy(
-                        id = it
-                    )
-                }
-            }
-            .onFailure {
-
-            }
-    }
-
-    fun getFinanceSchedule() = intent {
-        getFinanceScheduleUseCase()
-            .onSuccess {
-                reduce {
-                    state.copy(
-                        financeSchedules = it
-                    )
-                }
+                reduce { state.copy(isLoading = false) }
             }
             .onFailure {
 
@@ -196,7 +146,9 @@ class HomeViewModel @Inject constructor(
             year = year,
             month = month
         ).onSuccess {
+            reduce { state.copy(isLoading = true) }
             reduce {
+
                 if (isCurrent) {
                     state.copy(
                         currentMonthAccountBookAsset = it
@@ -207,6 +159,8 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+            reduce { state.copy(isLoading = false) }
+
         }.onFailure {
 
         }
@@ -253,6 +207,7 @@ class HomeViewModel @Inject constructor(
 
             postFinanceScheduleToAccountBookUseCase(accountBookFinanceScheduleRequest)
                 .onSuccess {
+                    reduce { state.copy(isLoading = true) }
 
                     getFinanceScheduleUseCase()
                         .onSuccess {
@@ -266,6 +221,8 @@ class HomeViewModel @Inject constructor(
                         .onFailure {
                             postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
                         }
+                    reduce { state.copy(isLoading = false) }
+
                 }
                 .onFailure {
                     postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
@@ -296,6 +253,7 @@ class HomeViewModel @Inject constructor(
 
         patchFinanceScheduleUseCase(financeScheduleUpdate)
             .onSuccess {
+                reduce { state.copy(isLoading = true) }
 
                 getFinanceScheduleUseCase()
                     .onSuccess {
@@ -309,6 +267,8 @@ class HomeViewModel @Inject constructor(
                     .onFailure {
                         postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
                     }
+                reduce { state.copy(isLoading = false) }
+
             }
             .onFailure {
                 postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
@@ -320,6 +280,8 @@ class HomeViewModel @Inject constructor(
     fun deleteFinanceScheduleDetail(id: Long) = intent {
         deleteFinanceScheduleDetailUseCase(id)
             .onSuccess {
+                reduce { state.copy(isLoading = true) }
+
                 getFinanceScheduleUseCase()
                     .onSuccess {
                         reduce {
@@ -331,6 +293,8 @@ class HomeViewModel @Inject constructor(
                     .onFailure {
                         postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
                     }
+                reduce { state.copy(isLoading = false) }
+
             }
             .onFailure {
                 postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
@@ -351,12 +315,16 @@ class HomeViewModel @Inject constructor(
 
         postAccountBookBudgetUseCase(accountBookBudgetRequest)
             .onSuccess {
+                reduce { state.copy(isLoading = true) }
 
                 getAccountBookMonthAsset(true, year.toInt(), month.toInt())
 
                 postSideEffect(
                     HomeSideEffect.FinishBudgetSettingBottomSheet
                 )
+
+                reduce { state.copy(isLoading = false) }
+
             }.onFailure {
 
             }
@@ -376,20 +344,18 @@ class HomeViewModel @Inject constructor(
 
         patchAccountBookBudgetUseCase(accountBookBudgetRequest)
             .onSuccess {
+                reduce { state.copy(isLoading = true) }
+
                 getAccountBookMonthAsset(true, year.toInt(), month.toInt())
 
                 postSideEffect(
                     HomeSideEffect.FinishBudgetSettingBottomSheet
                 )
+                reduce { state.copy(isLoading = false) }
+
             }.onFailure {
 
             }
 
-    }
-
-
-    override fun onCleared() {
-        Log.d("homeViewModel", "onCleared")
-        super.onCleared()
     }
 }
