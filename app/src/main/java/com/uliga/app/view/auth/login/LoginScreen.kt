@@ -65,6 +65,7 @@ import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CheckAlertDialog
+import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.auth.AuthActivity
 import com.uliga.app.view.auth.AuthSideEffect
@@ -425,6 +426,9 @@ fun LoginScreen(
 
     }
 
+    if(state.isLoading) {
+        CircularProgress()
+    }
 
     ToastAnimation(yOffset = yOffset, toastMessage = "")
 

@@ -47,8 +47,10 @@ import com.uliga.app.ui.theme.Black
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.auth.AuthViewModel
 import com.uliga.app.view.main.MainActivity
+import org.orbitmvi.orbit.compose.collectAsState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,6 +62,8 @@ fun NormalSignUpScreen(
 ) {
 
     val context = LocalContext.current
+
+    val state = viewModel.collectAsState().value
 
     LazyColumn(
         modifier = Modifier
@@ -408,6 +412,10 @@ fun NormalSignUpScreen(
 
         }
 
+    }
+
+    if(state.isLoading) {
+        CircularProgress()
     }
 
 
