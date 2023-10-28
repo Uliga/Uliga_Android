@@ -41,7 +41,9 @@ class ProfileViewModel @Inject constructor(
 
         deleteMemberUseCase()
             .onSuccess {
-
+                postSideEffect(
+                    ProfileSideEffect.ToastMessage("회원 탈퇴를 하는데 성공했습니다!")
+                )
                 postSideEffect(
                     ProfileSideEffect.DismissSignOutAlert
                 )
@@ -66,6 +68,9 @@ class ProfileViewModel @Inject constructor(
 
         getLogoutRedirectUseCase()
             .onSuccess {
+                postSideEffect(
+                    ProfileSideEffect.ToastMessage("로그아웃을 하는데 성공했습니다!")
+                )
                 postSideEffect(
                     ProfileSideEffect.DismissSignOutAlert
                 )
