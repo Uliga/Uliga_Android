@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,6 +35,9 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -73,6 +77,7 @@ import com.uliga.app.ui.theme.LightBlue
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.accountBook.input.AccountBookForInputActivity
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionBottomSheet
@@ -242,156 +247,188 @@ fun FinanceScreen(
 //        )
 //    }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(White),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-
-        item {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        modifier = Modifier
-                            .clickable {
-                                isSheetOpen = true
-                            },
-                        text = "안세훈님의 가계부",
-                        color = Color.Black,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
-                    )
-                },
-                actions = {
-                    IconButton(onClick = {
-                        showDialog = true
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                }
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = {
+            viewModel.initializeBaseInfo(
+                id = mainUiState.id,
+                currentAccountInfo = mainUiState.currentAccountInfo,
+                member = mainUiState.member
             )
         }
+    )
 
-        item {
 
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 32.dp,
-                        end = 32.dp,
-                        top = 8.dp
-                    ),
-                text = "${calendarState.firstVisibleMonth.yearMonth.monthValue.toString()}월",
-                color = Grey700,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Medium,
-                fontSize = 18.sp
-            )
+    Box(
+        modifier = Modifier
+            .wrapContentSize()
+            .pullRefresh(pullRefreshState),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(White),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
 
-            HorizontalCalendar(
-                modifier = Modifier
-                    .padding(
-                        vertical = 16.dp,
-                        horizontal = 16.dp
-                    ),
-                state = calendarState,
-                dayContent = {
-                    Day(
-                        day = it,
-                        accountBookAssetMonth = state.currentAccountBookAsset,
-                        onClick = {
-                            selectedDate.value = "${it.date.monthValue}월 ${it.date.dayOfMonth}일"
-                            viewModel.getAccountBookDayTransaction(
-                                it.date.year,
-                                it.date.monthValue,
-                                it.date.dayOfMonth
+            item {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            modifier = Modifier
+                                .clickable {
+                                    isSheetOpen = true
+                                },
+                            text = "안세훈님의 가계부",
+                            color = Color.Black,
+                            fontFamily = pretendard,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            showDialog = true
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Add,
+                                contentDescription = "Localized description"
                             )
                         }
-                    )
-                },
-                monthHeader = {
-                    DaysOfWeekTitle(daysOfWeek = daysOfWeek)
-                }
-            )
-        }
+                    }
+                )
+            }
 
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            item {
+
                 Text(
-                    modifier = Modifier.padding(
-                        start = 16.dp
-                    ),
-                    text = selectedDate.value,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 32.dp,
+                            end = 32.dp,
+                            top = 8.dp
+                        ),
+                    text = "${calendarState.firstVisibleMonth.yearMonth.monthValue.toString()}월",
                     color = Grey700,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp
+                    fontSize = 18.sp
                 )
 
-                Spacer(modifier = Modifier.weight(1f))
+                HorizontalCalendar(
+                    modifier = Modifier
+                        .padding(
+                            vertical = 16.dp,
+                            horizontal = 16.dp
+                        ),
+                    state = calendarState,
+                    dayContent = {
+                        Day(
+                            day = it,
+                            accountBookAssetMonth = state.currentAccountBookAsset,
+                            onClick = {
+                                selectedDate.value = "${it.date.monthValue}월 ${it.date.dayOfMonth}일"
+                                viewModel.getAccountBookDayTransaction(
+                                    it.date.year,
+                                    it.date.monthValue,
+                                    it.date.dayOfMonth
+                                )
+                            }
+                        )
+                    },
+                    monthHeader = {
+                        DaysOfWeekTitle(daysOfWeek = daysOfWeek)
+                    }
+                )
+            }
 
-
+            item {
                 Row(
                     modifier = Modifier
-                        .wrapContentSize()
-                        .clickable {
-                            val intent = Intent(context, AccountBookForInputActivity::class.java)
-                            intent.putExtra("selectedDate", selectedDate.value)
-                            launcher.launch(intent)
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
+                        .fillMaxWidth()
+                        .padding(end = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        modifier = Modifier
-                            .size(16.dp),
-                        painter = painterResource(
-                            id = R.drawable.ic_adding_budget
-                        ),
-                        contentDescription = null
-                    )
-
-                    Spacer(modifier = Modifier.width(4.dp))
-
                     Text(
-                        text = "가계부 추가하기",
-                        color = Secondary,
+                        modifier = Modifier.padding(
+                            start = 16.dp
+                        ),
+                        text = selectedDate.value,
+                        color = Grey700,
                         fontFamily = pretendard,
                         fontWeight = FontWeight.Medium,
-                        fontSize = 14.sp
+                        fontSize = 20.sp
                     )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+
+                    Row(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .clickable {
+                                val intent =
+                                    Intent(context, AccountBookForInputActivity::class.java)
+                                intent.putExtra("selectedDate", selectedDate.value)
+                                launcher.launch(intent)
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(16.dp),
+                            painter = painterResource(
+                                id = R.drawable.ic_adding_budget
+                            ),
+                            contentDescription = null
+                        )
+
+                        Spacer(modifier = Modifier.width(4.dp))
+
+                        Text(
+                            text = "가계부 추가하기",
+                            color = Secondary,
+                            fontFamily = pretendard,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp
+                        )
+                    }
                 }
             }
-        }
 
-        items(state.currentAccountBookAssetDay?.items?.size ?: 0) { idx ->
+            items(state.currentAccountBookAssetDay?.items?.size ?: 0) { idx ->
 
-            val currentAccountBookAssetDay =
-                state.currentAccountBookAssetDay?.items?.get(idx) ?: return@items
+                val currentAccountBookAssetDay =
+                    state.currentAccountBookAssetDay?.items?.get(idx) ?: return@items
 
-            TransactionItem(viewModel, currentAccountBookAssetDay) {
-                deleteAlertDialogVisibleState = true
-                selectedDeleteItemId = it.id
-            }
+                TransactionItem(viewModel, currentAccountBookAssetDay) {
+                    deleteAlertDialogVisibleState = true
+                    selectedDeleteItemId = it.id
+                }
 
 //            Spacer(
 //                modifier = Modifier.height(16.dp)
 //            )
+            }
+
+
         }
 
+        PullRefreshIndicator(
+            refreshing = state.isLoading,
+            state = pullRefreshState
+        )
+
     }
+
+    if(state.isLoading) {
+        CircularProgress()
+    }
+
 
 
 //    if (!accountBookSelectionSheetState.isVisible) {
