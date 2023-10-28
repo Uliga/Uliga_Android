@@ -5,17 +5,23 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -37,11 +44,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.uliga.app.customTabIndicatorOffset
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.main.MainUiState
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun AnalyzeScreen(
@@ -61,17 +69,39 @@ fun AnalyzeScreen(
 
     val pagerState = rememberPagerState()
 
-    Column(
-        modifier = Modifier.background(Color.White)
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = {
+            viewModel.initializeBaseInfo(
+                id = mainUiState.id,
+                currentAccountInfo = mainUiState.currentAccountInfo,
+                member = mainUiState.member
+            )
+        }
+    )
+
+
+    Box(
+        modifier = Modifier
+            .wrapContentSize()
+            .pullRefresh(pullRefreshState),
+        contentAlignment = Alignment.TopCenter
     ) {
         AnalyzeTabs(pagerState = pagerState)
         AnalyzeTabsContent(
             pagerState = pagerState,
             viewModel = viewModel
         )
+
+        PullRefreshIndicator(
+            refreshing = state.isLoading,
+            state = pullRefreshState
+        )
     }
 
-
+    if(state.isLoading) {
+        CircularProgress()
+    }
 }
 
 private val analyzeScreenList = listOf("시간별", "카테고리별")
