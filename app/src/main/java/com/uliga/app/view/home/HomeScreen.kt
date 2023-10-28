@@ -844,10 +844,6 @@ fun HomeScreen(
         )
     }
 
-    if(state.isLoading) {
-        CircularProgress()
-    }
-
     if (deleteAlertDialogVisibleState) {
         DeleteAlertDialog(
             onDismissRequest = {
@@ -858,6 +854,10 @@ fun HomeScreen(
             title = "금융 일정 삭제",
             subTitle = "정말 선택한 금융 일정을 삭제하시겠어요?"
         )
+    }
+
+    if(state.isLoading) {
+        CircularProgress()
     }
 }
 
