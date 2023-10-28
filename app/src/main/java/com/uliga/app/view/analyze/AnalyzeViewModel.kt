@@ -18,8 +18,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AnalyzeViewModel @Inject constructor(
-    private val fetchIdUseCase: FetchIdUseCase,
-    private val fetchCurrentAccountBookInfoUseCase: FetchCurrentAccountBookInfoUseCase,
     private val getAccountBookRecordByMonthForCategoryUseCase: GetAccountBookRecordByMonthForCategoryUseCase,
     private val getAccountBookRecordByMonthForCompareUseCase: GetAccountBookRecordByMonthForCompareUseCase,
     private val getAccountBookRecordByWeekUseCase: GetAccountBookRecordByWeekUseCase,
@@ -29,9 +27,6 @@ class AnalyzeViewModel @Inject constructor(
     override val container = container<AnalyzeUiState, AnalyzeSideEffect>(AnalyzeUiState.empty())
 
     init {
-        fetchCurrentAccountBookInfo()
-        fetchId()
-
         val currentDate = LocalDate.now()
         val currentYear = currentDate.year
         val currentMonth = currentDate.monthValue
@@ -44,6 +39,8 @@ class AnalyzeViewModel @Inject constructor(
 
     fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
         intent {
+            reduce { state.copy(isLoading = true) }
+
             reduce {
                 state.copy(
                     id = id,
@@ -51,39 +48,15 @@ class AnalyzeViewModel @Inject constructor(
                     member = member
                 )
             }
+
+            reduce { state.copy(isLoading = false) }
+
         }
-
-    fun fetchCurrentAccountBookInfo() = intent {
-        fetchCurrentAccountBookInfoUseCase()
-            .onSuccess {
-                reduce {
-                    state.copy(
-                        currentAccountInfo = it
-                    )
-                }
-            }
-            .onFailure {
-
-            }
-    }
-
-    fun fetchId() = intent {
-        fetchIdUseCase()
-            .onSuccess {
-                reduce {
-                    state.copy(
-                        id = it
-                    )
-                }
-            }
-            .onFailure {
-
-            }
-    }
 
     fun getAccountBookRecordByMonthForCompare(year: Int, month: Int) = intent {
         val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
 
+        reduce { state.copy(isLoading = true) }
         getAccountBookRecordByMonthForCompareUseCase(
             currentAccountBookInfo.second,
             year,
@@ -97,6 +70,8 @@ class AnalyzeViewModel @Inject constructor(
         }.onFailure {
 
         }
+        reduce { state.copy(isLoading = false) }
+
     }
 
     fun getAccountBookRecordByWeek(
@@ -105,6 +80,8 @@ class AnalyzeViewModel @Inject constructor(
         startDay: Int
     ) = intent {
         val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
+
+        reduce { state.copy(isLoading = true) }
 
         getAccountBookRecordByWeekUseCase(
             currentAccountBookInfo.second,
@@ -121,10 +98,15 @@ class AnalyzeViewModel @Inject constructor(
 
 
         }
+
+        reduce { state.copy(isLoading = false) }
+
     }
 
     fun getAccountBookRecordByMonthForCategory(year: Int, month: Int) = intent {
         val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
+
+        reduce { state.copy(isLoading = true) }
 
         getAccountBookRecordByMonthForCategoryUseCase(
             currentAccountBookInfo.second,
@@ -139,10 +121,14 @@ class AnalyzeViewModel @Inject constructor(
         }.onFailure {
 
         }
+        reduce { state.copy(isLoading = false) }
+
     }
 
     fun getAccountBookFixedRecordByMonth() = intent {
         val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
+
+        reduce { state.copy(isLoading = true) }
 
         getAccountBookFixedRecordByMonthUseCase(currentAccountBookInfo.second)
             .onSuccess {
@@ -155,6 +141,9 @@ class AnalyzeViewModel @Inject constructor(
             .onFailure {
 
             }
+
+        reduce { state.copy(isLoading = false) }
+
     }
 
 }
