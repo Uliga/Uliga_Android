@@ -40,21 +40,23 @@ class AccountBookGenerationViewModel @Inject constructor(
     }
 
     fun getAccountBooks() = intent {
+        reduce { state.copy(isLoading = true) }
 
         getAccountBooksUseCase()
             .onSuccess {
-                reduce { state.copy(isLoading = true) }
                 reduce {
                     state.copy(
                         accountBooks = it
                     )
                 }
-                reduce { state.copy(isLoading = false) }
 
             }
             .onFailure {
 
             }
+
+        reduce { state.copy(isLoading = false) }
+
     }
 
     fun getIsEmailExisted(email: String) = intent {
@@ -62,18 +64,12 @@ class AccountBookGenerationViewModel @Inject constructor(
             postSideEffect(AccountBookGenerationSideEffect.ToastMessage("닉네임을 적어주세요."))
             return@intent
         }
+        reduce { state.copy(isLoading = true) }
 
         getUserAuthDataExistedUseCase("mail", email)
             .onSuccess {
 
                 if (it.exists == null) return@intent
-
-                reduce { state.copy(isLoading = true) }
-                reduce {
-                    state.copy(
-                        isLoading = true,
-                    )
-                }
 
                 if (it.exists!!) {
                     postSideEffect(AccountBookGenerationSideEffect.AddEmailChip)
@@ -81,18 +77,15 @@ class AccountBookGenerationViewModel @Inject constructor(
                     postSideEffect(AccountBookGenerationSideEffect.ToastMessage("이메일이 존재하지 않습니다."))
                 }
 
-                reduce {
-                    state.copy(
-                        isLoading = false,
-                    )
-                }
+
             }.onFailure {
-                reduce {
-                    state.copy(
-                        isLoading = false,
-                    )
-                }
             }
+
+        reduce {
+            state.copy(
+                isLoading = false,
+            )
+        }
     }
 
     fun postAccountBook(
@@ -111,6 +104,8 @@ class AccountBookGenerationViewModel @Inject constructor(
             return@intent
         }
 
+        reduce { state.copy(isLoading = true) }
+
         val accountBookGenerationRequest = AccountBookGenerationRequest(
             name = name,
             categories = categoryList,
@@ -120,11 +115,9 @@ class AccountBookGenerationViewModel @Inject constructor(
 
         postAccountBookUseCase(accountBookGenerationRequest)
             .onSuccess {
-                reduce { state.copy(isLoading = true) }
 
                 getAccountBooksUseCase()
                     .onSuccess {
-                        reduce { state.copy(isLoading = true) }
                         reduce {
                             state.copy(
                                 accountBooks = it
@@ -137,7 +130,6 @@ class AccountBookGenerationViewModel @Inject constructor(
                     .onFailure {
 
                     }
-                reduce { state.copy(isLoading = false) }
             }
             .onFailure {
 
