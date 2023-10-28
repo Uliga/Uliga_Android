@@ -135,7 +135,9 @@ class FinanceViewModel @Inject constructor(
                 postSideEffect(
                     FinanceSideEffect.DismissDeleteAlert
                 )
-
+                postSideEffect(
+                    FinanceSideEffect.ToastMessage("거래 내역을 삭제하는데 성공했습니다!")
+                )
             }
             .onFailure {
 
