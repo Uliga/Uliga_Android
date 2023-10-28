@@ -54,6 +54,7 @@ import com.uliga.app.ui.theme.Black
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.accountBook.generation.AccountBookGenerationActivity
 import com.uliga.app.view.auth.AuthSideEffect
 import com.uliga.app.view.auth.AuthViewModel
@@ -401,6 +402,10 @@ fun SocialSignupScreen(
 
         }
 
+    }
+
+    if(state.isLoading) {
+        CircularProgress()
     }
 
     ToastAnimation(yOffset = yOffset, toastMessage = label)

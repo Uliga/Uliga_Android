@@ -74,11 +74,13 @@ class AuthViewModel @Inject constructor(
             }
 
         }.onFailure { throwable ->
-            reduce {
-                state.copy(
-                    isLoading = false,
-                )
-            }
+
+        }
+
+        reduce {
+            state.copy(
+                isLoading = false,
+            )
         }
     }
 
@@ -88,11 +90,12 @@ class AuthViewModel @Inject constructor(
             return@intent
         }
 
+        reduce {
+            state.copy(isLoading = true)
+        }
         getUserAuthDataExistedUseCase("nickname", nickName)
             .onSuccess {
-                reduce {
-                    state.copy(isLoading = true)
-                }
+
                 reduce {
                     state.copy(
                         isLoading = false,
@@ -100,12 +103,14 @@ class AuthViewModel @Inject constructor(
                     )
                 }
             }.onFailure {
-                reduce {
-                    state.copy(
-                        isLoading = false,
-                    )
-                }
+
             }
+
+        reduce {
+            state.copy(
+                isLoading = false,
+            )
+        }
     }
 
     fun fetchIsPrivacyChecked(isPrivacyChecked: Boolean) = intent {
