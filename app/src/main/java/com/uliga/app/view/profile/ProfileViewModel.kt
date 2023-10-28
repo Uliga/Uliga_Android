@@ -25,6 +25,7 @@ class ProfileViewModel @Inject constructor(
 
     fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
         intent {
+            reduce { state.copy(isLoading = true) }
             reduce {
                 state.copy(
                     id = id,
@@ -32,11 +33,14 @@ class ProfileViewModel @Inject constructor(
                     member = member
                 )
             }
+            reduce { state.copy(isLoading = false) }
         }
 
     fun deleteMember() = intent {
         deleteMemberUseCase()
             .onSuccess {
+                reduce { state.copy(isLoading = true) }
+
                 postSideEffect(
                     ProfileSideEffect.DismissSignOutAlert
                 )
@@ -46,6 +50,8 @@ class ProfileViewModel @Inject constructor(
                 postSideEffect(
                     ProfileSideEffect.Finish
                 )
+                reduce { state.copy(isLoading = false) }
+
             }
             .onFailure {
 
@@ -55,6 +61,7 @@ class ProfileViewModel @Inject constructor(
     fun getLogoutRedirect() = intent {
         getLogoutRedirectUseCase()
             .onSuccess {
+                reduce { state.copy(isLoading = true) }
                 postSideEffect(
                     ProfileSideEffect.DismissSignOutAlert
                 )
@@ -64,6 +71,8 @@ class ProfileViewModel @Inject constructor(
                 postSideEffect(
                     ProfileSideEffect.Finish
                 )
+                reduce { state.copy(isLoading = false) }
+
             }
             .onFailure {
 
