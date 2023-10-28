@@ -89,9 +89,7 @@ class HomeViewModel @Inject constructor(
                     state.copy(
                         member = it
                     )
-                }
-                reduce { state.copy(isLoading = false) }
-            }
+                } }
             .onFailure {
 
             }
@@ -106,13 +104,11 @@ class HomeViewModel @Inject constructor(
 
         getAccountBOokAnalyzeRecordByDayUseCase(currentAccountBookInfo.second, year, month)
             .onSuccess {
-                reduce { state.copy(isLoading = true) }
                 reduce {
                     state.copy(
                         accountBookAnalyzeRecordByDay = it
                     )
                 }
-                reduce { state.copy(isLoading = false) }
 
             }
             .onFailure {
@@ -142,6 +138,10 @@ class HomeViewModel @Inject constructor(
         postAccountBookInvitationReplyUseCase(accountBookInvitationReply)
             .onSuccess {
                 getMember()
+
+                postSideEffect(
+                    HomeSideEffect.ToastMessage("가계부에 합류하였습니다!")
+                )
             }
             .onFailure {
 
@@ -231,6 +231,7 @@ class HomeViewModel @Inject constructor(
                                     financeSchedules = it
                                 )
                             }
+                            postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 성공했습니다."))
                             postSideEffect(HomeSideEffect.FinishScheduleBottomSheet)
                         }
                         .onFailure {
@@ -279,6 +280,7 @@ class HomeViewModel @Inject constructor(
                                 financeSchedules = it
                             )
                         }
+                        postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 수정하는데 성공했습니다."))
                         postSideEffect(HomeSideEffect.FinishScheduleBottomSheet)
                     }
                     .onFailure {
@@ -308,6 +310,8 @@ class HomeViewModel @Inject constructor(
                                 financeSchedules = it
                             )
                         }
+                        postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 삭제하는데 성공했습니다."))
+
                     }
                     .onFailure {
                         postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
@@ -340,6 +344,7 @@ class HomeViewModel @Inject constructor(
 
                 getAccountBookMonthAsset(true, year.toInt(), month.toInt())
 
+                postSideEffect(HomeSideEffect.ToastMessage("예산을 등록하는데 성공했습니다."))
                 postSideEffect(
                     HomeSideEffect.FinishBudgetSettingBottomSheet
                 )
@@ -369,7 +374,7 @@ class HomeViewModel @Inject constructor(
             .onSuccess {
 
                 getAccountBookMonthAsset(true, year.toInt(), month.toInt())
-
+                postSideEffect(HomeSideEffect.ToastMessage("예산을 수정하는데 성공했습니다."))
                 postSideEffect(
                     HomeSideEffect.FinishBudgetSettingBottomSheet
                 )
