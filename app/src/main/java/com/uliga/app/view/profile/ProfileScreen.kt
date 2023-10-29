@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.uliga.app.R
-import com.uliga.app.ToastAnimation
+import com.uliga.app.TopDownToast
 import com.uliga.app.ui.theme.Black
 import com.uliga.app.ui.theme.Grey300
 import com.uliga.app.ui.theme.Grey700
@@ -51,7 +51,6 @@ import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.DeleteAlertDialog
-import com.uliga.app.view.accountBook.generation.AccountBookGenerationSideEffect
 import com.uliga.app.view.auth.AuthActivity
 import com.uliga.app.view.main.MainActivity
 import com.uliga.app.view.main.MainUiState
@@ -87,7 +86,7 @@ fun ProfileScreen(
         mutableStateOf("")
     }
 
-    val yOffset by animateFloatAsState(
+    val toastYOffset by animateFloatAsState(
         targetValue = if (isToastAnimating) 25f else -100f,
         animationSpec = tween(durationMillis = 1500),
         finishedListener = { endValue ->
@@ -99,6 +98,10 @@ fun ProfileScreen(
     )
 
 
+    /**
+     * Logout / SignOut Alert Dialog
+     */
+
     var logoutAlertDialogVisibleState by remember {
         mutableStateOf(false)
     }
@@ -106,6 +109,10 @@ fun ProfileScreen(
     var signOutAlertDialogVisibleState by remember {
         mutableStateOf(false)
     }
+
+    /**
+     * SideEffect
+     */
 
     viewModel.collectSideEffect { sideEffect ->
         handleSideEffect(
@@ -123,25 +130,9 @@ fun ProfileScreen(
         )
     }
 
-    if (logoutAlertDialogVisibleState) {
-        DeleteAlertDialog(
-            onDismissRequest = {
-                viewModel.getLogoutRedirect()
-            },
-            title = "정말로 로그아웃 하시겠습니까?",
-            subTitle = ""
-        )
-    }
-
-    if (signOutAlertDialogVisibleState) {
-        DeleteAlertDialog(
-            onDismissRequest = {
-                viewModel.deleteMember()
-            },
-            title = "정말로 회원탈퇴를 하시겠습니까?",
-            subTitle = "지금까지 사용하셨던 정보들이 모두 삭제될 수 있어요."
-        )
-    }
+    /**
+     * Pull-To-Refresh
+     */
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading,
@@ -414,11 +405,31 @@ fun ProfileScreen(
         )
     }
 
+    if (logoutAlertDialogVisibleState) {
+        DeleteAlertDialog(
+            onDismissRequest = {
+                viewModel.getLogoutRedirect()
+            },
+            title = "정말로 로그아웃 하시겠습니까?",
+            subTitle = ""
+        )
+    }
+
+    if (signOutAlertDialogVisibleState) {
+        DeleteAlertDialog(
+            onDismissRequest = {
+                viewModel.deleteMember()
+            },
+            title = "정말로 회원탈퇴를 하시겠습니까?",
+            subTitle = "지금까지 사용하셨던 정보들이 모두 삭제될 수 있어요."
+        )
+    }
+
     if(state.isLoading) {
         CircularProgress()
     }
 
-    ToastAnimation(yOffset = yOffset, toastMessage = toastMessage)
+    TopDownToast(toastYOffset = toastYOffset, toastMessage = toastMessage)
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
