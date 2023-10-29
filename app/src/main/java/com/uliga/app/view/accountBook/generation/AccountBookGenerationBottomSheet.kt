@@ -3,8 +3,6 @@ package com.uliga.app.view.accountBook.generation
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,7 +50,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.uliga.app.R
 import com.uliga.app.ui.theme.Grey100
 import com.uliga.app.ui.theme.Grey400
@@ -70,28 +67,8 @@ fun AccountBookGenerationBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit
 ) {
-
     val state = viewModel.collectAsState().value
     val context = LocalContext.current
-
-    var isAnimating by remember {
-        mutableStateOf(false)
-    }
-
-    var label by remember {
-        mutableStateOf("")
-    }
-
-    val yOffset by animateFloatAsState(
-        targetValue = if (isAnimating) 25f else -100f,
-        animationSpec = tween(durationMillis = 1500),
-        finishedListener = { endValue ->
-            if (endValue == 25f) {
-                isAnimating = false
-            }
-        },
-        label = ""
-    )
 
     ModalBottomSheet(
         sheetState = sheetState,
@@ -125,11 +102,9 @@ fun AccountBookGenerationBottomSheet(
         }
 
         viewModel.collectSideEffect {
-            handleSideEffect(it, context,
-                toastRequest = { toastMessage ->
-                    isAnimating = true
-                    label = toastMessage
-                },
+            handleSideEffect(
+                sideEffect = it,
+                context = context,
                 onEmailAddingRequest = {
                     invitiationElementList.add(accountBookInvitation)
                 },
@@ -609,31 +584,19 @@ fun ChipWithDelete(
 private fun handleSideEffect(
     sideEffect: AccountBookGenerationSideEffect,
     context: Context,
-    toastRequest: (String) -> Unit,
     onEmailAddingRequest: () -> Unit,
     onDismissRequest: () -> Unit
 ) {
     when (sideEffect) {
-        is AccountBookGenerationSideEffect.ToastMessage -> {
-            toastRequest(sideEffect.toastMessage)
-        }
-
         is AccountBookGenerationSideEffect.AddEmailChip -> {
             onEmailAddingRequest()
-        }
-
-        is AccountBookGenerationSideEffect.NavigateToMainActivity -> {
-
-        }
-
-        is AccountBookGenerationSideEffect.Finish -> {
-
         }
 
         is AccountBookGenerationSideEffect.FinishAccountBookGenerationBottomSheet -> {
             onDismissRequest()
         }
 
-
+        else -> { // no-op
+        }
     }
 }
