@@ -1,6 +1,6 @@
 package com.uliga.app.view.accountBook.input
 
-import androidx.lifecycle.ViewModel
+import com.uliga.app.base.BaseViewModel
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
 import com.uliga.domain.usecase.accountbook.PostAccountBookTransactionUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
@@ -19,15 +19,21 @@ class AccountBookForInputViewModel @Inject constructor(
     private val fetchCurrentAccountBookInfoUseCase: FetchCurrentAccountBookInfoUseCase,
     private val fetchIdUseCase: FetchIdUseCase,
     private val postAccountBookTransactionUseCase: PostAccountBookTransactionUseCase
-) : ContainerHost<AccountBookForInputUiState, AccountBookForInputSideEffect>, ViewModel() {
+) : ContainerHost<AccountBookForInputUiState, AccountBookForInputSideEffect>, BaseViewModel() {
 
     override val container = container<AccountBookForInputUiState, AccountBookForInputSideEffect>(
         AccountBookForInputUiState.empty()
     )
 
     init {
-        fetchCurrentAccountBookInfo()
-        fetchId()
+        initialize()
+    }
+
+    fun initialize() = intent {
+        launch {
+            fetchCurrentAccountBookInfo()
+            fetchId()
+        }
     }
 
     fun postAccountBookTransaction(
@@ -98,6 +104,18 @@ class AccountBookForInputViewModel @Inject constructor(
             .onFailure {
 
             }
+    }
+
+    override fun onShowErrorToast(message: String) = intent {
+        postSideEffect(AccountBookForInputSideEffect.ToastMessage(message))
+    }
+
+    override fun updateIsLoading(isLoading: Boolean) = intent {
+        reduce {
+            state.copy(
+                isLoading = isLoading,
+            )
+        }
     }
 
 }
