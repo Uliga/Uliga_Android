@@ -144,7 +144,7 @@ class AuthViewModel @Inject constructor(
         postSideEffect(AuthSideEffect.ToastMessage(message))
     }
 
-    override fun onUpdateIsLoading(isLoading: Boolean): Job = intent {
+    override fun updateIsLoading(isLoading: Boolean): Job = intent {
         reduce {
             state.copy(
                 isLoading = isLoading,

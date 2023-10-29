@@ -15,7 +15,7 @@ abstract class BaseViewModel : ViewModel() {
 
     val ceh = CoroutineExceptionHandler { _, throwable ->
 
-        onUpdateIsLoading(false)
+        updateIsLoading(false)
         filterUligaException(throwable)
     }
 
@@ -24,9 +24,9 @@ abstract class BaseViewModel : ViewModel() {
         @ViewModelScoped crossinline action: suspend CoroutineScope.() -> Unit,
     ): Job {
         return viewModelScope.launch(ceh + SupervisorJob(), start = start) {
-            onUpdateIsLoading(true)
+            updateIsLoading(true)
             action(this)
-            onUpdateIsLoading(false)
+            updateIsLoading(false)
         }
     }
 
@@ -39,5 +39,5 @@ abstract class BaseViewModel : ViewModel() {
 
     abstract fun onShowErrorToast(message: String): Job
 
-    abstract fun onUpdateIsLoading(isLoading: Boolean): Job
+    abstract fun updateIsLoading(isLoading: Boolean): Job
 }

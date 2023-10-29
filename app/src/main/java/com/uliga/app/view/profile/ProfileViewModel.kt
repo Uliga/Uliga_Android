@@ -74,7 +74,7 @@ class ProfileViewModel @Inject constructor(
         postSideEffect(ProfileSideEffect.ToastMessage(message))
     }
 
-    override fun onUpdateIsLoading(isLoading: Boolean) = intent {
+    override fun updateIsLoading(isLoading: Boolean) = intent {
         reduce {
             state.copy(
                 isLoading = isLoading,
