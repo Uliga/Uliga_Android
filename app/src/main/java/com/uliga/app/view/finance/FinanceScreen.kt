@@ -272,6 +272,7 @@ fun FinanceScreen(
                 )
             },
             onShowToast = {
+                isToastAnimating = true
                 toastMessage = it
             }
         )

@@ -125,6 +125,7 @@ fun ProfileScreen(
                 signOutAlertDialogVisibleState = false
             },
             onShowToast = {
+                isToastAnimating = true
                 toastMessage = it
             }
         )
