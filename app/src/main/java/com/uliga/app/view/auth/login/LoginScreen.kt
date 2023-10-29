@@ -136,6 +136,7 @@ fun LoginScreen(
             navController = navController,
             onShowToast = {
                 isToastAnimating = true
+                toastMessage = it
             }
         )
     }
