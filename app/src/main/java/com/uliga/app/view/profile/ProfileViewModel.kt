@@ -1,6 +1,6 @@
 package com.uliga.app.view.profile
 
-import androidx.lifecycle.ViewModel
+import com.uliga.app.base.BaseViewModel
 import com.uliga.domain.model.member.Member
 import com.uliga.domain.usecase.member.DeleteMemberUseCase
 import com.uliga.domain.usecase.userAuth.GetLogoutRedirectUseCase
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val deleteMemberUseCase: DeleteMemberUseCase,
     private val getLogoutRedirectUseCase: GetLogoutRedirectUseCase,
-) : ContainerHost<ProfileUiState, ProfileSideEffect>, ViewModel() {
+) : ContainerHost<ProfileUiState, ProfileSideEffect>, BaseViewModel() {
     override val container = container<ProfileUiState, ProfileSideEffect>(ProfileUiState.empty())
 
     init {
@@ -25,60 +25,60 @@ class ProfileViewModel @Inject constructor(
 
     fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
         intent {
-            reduce { state.copy(isLoading = true) }
-            reduce {
-                state.copy(
-                    id = id,
-                    currentAccountInfo = currentAccountInfo,
-                    member = member
-                )
+            launch {
+                reduce {
+                    state.copy(
+                        id = id,
+                        currentAccountInfo = currentAccountInfo,
+                        member = member
+                    )
+                }
             }
-            reduce { state.copy(isLoading = false) }
         }
 
     fun deleteMember() = intent {
-        reduce { state.copy(isLoading = true) }
-
-        deleteMemberUseCase()
-            .onSuccess {
-                postSideEffect(
-                    ProfileSideEffect.DismissSignOutAlert
-                )
-                postSideEffect(
-                    ProfileSideEffect.MoveToAuthActivity
-                )
-                postSideEffect(
-                    ProfileSideEffect.Finish
-                )
-
-            }
-            .onFailure {
-
-            }
-
-        reduce { state.copy(isLoading = false) }
-
+        launch {
+            deleteMemberUseCase()
+                .onSuccess {
+                    postSideEffect(
+                        ProfileSideEffect.DismissSignOutAlert
+                    )
+                    postSideEffect(
+                        ProfileSideEffect.MoveToAuthActivity
+                    )
+                    postSideEffect(
+                        ProfileSideEffect.Finish
+                    )
+                }
+        }
     }
 
     fun getLogoutRedirect() = intent {
-        reduce { state.copy(isLoading = true) }
-
-        getLogoutRedirectUseCase()
-            .onSuccess {
-                postSideEffect(
-                    ProfileSideEffect.DismissLogoutAlert
-                )
-                postSideEffect(
-                    ProfileSideEffect.MoveToAuthActivity
-                )
-                postSideEffect(
-                    ProfileSideEffect.Finish
-                )
-            }
-            .onFailure {
-
-            }
-        reduce { state.copy(isLoading = false) }
+        launch {
+            getLogoutRedirectUseCase()
+                .onSuccess {
+                    postSideEffect(
+                        ProfileSideEffect.DismissLogoutAlert
+                    )
+                    postSideEffect(
+                        ProfileSideEffect.MoveToAuthActivity
+                    )
+                    postSideEffect(
+                        ProfileSideEffect.Finish
+                    )
+                }
+        }
     }
 
+    override fun onShowErrorToast(message: String) = intent {
+        postSideEffect(ProfileSideEffect.ToastMessage(message))
+    }
+
+    override fun onUpdateIsLoading(isLoading: Boolean) = intent {
+        reduce {
+            state.copy(
+                isLoading = isLoading,
+            )
+        }
+    }
 }
