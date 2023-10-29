@@ -27,6 +27,39 @@ import com.uliga.app.ui.theme.pretendard
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
+fun TopDownToast(
+    toastYOffset: Float,
+    toastMessage: String
+) {
+    Box(Modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .wrapContentSize()
+                .align(Alignment.TopCenter)
+                .offset(
+                    y = toastYOffset.dp
+                )
+                .shadow(
+                    elevation = 10.dp,
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .background(Color.White)
+                .padding(8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                color = Primary,
+                fontFamily = pretendard,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 12.sp,
+                text = toastMessage
+            )
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+@Composable
 fun ToastAnimation(
     yOffset: Float,
     toastMessage: String
