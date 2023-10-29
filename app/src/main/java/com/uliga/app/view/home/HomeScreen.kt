@@ -1,7 +1,7 @@
 package com.uliga.app.view.home
 
+import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -21,10 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
@@ -42,12 +39,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Medium
 import androidx.compose.ui.unit.dp
@@ -55,9 +50,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.uliga.app.R
+import com.uliga.app.TopDownToast
 import com.uliga.app.ui.theme.CustomGrey100
 import com.uliga.app.ui.theme.Danger100
-import com.uliga.app.ui.theme.Grey200
 import com.uliga.app.ui.theme.Grey300
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey600
@@ -74,12 +69,11 @@ import com.uliga.app.view.home.invitation.InvitationBottomSheet
 import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
 import com.uliga.app.view.schedule.ScheduleBottomSheet
-import com.uliga.chart.bar.VerticalBarChart
 import com.uliga.chart.line.LineChart
 import com.uliga.domain.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDay
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
-import kotlinx.coroutines.delay
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -91,6 +85,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val state = viewModel.collectAsState().value
 
     viewModel.initializeBaseInfo(
         id = mainUiState.id,
@@ -98,7 +93,9 @@ fun HomeScreen(
         member = mainUiState.member
     )
 
-    val state = viewModel.collectAsState().value
+    /**
+     * Need Refactor
+     */
 
     val currentDate = LocalDate.now()
 
@@ -175,9 +172,9 @@ fun HomeScreen(
     }
 
     var recordValue = state.currentMonthAccountBookAsset?.record?.value?.toFloat()
-    if(recordValue == null) recordValue = 0f
+    if (recordValue == null) recordValue = 0f
     var budgetValue = state.currentMonthAccountBookAsset?.budget?.value?.toFloat()
-    if(budgetValue == null || budgetValue == 0f) budgetValue = 1f
+    if (budgetValue == null || budgetValue == 0f) budgetValue = 1f
 
     val animationDuration: Int = 1000
     val animationDelay: Int = 0
@@ -189,10 +186,66 @@ fun HomeScreen(
         ), label = ""
     )
 
+    /**
+     * Toast Message
+     */
+
+    var isToastAnimating by remember {
+        mutableStateOf(false)
+    }
+
+    var toastMessage by remember {
+        mutableStateOf("")
+    }
+
+    val toastYOffset by animateFloatAsState(
+        targetValue = if (isToastAnimating) 25f else -100f,
+        animationSpec = tween(durationMillis = 1500),
+        finishedListener = { endValue ->
+            if (endValue == 25f) {
+                isToastAnimating = false
+            }
+        },
+        label = ""
+    )
+
+    /**
+     * SideEffect
+     */
+
+    viewModel.collectSideEffect { sideEffect ->
+        handleSideEffect(
+            sideEffect = sideEffect,
+            context = context,
+            onFinishScheduleBottomSheet = {
+                isScheduleAlertSheetOpen = false
+            },
+            onFinishBudgetSettingBottomSheet = {
+                isBudgetSettingSheetOpen = false
+            },
+            onShowToast = {
+                isToastAnimating = true
+                toastMessage = it
+            }
+        )
+    }
+
+
+    /**
+     * Pull-To-Refresh
+     */
+
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading,
         onRefresh = {
-            viewModel.initialize()
+            viewModel.apply {
+                initializeBaseInfo(
+                    id = mainUiState.id,
+                    currentAccountInfo = mainUiState.currentAccountInfo,
+                    member = mainUiState.member
+                )
+                initialize()
+            }
         }
     )
 
@@ -856,16 +909,18 @@ fun HomeScreen(
         )
     }
 
-    if(state.isLoading) {
+    if (state.isLoading) {
         CircularProgress()
     }
+
+    TopDownToast(toastYOffset = toastYOffset, toastMessage = toastMessage)
 }
 
 @Composable
 fun LineChartScreenContent(
     accountBookAnalyzeRecordByDay: AccountBookAnalyzeRecordByDay?
 ) {
-    if(accountBookAnalyzeRecordByDay == null) return
+    if (accountBookAnalyzeRecordByDay == null) return
 
     val lineChartDataModel = LineChartDataModel(accountBookAnalyzeRecordByDay.records)
 
@@ -904,6 +959,30 @@ fun notificationDayColor(currentDay: Int, notificationDay: Long): Color {
         Success200
     }
 
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+
+private fun handleSideEffect(
+    sideEffect: HomeSideEffect,
+    context: Context,
+    onFinishScheduleBottomSheet: () -> Unit,
+    onFinishBudgetSettingBottomSheet: () -> Unit,
+    onShowToast: (String) -> Unit
+) {
+    when (sideEffect) {
+        is HomeSideEffect.FinishScheduleBottomSheet -> {
+            onFinishScheduleBottomSheet()
+        }
+
+        is HomeSideEffect.FinishBudgetSettingBottomSheet -> {
+            onFinishBudgetSettingBottomSheet()
+        }
+
+        is HomeSideEffect.ToastMessage -> {
+            onShowToast(sideEffect.toastMessage)
+        }
+    }
 }
 
 //@RequiresApi(Build.VERSION_CODES.Q)
