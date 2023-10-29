@@ -1,11 +1,14 @@
 package com.uliga.app.view.accountBook.input
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -31,9 +34,6 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -46,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -53,13 +54,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.uliga.app.TopDownToast
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.MyApplicationTheme
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CircularProgress
-import com.uliga.app.view.home.HomeSideEffect
 import com.uliga.app.view.schedule.RadioButtonWithNoCheckBox
 import dagger.hilt.android.AndroidEntryPoint
 import org.orbitmvi.orbit.compose.collectAsState
@@ -77,6 +78,10 @@ class AccountBookForInputActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyApplicationTheme {
+
+                val context = LocalContext.current
+                val state = viewModel.collectAsState().value
+
 
                 val selectedDate = getIntent().getStringExtra("selectedDate")
 
@@ -133,6 +138,48 @@ class AccountBookForInputActivity : ComponentActivity() {
                     mutableStateOf("")
                 }
 
+                /**
+                 * Toast Message
+                 */
+
+                var isToastAnimating by remember {
+                    mutableStateOf(false)
+                }
+
+                var toastMessage by remember {
+                    mutableStateOf("")
+                }
+
+                val toastYOffset by animateFloatAsState(
+                    targetValue = if (isToastAnimating) 25f else -100f,
+                    animationSpec = tween(durationMillis = 1500),
+                    finishedListener = { endValue ->
+                        if (endValue == 25f) {
+                            isToastAnimating = false
+                        }
+                    },
+                    label = ""
+                )
+
+                /**
+                 * SideEffect
+                 */
+
+                viewModel.collectSideEffect { sideEffect ->
+                    handleSideEffect(
+                        sideEffect = sideEffect,
+                        context = context,
+                        onFinishRequest = {
+                            setResult(RESULT_OK)
+                            finish()
+                        },
+                        onShowToast = {
+                            isToastAnimating = true
+                            toastMessage = it
+                        }
+                    )
+                }
+
                 viewModel.collectSideEffect { sideEffect ->
                     when (sideEffect) {
                         is AccountBookForInputSideEffect.Finish -> {
@@ -146,19 +193,9 @@ class AccountBookForInputActivity : ComponentActivity() {
                     }
                 }
 
-                val state = viewModel.collectAsState().value
-
-                val pullRefreshState = rememberPullRefreshState(
-                    refreshing = state.isLoading,
-                    onRefresh = {
-
-                    }
-                )
-
                 Box(
                     modifier = Modifier
-                        .wrapContentSize()
-                        .pullRefresh(pullRefreshState),
+                        .wrapContentSize(),
                     contentAlignment = Alignment.TopCenter
                 ) {
                     LazyColumn(
@@ -571,20 +608,36 @@ class AccountBookForInputActivity : ComponentActivity() {
                         }
 
                     }
-
-//                AccountBookForInputBottomSheetCompose()
-
-                    PullRefreshIndicator(
-                        refreshing = state.isLoading,
-                        state = pullRefreshState
-                    )
                 }
 
-                if(state.isLoading) {
+                if (state.isLoading) {
                     CircularProgress()
                 }
+
+                TopDownToast(toastYOffset = toastYOffset, toastMessage = toastMessage)
+
             }
 
         }
+    }
+}
+
+
+@RequiresApi(Build.VERSION_CODES.Q)
+private fun handleSideEffect(
+    sideEffect: AccountBookForInputSideEffect,
+    context: Context,
+    onFinishRequest: () -> Unit,
+    onShowToast: (String) -> Unit
+) {
+    when (sideEffect) {
+        is AccountBookForInputSideEffect.Finish -> {
+            onFinishRequest()
+        }
+
+        is AccountBookForInputSideEffect.ToastMessage -> {
+            onShowToast(sideEffect.toastMessage)
+        }
+
     }
 }
