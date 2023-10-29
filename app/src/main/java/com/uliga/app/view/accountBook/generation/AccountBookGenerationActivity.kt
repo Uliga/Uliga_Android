@@ -9,6 +9,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -56,12 +58,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uliga.app.R
+import com.uliga.app.TopDownToast
 import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.MyApplicationTheme
 import com.uliga.app.ui.theme.Primary
@@ -86,7 +90,9 @@ class AccountBookGenerationActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
 
+                val context = LocalContext.current
                 val state = viewModel.collectAsState().value
+
                 var selectedIndex by remember { mutableStateOf(-1) }
                 val onItemClick = { index: Int -> selectedIndex = index }
 
@@ -104,24 +110,47 @@ class AccountBookGenerationActivity : ComponentActivity() {
                     }
                 }
 
-                var isAnimating by remember {
+                /**
+                 * Toast Message
+                 */
+
+                var isToastAnimating by remember {
                     mutableStateOf(false)
                 }
 
-                var label by remember {
+                var toastMessage by remember {
                     mutableStateOf("")
                 }
 
+                val toastYOffset by animateFloatAsState(
+                    targetValue = if (isToastAnimating) 25f else -100f,
+                    animationSpec = tween(durationMillis = 1500),
+                    finishedListener = { endValue ->
+                        if (endValue == 25f) {
+                            isToastAnimating = false
+                        }
+                    },
+                    label = ""
+                )
 
-                viewModel.collectSideEffect {
+                /**
+                 * SideEffect
+                 */
+
+                viewModel.collectSideEffect { sideEffect ->
                     handleSideEffect(
-                        it, this,
-                        toastRequest = { toastMessage ->
-                            isAnimating = true
-                            label = toastMessage
+                        sideEffect = sideEffect,
+                        context = this,
+                        onShowToast = {
+                            isToastAnimating = true
+                            toastMessage = it
                         },
                     )
                 }
+
+                /**
+                 * Pull-To-Refresh
+                 */
 
                 val pullRefreshState = rememberPullRefreshState(
                     refreshing = state.isLoading,
@@ -307,11 +336,15 @@ class AccountBookGenerationActivity : ComponentActivity() {
                 if (state.isLoading) {
                     CircularProgress()
                 }
+
+                TopDownToast(toastYOffset = toastYOffset, toastMessage = toastMessage)
+
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun selectedAccountBook(
@@ -367,8 +400,8 @@ fun selectedAccountBook(
             ),
             contentDescription = "uliga logo"
         )
-    }
 
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -501,11 +534,11 @@ fun showAccountBookGenerationDropDownMenu(
 private fun handleSideEffect(
     sideEffect: AccountBookGenerationSideEffect,
     context: Context,
-    toastRequest: (String) -> Unit,
+    onShowToast: (String) -> Unit,
 ) {
     when (sideEffect) {
         is AccountBookGenerationSideEffect.ToastMessage -> {
-            toastRequest(sideEffect.toastMessage)
+            onShowToast(sideEffect.toastMessage)
         }
 
         is AccountBookGenerationSideEffect.NavigateToMainActivity -> {
@@ -513,12 +546,7 @@ private fun handleSideEffect(
             context.startActivity(intent)
         }
 
-        is AccountBookGenerationSideEffect.Finish -> {
-
-        }
-
-        else -> {
-
+        else -> { // no-op
         }
     }
 }

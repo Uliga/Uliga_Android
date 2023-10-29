@@ -1,6 +1,8 @@
 package com.uliga.app.view.accountBook.generation
 
 import androidx.lifecycle.ViewModel
+import com.uliga.app.base.BaseViewModel
+import com.uliga.app.view.profile.ProfileSideEffect
 import com.uliga.domain.model.accountBook.AccountBook
 import com.uliga.domain.model.accountBook.AccountBookGenerationRequest
 import com.uliga.domain.model.accountBook.AccountBooks
@@ -10,6 +12,7 @@ import com.uliga.domain.usecase.accountbook.local.UpdateAccountBookUseCase
 import com.uliga.domain.usecase.member.DeleteMemberUseCase
 import com.uliga.domain.usecase.userAuth.GetUserAuthDataExistedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -25,7 +28,7 @@ class AccountBookGenerationViewModel @Inject constructor(
     private val deleteMemberUseCase: DeleteMemberUseCase,
     private val getUserAuthDataExistedUseCase: GetUserAuthDataExistedUseCase,
     private val updateAccountBookUseCase: UpdateAccountBookUseCase
-) : ContainerHost<AccountBookGenerationUiState, AccountBookGenerationSideEffect>, ViewModel() {
+) : ContainerHost<AccountBookGenerationUiState, AccountBookGenerationSideEffect>, BaseViewModel() {
     override val container =
         container<AccountBookGenerationUiState, AccountBookGenerationSideEffect>(
             AccountBookGenerationUiState.empty()
@@ -36,55 +39,48 @@ class AccountBookGenerationViewModel @Inject constructor(
     }
 
     fun deleteMember() = intent {
-        deleteMemberUseCase()
+        launch {
+            deleteMemberUseCase()
+        }
     }
 
     fun getAccountBooks() = intent {
-        reduce { state.copy(isLoading = true) }
+        launch {
 
-        getAccountBooksUseCase()
-            .onSuccess {
-                reduce {
-                    state.copy(
-                        accountBooks = it
-                    )
+            getAccountBooksUseCase()
+                .onSuccess {
+                    reduce {
+                        state.copy(
+                            accountBooks = it
+                        )
+                    }
                 }
-
-            }
-            .onFailure {
-
-            }
-
-        reduce { state.copy(isLoading = false) }
-
+        }
     }
 
     fun getIsEmailExisted(email: String) = intent {
-        if (email.isEmpty()) {
-            postSideEffect(AccountBookGenerationSideEffect.ToastMessage("닉네임을 적어주세요."))
-            return@intent
-        }
-        reduce { state.copy(isLoading = true) }
 
-        getUserAuthDataExistedUseCase("mail", email)
-            .onSuccess {
-
-                if (it.exists == null) return@intent
-
-                if (it.exists!!) {
-                    postSideEffect(AccountBookGenerationSideEffect.AddEmailChip)
-                } else {
-                    postSideEffect(AccountBookGenerationSideEffect.ToastMessage("이메일이 존재하지 않습니다."))
-                }
-
-
-            }.onFailure {
+        launch {
+            if (email.isEmpty()) {
+                postSideEffect(AccountBookGenerationSideEffect.ToastMessage("닉네임을 적어주세요."))
+                updateIsLoading(false)
+                return@launch
             }
 
-        reduce {
-            state.copy(
-                isLoading = false,
-            )
+            getUserAuthDataExistedUseCase("mail", email)
+                .onSuccess {
+
+                    if (it.exists == null) {
+                        updateIsLoading(false)
+                        return@launch
+                    }
+
+                    if (it.exists!!) {
+                        postSideEffect(AccountBookGenerationSideEffect.AddEmailChip)
+                    } else {
+                        postSideEffect(AccountBookGenerationSideEffect.ToastMessage("이메일이 존재하지 않습니다."))
+                    }
+                }
         }
     }
 
@@ -94,80 +90,76 @@ class AccountBookGenerationViewModel @Inject constructor(
         categoryList: List<String>,
         emailList: List<String>
     ) = intent {
-        if (name.isEmpty()) {
-            postSideEffect(AccountBookGenerationSideEffect.ToastMessage("가계부 이름을 입력해주세요."))
-            return@intent
-        }
+        launch {
+            if (name.isEmpty()) {
+                postSideEffect(AccountBookGenerationSideEffect.ToastMessage("가계부 이름을 입력해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
 
-        if (relationship.isEmpty()) {
-            postSideEffect(AccountBookGenerationSideEffect.ToastMessage("관계를 입력해주세요."))
-            return@intent
-        }
+            if (relationship.isEmpty()) {
+                postSideEffect(AccountBookGenerationSideEffect.ToastMessage("관계를 입력해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
 
-        reduce { state.copy(isLoading = true) }
+            val accountBookGenerationRequest = AccountBookGenerationRequest(
+                name = name,
+                categories = categoryList,
+                emails = emailList,
+                relationship = relationship
+            )
 
-        val accountBookGenerationRequest = AccountBookGenerationRequest(
-            name = name,
-            categories = categoryList,
-            emails = emailList,
-            relationship = relationship
-        )
+            postAccountBookUseCase(accountBookGenerationRequest)
+                .onSuccess {
 
-        postAccountBookUseCase(accountBookGenerationRequest)
-            .onSuccess {
+                    getAccountBooksUseCase()
+                        .onSuccess {
+                            reduce {
+                                state.copy(
+                                    accountBooks = it
+                                )
+                            }
 
-                getAccountBooksUseCase()
-                    .onSuccess {
-                        reduce {
-                            state.copy(
-                                accountBooks = it
-                            )
+                            postSideEffect(AccountBookGenerationSideEffect.FinishAccountBookGenerationBottomSheet)
                         }
-
-                        postSideEffect(AccountBookGenerationSideEffect.FinishAccountBookGenerationBottomSheet)
-
-                    }
-                    .onFailure {
-
-                    }
-            }
-            .onFailure {
-
-            }
-
-        reduce { state.copy(isLoading = false) }
-
+                }
+        }
     }
 
     fun updateAccountBook(selectedIndex: Int, accountBooks: AccountBooks?) = intent {
-
-        if(selectedIndex == -1) {
-            postSideEffect(AccountBookGenerationSideEffect.ToastMessage("가계부를 선택해주세요."))
-            return@intent
-        }
-
-        if(accountBooks == null) {
-            postSideEffect(AccountBookGenerationSideEffect.ToastMessage("가계부를 찾을 수 없습니다."))
-            return@intent
-        }
-
-        reduce { state.copy(isLoading = true) }
-
-
-        val accountBookName = accountBooks.accountBooks[selectedIndex].info.accountBookName
-        val accountBookId = accountBooks.accountBooks[selectedIndex].info.accountBookId
-
-        updateAccountBookUseCase(accountBookName, accountBookId)
-            .onSuccess {
-                postSideEffect(AccountBookGenerationSideEffect.NavigateToMainActivity)
+        launch {
+            if (selectedIndex == -1) {
+                postSideEffect(AccountBookGenerationSideEffect.ToastMessage("가계부를 선택해주세요."))
+                updateIsLoading(false)
+                return@launch
             }
-            .onFailure {
 
+            if (accountBooks == null) {
+                postSideEffect(AccountBookGenerationSideEffect.ToastMessage("가계부를 찾을 수 없습니다."))
+                updateIsLoading(false)
+                return@launch
             }
-        reduce { state.copy(isLoading = false) }
 
+            val accountBookName = accountBooks.accountBooks[selectedIndex].info.accountBookName
+            val accountBookId = accountBooks.accountBooks[selectedIndex].info.accountBookId
 
+            updateAccountBookUseCase(accountBookName, accountBookId)
+                .onSuccess {
+                    postSideEffect(AccountBookGenerationSideEffect.NavigateToMainActivity)
+                }
+        }
     }
 
+    override fun onShowErrorToast(message: String) = intent {
+        postSideEffect(AccountBookGenerationSideEffect.ToastMessage(message))
+    }
 
+    override fun updateIsLoading(isLoading: Boolean) = intent {
+        reduce {
+            state.copy(
+                isLoading = isLoading,
+            )
+        }
+    }
 }
