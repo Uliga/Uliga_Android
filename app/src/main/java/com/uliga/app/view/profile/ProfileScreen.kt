@@ -1,7 +1,12 @@
 package com.uliga.app.view.profile
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.uliga.app.R
+import com.uliga.app.ToastAnimation
 import com.uliga.app.ui.theme.Black
 import com.uliga.app.ui.theme.Grey300
 import com.uliga.app.ui.theme.Grey700
@@ -45,6 +51,7 @@ import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.DeleteAlertDialog
+import com.uliga.app.view.accountBook.generation.AccountBookGenerationSideEffect
 import com.uliga.app.view.auth.AuthActivity
 import com.uliga.app.view.main.MainActivity
 import com.uliga.app.view.main.MainUiState
@@ -60,6 +67,7 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val state = viewModel.collectAsState().value
 
     viewModel.initializeBaseInfo(
         id = mainUiState.id,
@@ -67,8 +75,29 @@ fun ProfileScreen(
         member = mainUiState.member
     )
 
+    /**
+     * Toast Message
+     */
 
-    val state = viewModel.collectAsState().value
+    var isToastAnimating by remember {
+        mutableStateOf(false)
+    }
+
+    var toastMessage by remember {
+        mutableStateOf("")
+    }
+
+    val yOffset by animateFloatAsState(
+        targetValue = if (isToastAnimating) 25f else -100f,
+        animationSpec = tween(durationMillis = 1500),
+        finishedListener = { endValue ->
+            if (endValue == 25f) {
+                isToastAnimating = false
+            }
+        },
+        label = ""
+    )
+
 
     var logoutAlertDialogVisibleState by remember {
         mutableStateOf(false)
@@ -79,28 +108,20 @@ fun ProfileScreen(
     }
 
     viewModel.collectSideEffect { sideEffect ->
-        when(sideEffect) {
-            ProfileSideEffect.DismissLogoutAlert -> {
+        handleSideEffect(
+            sideEffect = sideEffect,
+            context = context,
+            onShowLogoutAlertDialog = {
                 logoutAlertDialogVisibleState = false
-            }
-            ProfileSideEffect.DismissSignOutAlert -> {
+            },
+            onShowSignOutAlertDialog = {
                 signOutAlertDialogVisibleState = false
+            },
+            onShowToast = {
+                toastMessage = it
             }
-            ProfileSideEffect.ToastMessage("") -> {
-
-            }
-            ProfileSideEffect.MoveToAuthActivity -> {
-                val intent = Intent(context, AuthActivity::class.java)
-                context.startActivity(intent)
-            }
-            ProfileSideEffect.Finish -> {
-                (context as MainActivity).finish()
-            }
-            else -> {}
-        }
+        )
     }
-
-
 
     if (logoutAlertDialogVisibleState) {
         DeleteAlertDialog(
@@ -395,5 +416,35 @@ fun ProfileScreen(
 
     if(state.isLoading) {
         CircularProgress()
+    }
+
+    ToastAnimation(yOffset = yOffset, toastMessage = toastMessage)
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+private fun handleSideEffect(
+    sideEffect: ProfileSideEffect,
+    context: Context,
+    onShowLogoutAlertDialog: () -> Unit,
+    onShowSignOutAlertDialog: () -> Unit,
+    onShowToast: (String) -> Unit
+) {
+    when(sideEffect) {
+        is ProfileSideEffect.DismissLogoutAlert -> {
+            onShowLogoutAlertDialog()
+        }
+        is ProfileSideEffect.DismissSignOutAlert -> {
+            onShowSignOutAlertDialog()
+        }
+        is ProfileSideEffect.ToastMessage -> {
+            onShowToast(sideEffect.toastMessage)
+        }
+        is ProfileSideEffect.MoveToAuthActivity -> {
+            val intent = Intent(context, AuthActivity::class.java)
+            context.startActivity(intent)
+        }
+        is ProfileSideEffect.Finish -> {
+            (context as MainActivity).finish()
+        }
     }
 }
