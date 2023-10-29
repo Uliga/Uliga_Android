@@ -1,5 +1,6 @@
 package com.uliga.app.view.auth.signup
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -71,43 +72,50 @@ fun SocialSignupScreen(
     paramEmail: String,
     paramName: String
 ) {
-
-    val state = viewModel.collectAsState().value
     val context = LocalContext.current
+    val state = viewModel.collectAsState().value
 
     val emailAddressTextState = remember { mutableStateOf(paramEmail) }
     val nameTextState = remember { mutableStateOf(paramName) }
     val nickNameTextState = remember { mutableStateOf("") }
     val privacyCheckBoxState = remember { mutableStateOf(state.isPrivacyChecked) }
 
-    var isVisible by remember {
+    /**
+     * Toast Message
+     */
+
+    var isToastAnimating by remember {
         mutableStateOf(false)
     }
 
-    var isAnimating by remember {
-        mutableStateOf(false)
-    }
-
-    var label by remember {
+    var toastMessage by remember {
         mutableStateOf("")
     }
 
-    val yOffset by animateFloatAsState(
-        targetValue = if (isAnimating) 25f else -100f,
+    val toastYOffset by animateFloatAsState(
+        targetValue = if (isToastAnimating) 25f else -100f,
         animationSpec = tween(durationMillis = 1500),
         finishedListener = { endValue ->
             if (endValue == 25f) {
-                isAnimating = false
+                isToastAnimating = false
             }
         },
         label = ""
     )
 
+    /**
+     * SideEffect
+     */
+
     viewModel.collectSideEffect {
-        handleSideEffect(it, navController, context) { toastMessage ->
-            isAnimating = true
-            label = toastMessage
-        }
+        handleSideEffect(
+            sideEffect = it,
+            context = context,
+            onShowToast = {
+                isToastAnimating = true
+                toastMessage = it
+            }
+        )
     }
 
     LazyColumn(
@@ -408,7 +416,7 @@ fun SocialSignupScreen(
         CircularProgress()
     }
 
-    ToastAnimation(yOffset = yOffset, toastMessage = label)
+    ToastAnimation(yOffset = toastYOffset, toastMessage = toastMessage)
 
 }
 
@@ -416,17 +424,17 @@ fun SocialSignupScreen(
 @RequiresApi(Build.VERSION_CODES.Q)
 private fun handleSideEffect(
     sideEffect: AuthSideEffect,
-    navController: NavController,
     context: Context,
-    toastRequest: (String) -> Unit
+    onShowToast: (String) -> Unit
 ) {
     when (sideEffect) {
         is AuthSideEffect.Finish -> {
-
+            val activity = (context as? Activity)
+            activity?.finish()
         }
 
         is AuthSideEffect.ToastMessage -> {
-            toastRequest(sideEffect.toastMessage)
+            onShowToast(sideEffect.toastMessage)
         }
 
         is AuthSideEffect.NavigateToMainActivity -> {
