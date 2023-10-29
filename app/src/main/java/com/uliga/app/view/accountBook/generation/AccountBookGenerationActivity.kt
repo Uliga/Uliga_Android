@@ -67,9 +67,7 @@ import com.uliga.app.ui.theme.MyApplicationTheme
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CircularProgress
-import com.uliga.app.view.finance.showSettingDropDownMenu
 import com.uliga.app.view.main.MainActivity
-import com.uliga.app.view.schedule.ScheduleBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -306,7 +304,7 @@ class AccountBookGenerationActivity : ComponentActivity() {
                     )
                 }
 
-                if(state.isLoading) {
+                if (state.isLoading) {
                     CircularProgress()
                 }
             }
@@ -453,7 +451,7 @@ fun showAccountBookGenerationDropDownMenu(
                 isAccountBookGenerationSheetStateOpen = false
             },
 
-        )
+            )
     }
 
     var expanded by remember { mutableStateOf(true) }
