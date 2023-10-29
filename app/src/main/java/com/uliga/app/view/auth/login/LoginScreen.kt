@@ -64,9 +64,7 @@ import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
-import com.uliga.app.view.CheckAlertDialog
 import com.uliga.app.view.CircularProgress
-import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.auth.AuthActivity
 import com.uliga.app.view.auth.AuthSideEffect
 import com.uliga.app.view.auth.AuthViewModel
@@ -83,10 +81,8 @@ fun LoginScreen(
     navController: NavController,
     viewModel: AuthViewModel
 ) {
-
-    val state = viewModel.collectAsState().value
     val context = LocalContext.current
-
+    val state = viewModel.collectAsState().value
 
     val activityResult =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -95,57 +91,53 @@ fun LoginScreen(
                 val task: Task<GoogleSignInAccount> =
                     GoogleSignIn.getSignedInAccountFromIntent(intent)
 
-                viewModel.socialLogin(AuthType.GOOGLE, task.result.idToken, task.result.email, task.result.displayName)
+                viewModel.socialLogin(
+                    AuthType.GOOGLE,
+                    task.result.idToken,
+                    task.result.email,
+                    task.result.displayName
+                )
             } else {
 
             }
         }
 
-//    var checkAlertDialogVisibleState by remember {
-//        mutableStateOf(true)
-//    }
-//
-//    TmpCheckAlertDialog(
-//        checkAlertDialogVisibleState
-//    ) {
-//        // onDimsissRequest
-//    }
-//
-//    var deleteAlertDialogVisibleState by remember {
-//        mutableStateOf(false)
-//    }
-//
-//    TmpDeleteAlertDialog(
-//        deleteAlertDialogVisibleState
-//    ) {
-//        // onDimsissRequest
-//    }
+    /**
+     * Toast Message
+     */
 
-
-    var isVisible by remember {
+    var isToastAnimating by remember {
         mutableStateOf(false)
     }
 
-    var isAnimating by remember {
-        mutableStateOf(false)
+    var toastMessage by remember {
+        mutableStateOf("")
     }
 
-    val yOffset by animateFloatAsState(
-        targetValue = if (isAnimating) 25f else -100f,
+    val toastYOffset by animateFloatAsState(
+        targetValue = if (isToastAnimating) 25f else -100f,
         animationSpec = tween(durationMillis = 1500),
         finishedListener = { endValue ->
             if (endValue == 25f) {
-                isAnimating = false
+                isToastAnimating = false
             }
         },
-        label = "dfsdfsdf"
+        label = ""
     )
-    
-    viewModel.collectSideEffect {
-        handleSideEffect(it, navController, context) { toastMessage ->
-            isAnimating != isAnimating
 
-        }
+    /**
+     * SideEffect
+     */
+
+    viewModel.collectSideEffect {
+        handleSideEffect(
+            sideEffect = it,
+            context = context,
+            navController = navController,
+            onShowToast = {
+                isToastAnimating = true
+            }
+        )
     }
 
     Column(
@@ -279,8 +271,7 @@ fun LoginScreen(
                 ),
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
-                    isAnimating = isAnimating.not()
-                    isVisible = isVisible.not()
+                    isToastAnimating = isToastAnimating.not()
                 }) {
                 Text(
                     color = Color.White,
@@ -426,52 +417,19 @@ fun LoginScreen(
 
     }
 
-    if(state.isLoading) {
+    if (state.isLoading) {
         CircularProgress()
     }
 
-    ToastAnimation(yOffset = yOffset, toastMessage = "")
-
-}
-
-@RequiresApi(Build.VERSION_CODES.Q)
-@Composable
-fun TmpDeleteAlertDialog(
-    deleteAlertDialogVisibleState: Boolean,
-    onDismissRequest: () -> Unit
-) {
-    if (deleteAlertDialogVisibleState) {
-        DeleteAlertDialog(
-            onDismissRequest = {},
-            title = "안세훈님의 가계부 삭제",
-            subTitle = "정말 안세훈님의 가계부를 삭제하시겠어요?"
-        )
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.Q)
-@Composable
-fun TmpCheckAlertDialog(
-    checkAlertDialogVisibleState: Boolean,
-    onDismissRequest: () -> Unit
-) {
-    if (checkAlertDialogVisibleState) {
-        CheckAlertDialog(
-            onDismissRequest = onDismissRequest,
-            title = "가계부 생성 완료",
-            subTitle = "가계부가 성공적으로 만들어졌습니다. \n" +
-                    "당신의 합리적인 소비생활을 응원합니다! \uD83D\uDE4B\u200D♀️"
-        )
-    }
-
+    ToastAnimation(yOffset = toastYOffset, toastMessage = toastMessage)
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
 private fun handleSideEffect(
     sideEffect: AuthSideEffect,
-    navController: NavController,
     context: Context,
-    toastRequest: (String) -> Unit
+    navController: NavController,
+    onShowToast: (String) -> Unit
 ) {
     when (sideEffect) {
         is AuthSideEffect.Finish -> {
@@ -480,7 +438,7 @@ private fun handleSideEffect(
         }
 
         is AuthSideEffect.ToastMessage -> {
-            toastRequest(sideEffect.toastMessage)
+            onShowToast(sideEffect.toastMessage)
         }
 
         is AuthSideEffect.NavigateToNormalSignUpScreen -> {
@@ -496,8 +454,42 @@ private fun handleSideEffect(
             context.startActivity(intent)
         }
 
-        else -> {}
+        else -> {
+            // no-op
+        }
 
     }
 }
 
+
+//@RequiresApi(Build.VERSION_CODES.Q)
+//@Composable
+//fun TmpDeleteAlertDialog(
+//    deleteAlertDialogVisibleState: Boolean,
+//    onDismissRequest: () -> Unit
+//) {
+//    if (deleteAlertDialogVisibleState) {
+//        DeleteAlertDialog(
+//            onDismissRequest = {},
+//            title = "안세훈님의 가계부 삭제",
+//            subTitle = "정말 안세훈님의 가계부를 삭제하시겠어요?"
+//        )
+//    }
+//}
+//
+//@RequiresApi(Build.VERSION_CODES.Q)
+//@Composable
+//fun TmpCheckAlertDialog(
+//    checkAlertDialogVisibleState: Boolean,
+//    onDismissRequest: () -> Unit
+//) {
+//    if (checkAlertDialogVisibleState) {
+//        CheckAlertDialog(
+//            onDismissRequest = onDismissRequest,
+//            title = "가계부 생성 완료",
+//            subTitle = "가계부가 성공적으로 만들어졌습니다. \n" +
+//                    "당신의 합리적인 소비생활을 응원합니다! \uD83D\uDE4B\u200D♀️"
+//        )
+//    }
+//
+//}

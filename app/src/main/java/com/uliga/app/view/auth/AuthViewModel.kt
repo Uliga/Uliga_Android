@@ -85,7 +85,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun getIsNickNameExisted(nickName: String) = intent {
-        if(nickName.isEmpty()) {
+        if (nickName.isEmpty()) {
             postSideEffect(AuthSideEffect.ToastMessage("닉네임을 적어주세요."))
             return@intent
         }
@@ -128,9 +128,13 @@ class AuthViewModel @Inject constructor(
         privacyCheckBoxState: Boolean
     ) = intent {
 
-        if(!privacyCheckBoxState) {
+        if (!privacyCheckBoxState) {
 
             return@intent
+        }
+
+        reduce {
+            state.copy(isLoading = true)
         }
 
         val socialLoginRequest = SocialLoginRequest(
@@ -143,12 +147,15 @@ class AuthViewModel @Inject constructor(
 
         postSocialLoginUseCase(socialLoginRequest)
             .onSuccess {
-                postSideEffect(AuthSideEffect.ToastMessage("회원가입에 성공했습니다."))
                 postSideEffect(AuthSideEffect.Finish)
                 postSideEffect(AuthSideEffect.NavigateToAccountBookGenerationActivity)
             }
             .onFailure {
 
             }
+
+        reduce {
+            state.copy(isLoading = false)
+        }
     }
 }
