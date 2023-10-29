@@ -116,7 +116,7 @@ internal object KtorClientModule {
                     encodeDefaults = true
                     prettyPrint = true
                     isLenient = true
-                    explicitNulls = true
+                    explicitNulls = false
                     ignoreUnknownKeys = true
                 }
             )
@@ -125,7 +125,7 @@ internal object KtorClientModule {
         HttpResponseValidator {
             validateResponse { response ->
                 if (response.status.value.isNotSuccess()) {
-
+                    response.body<ExceptionBody>().throwing()
                 }
             }
         }

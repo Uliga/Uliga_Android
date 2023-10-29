@@ -1,6 +1,6 @@
 package com.uliga.app.view.auth
 
-import androidx.lifecycle.ViewModel
+import com.uliga.app.base.BaseViewModel
 import com.uliga.domain.AuthType
 import com.uliga.domain.model.userAuth.NormalLoginRequest
 import com.uliga.domain.model.userAuth.SocialLoginRequest
@@ -9,6 +9,7 @@ import com.uliga.domain.usecase.userAuth.PostNormalLoginUseCase
 import com.uliga.domain.usecase.userAuth.PostSocialLoginUseCase
 import com.uliga.domain.usecase.userAuth.SocialLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -23,7 +24,7 @@ class AuthViewModel @Inject constructor(
     private val getUserAuthDataExistedUseCase: GetUserAuthDataExistedUseCase,
     private val postSocialLoginUseCase: PostSocialLoginUseCase,
     private val postNormalLoginUseCase: PostNormalLoginUseCase
-) : ContainerHost<AuthUiState, AuthSideEffect>, ViewModel() {
+) : ContainerHost<AuthUiState, AuthSideEffect>, BaseViewModel() {
 
     override val container = container<AuthUiState, AuthSideEffect>(AuthUiState.empty())
 
@@ -38,49 +39,42 @@ class AuthViewModel @Inject constructor(
         checkedEmail: String?,
         checkedName: String?
     ) = intent {
-        reduce { state.copy(isLoading = true) }
-        val socialLoginResult =
-            socialLoginUseCase(type, checkedIdToken, checkedEmail, checkedName).getOrThrow()
-        val socialLoginEmail = socialLoginResult.email ?: ""
-        val socialLoginName = socialLoginResult.name ?: ""
 
-        getUserAuthDataExistedUseCase("mail", socialLoginEmail).onSuccess {
-            if (it.exists == null) {
-                postSideEffect(AuthSideEffect.ToastMessage("이메일에 대한 정보를 불러올 수 없습니다."))
-                return@intent
-            }
+        launch {
 
-            if (it.exists!!) {
+            val socialLoginResult =
+                socialLoginUseCase(type, checkedIdToken, checkedEmail, checkedName).getOrThrow()
+            val socialLoginEmail = socialLoginResult.email ?: ""
+            val socialLoginName = socialLoginResult.name ?: ""
 
-                val normalLoginRequest = NormalLoginRequest(
-                    email = socialLoginEmail,
-                    password = "12341234"
-                )
-
-                postNormalLoginUseCase(normalLoginRequest).onSuccess {
-                    postSideEffect(AuthSideEffect.Finish)
-                    postSideEffect(AuthSideEffect.NavigateToMainActivity)
-                }.onFailure {
-
+            getUserAuthDataExistedUseCase("mail", socialLoginEmail).onSuccess {
+                if (it.exists == null) {
+                    postSideEffect(AuthSideEffect.ToastMessage("이메일에 대한 정보를 불러올 수 없습니다."))
+                    return@onSuccess
                 }
 
+                if (it.exists!!) {
 
-            } else {
-                postSideEffect(
-                    AuthSideEffect.NavigateToSocialSignUpScreen(
-                        socialLoginEmail, socialLoginName
+                    val normalLoginRequest = NormalLoginRequest(
+                        email = socialLoginEmail,
+                        password = "12341234"
                     )
-                )
+
+                    postNormalLoginUseCase(normalLoginRequest).onSuccess {
+                        postSideEffect(AuthSideEffect.Finish)
+                        postSideEffect(AuthSideEffect.NavigateToMainActivity)
+                    }
+
+
+                } else {
+                    postSideEffect(
+                        AuthSideEffect.NavigateToSocialSignUpScreen(
+                            socialLoginEmail, socialLoginName
+                        )
+                    )
+                }
             }
 
-        }.onFailure { throwable ->
-
-        }
-
-        reduce {
-            state.copy(
-                isLoading = false,
-            )
         }
     }
 
@@ -90,9 +84,7 @@ class AuthViewModel @Inject constructor(
             return@intent
         }
 
-        reduce {
-            state.copy(isLoading = true)
-        }
+
         getUserAuthDataExistedUseCase("nickname", nickName)
             .onSuccess {
 
@@ -102,15 +94,9 @@ class AuthViewModel @Inject constructor(
                         isNickNameExisted = it.exists
                     )
                 }
-            }.onFailure {
-
             }
 
-        reduce {
-            state.copy(
-                isLoading = false,
-            )
-        }
+
     }
 
     fun fetchIsPrivacyChecked(isPrivacyChecked: Boolean) = intent {
@@ -127,35 +113,44 @@ class AuthViewModel @Inject constructor(
         nickName: String,
         privacyCheckBoxState: Boolean
     ) = intent {
+        launch {
+            if (!privacyCheckBoxState) {
 
-        if (!privacyCheckBoxState) {
-
-            return@intent
-        }
-
-        reduce {
-            state.copy(isLoading = true)
-        }
-
-        val socialLoginRequest = SocialLoginRequest(
-            email = email,
-            userName = userName,
-            nickName = nickName,
-            loginType = "EMAIL",
-            applicationPassword = "12341234"
-        )
-
-        postSocialLoginUseCase(socialLoginRequest)
-            .onSuccess {
-                postSideEffect(AuthSideEffect.Finish)
-                postSideEffect(AuthSideEffect.NavigateToAccountBookGenerationActivity)
-            }
-            .onFailure {
-
+                return@launch
             }
 
-        reduce {
-            state.copy(isLoading = false)
+
+
+            val socialLoginRequest = SocialLoginRequest(
+                email = email,
+                userName = userName,
+                nickName = nickName,
+                loginType = "EMAIL",
+                applicationPassword = "12341234"
+            )
+
+            postSocialLoginUseCase(socialLoginRequest)
+                .onSuccess {
+                    postSideEffect(AuthSideEffect.Finish)
+                    postSideEffect(AuthSideEffect.NavigateToAccountBookGenerationActivity)
+                }
+
+
+
         }
     }
+
+    override fun onShowErrorToast(message: String) = intent {
+        postSideEffect(AuthSideEffect.ToastMessage(message))
+    }
+
+    override fun onUpdateIsLoading(isLoading: Boolean): Job = intent {
+        reduce {
+            state.copy(
+                isLoading = isLoading,
+            )
+        }
+    }
+
+
 }
