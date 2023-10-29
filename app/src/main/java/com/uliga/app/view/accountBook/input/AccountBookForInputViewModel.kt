@@ -45,65 +45,60 @@ class AccountBookForInputViewModel @Inject constructor(
         value: Long,
         memo: String,
     ) = intent {
-        val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
+        launch {
 
-        val accountBookTransactionRequest = AccountBookTransactionRequest(
-            id = currentAccountBookInfo.second,
-            category = category,
-            payment = payment,
-            date = date,
-            account = account,
-            value = value,
-            memo = memo,
-            sharedAccountBook = listOf()
-        )
-
-        reduce { state.copy(isLoading = true) }
-
-        postAccountBookTransactionUseCase(transactionType, accountBookTransactionRequest)
-            .onSuccess {
-                postSideEffect(AccountBookForInputSideEffect.Finish)
-            }
-            .onFailure {
-                postSideEffect(AccountBookForInputSideEffect.Finish)
-
+            val currentAccountBookInfo = state.currentAccountInfo
+            if (currentAccountBookInfo == null) {
+                updateIsLoading(false)
+                return@launch
             }
 
-        reduce { state.copy(isLoading = false) }
+            val accountBookTransactionRequest = AccountBookTransactionRequest(
+                id = currentAccountBookInfo.second,
+                category = category,
+                payment = payment,
+                date = date,
+                account = account,
+                value = value,
+                memo = memo,
+                sharedAccountBook = listOf()
+            )
 
+            postAccountBookTransactionUseCase(transactionType, accountBookTransactionRequest)
+                .onSuccess {
+                    postSideEffect(AccountBookForInputSideEffect.Finish)
+                }
+                .onFailure {
+                    postSideEffect(AccountBookForInputSideEffect.Finish)
+
+                }
+        }
     }
 
     fun fetchCurrentAccountBookInfo() = intent {
-        reduce { state.copy(isLoading = true) }
-
-        fetchCurrentAccountBookInfoUseCase()
-            .onSuccess {
-                reduce {
-                    state.copy(
-                        currentAccountInfo = it
-                    )
+        launch {
+            fetchCurrentAccountBookInfoUseCase()
+                .onSuccess {
+                    reduce {
+                        state.copy(
+                            currentAccountInfo = it
+                        )
+                    }
                 }
-            }
-            .onFailure {
-
-            }
-
-        reduce { state.copy(isLoading = false) }
-
+        }
     }
 
     fun fetchId() = intent {
-        fetchIdUseCase()
-            .onSuccess {
-                reduce {
-                    state.copy(
-                        id = it
-                    )
+        launch {
+            fetchIdUseCase()
+                .onSuccess {
+                    reduce {
+                        state.copy(
+                            id = it
+                        )
+                    }
                 }
-            }
-            .onFailure {
-
-            }
+        }
     }
 
     override fun onShowErrorToast(message: String) = intent {
