@@ -56,8 +56,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uliga.app.TopDownToast
 import com.uliga.app.ui.theme.Grey400
-import com.uliga.app.ui.theme.MyApplicationTheme
 import com.uliga.app.ui.theme.Primary
+import com.uliga.app.ui.theme.UligaApplicationTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CircularProgress
@@ -77,7 +77,7 @@ class AccountBookForInputActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApplicationTheme {
+            UligaApplicationTheme {
 
                 val context = LocalContext.current
                 val state = viewModel.collectAsState().value

@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uliga.app.R
+import com.uliga.app.ui.theme.CustomGrey200
 import com.uliga.app.ui.theme.Grey100
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey500
@@ -325,7 +326,7 @@ fun AccountBookGenerationBottomSheet(
                             .weight(1f)
                             .fillMaxHeight(),
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color(0xFFE9EEFF)
+                            backgroundColor = CustomGrey200
                         ),
                         shape = RoundedCornerShape(10.dp),
                         onClick = {
@@ -410,7 +411,7 @@ fun AccountBookGenerationBottomSheet(
                             .weight(1f)
                             .fillMaxHeight(),
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color(0xFFE9EEFF)
+                            backgroundColor = CustomGrey200
                         ),
                         shape = RoundedCornerShape(10.dp),
                         onClick = {

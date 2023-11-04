@@ -12,7 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.uliga.app.base.UligaActivity
-import com.uliga.app.ui.theme.MyApplicationTheme
+import com.uliga.app.ui.theme.UligaApplicationTheme
 import com.uliga.app.view.auth.login.LoginScreen
 import com.uliga.app.view.auth.signup.NormalSignUpScreen
 import com.uliga.app.view.auth.signup.SocialSignupScreen
@@ -31,7 +31,7 @@ class AuthActivity : ComponentActivity(), UligaActivity {
 
         super.onCreate(savedInstanceState)
         setContent {
-            MyApplicationTheme {
+            UligaApplicationTheme {
 
 
                 val navController = rememberNavController()

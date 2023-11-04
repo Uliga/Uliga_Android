@@ -60,6 +60,7 @@ import com.uliga.app.R
 import com.uliga.app.ToastAnimation
 import com.uliga.app.ext.getGoogleSignInClient
 import com.uliga.app.ui.theme.CustomGrey100
+import com.uliga.app.ui.theme.CustomGrey700
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Primary
@@ -332,7 +333,7 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    color = Color(0xFF777777),
+                    color = CustomGrey700,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.Light,
                     fontSize = 12.sp,

@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.sp
 import com.uliga.app.R
 import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.Grey700
-import com.uliga.app.ui.theme.MyApplicationTheme
 import com.uliga.app.ui.theme.Primary
+import com.uliga.app.ui.theme.UligaApplicationTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.main.MainScreen
@@ -46,7 +46,7 @@ class ErrorActivity: ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MyApplicationTheme {
+            UligaApplicationTheme {
 
 
                 Column(

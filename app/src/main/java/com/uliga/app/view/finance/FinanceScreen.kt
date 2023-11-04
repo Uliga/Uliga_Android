@@ -70,8 +70,8 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.uliga.app.R
 import com.uliga.app.TopDownToast
-import com.uliga.app.ui.theme.CustomGray9B9B9B
-import com.uliga.app.ui.theme.CustomGrayF9F9F9
+import com.uliga.app.ui.theme.CustomGray300
+import com.uliga.app.ui.theme.CustomGrey500
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.LightBlue
 import com.uliga.app.ui.theme.Secondary
@@ -576,7 +576,7 @@ fun TransactionItem(
                     }
                 )
             }
-            .background(CustomGrayF9F9F9),
+            .background(CustomGray300),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -648,7 +648,7 @@ fun TransactionItem(
 
             Text(
                 text = "${currentAccountBookAssetDay.value}원 / ${currentAccountBookAssetDay.payment} / by. ${currentAccountBookAssetDay.creator}",
-                color = CustomGray9B9B9B,
+                color = CustomGrey500,
                 fontFamily = pretendard,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 11.sp,
@@ -697,6 +697,7 @@ private fun handleSideEffect(
         is FinanceSideEffect.DismissDeleteAlert -> {
             onDismissDeleteAlert()
         }
+
         is FinanceSideEffect.ToastMessage -> {
             onShowToast(sideEffect.toastMessage)
         }
