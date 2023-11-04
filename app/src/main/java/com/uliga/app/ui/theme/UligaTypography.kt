@@ -22,6 +22,8 @@ class UligaTypography internal constructor(
     val title2: TextStyle,
     val subTitle1: TextStyle,
     val subTitle2: TextStyle,
+    val body1: TextStyle,
+    val body2: TextStyle
 ) {
     constructor(
         defaultFontFamily: FontFamily = Pretendard,
@@ -41,15 +43,27 @@ class UligaTypography internal constructor(
             platformStyle = PlatformTextStyle(includeFontPadding = false)
         ),
         subTitle2: TextStyle = TextStyle(
-            fontWeight = FontWeight.Medium,
-            fontSize = 14.scaledSpOutside,
+            fontWeight = FontWeight.Light,
+            fontSize = 12.scaledSpOutside,
+            platformStyle = PlatformTextStyle(includeFontPadding = false)
+        ),
+        body1: TextStyle = TextStyle(
+            fontWeight = FontWeight.Light,
+            fontSize = 10.scaledSpOutside,
+            platformStyle = PlatformTextStyle(includeFontPadding = false)
+        ),
+        body2: TextStyle = TextStyle(
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.scaledSpOutside,
             platformStyle = PlatformTextStyle(includeFontPadding = false)
         ),
     ) : this(
         title1 = title1.withDefaultFontFamily(defaultFontFamily),
         title2 = title2.withDefaultFontFamily(defaultFontFamily),
         subTitle1 = subTitle1.withDefaultFontFamily(defaultFontFamily),
-        subTitle2 = subTitle2.withDefaultFontFamily(defaultFontFamily)
+        subTitle2 = subTitle2.withDefaultFontFamily(defaultFontFamily),
+        body1 = body1.withDefaultFontFamily(defaultFontFamily),
+        body2 = body2.withDefaultFontFamily(defaultFontFamily)
     )
 
     fun copy(

@@ -58,6 +58,12 @@ fun TopDownToast(
     }
 }
 
+const val TOAST_START_POSITION = -100f
+
+const val TOAST_END_POSITION = 25f
+
+const val TOAST_DURATION_MILLIS = 1500
+
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun ToastAnimation(

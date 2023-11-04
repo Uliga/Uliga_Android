@@ -31,6 +31,8 @@ val Success200 = Color(0xFF1BBF83)
 val Danger100 = Color(0xFFFF8E89)
 val Danger200 = Color(0xFFF24147)
 
+val KakaoYellow = Color(0xFFFEDC3F)
+
 fun pieChartColor(categoryName: String): Color {
     when (categoryName) {
         "\uD83C\uDF7D️ 식비" -> {
