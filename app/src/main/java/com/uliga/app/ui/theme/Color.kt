@@ -9,7 +9,6 @@ val LightBlue = Color(0xFFADC1FF)
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)
 
-
 val Grey100 = Color(0xFFF5F5F9)
 val Grey200 = Color(0xFFE9E9EE)
 val Grey300 = Color(0xFFE4E4E4)
@@ -19,8 +18,12 @@ val Grey600 = Color(0xFF626273)
 val Grey700 = Color(0xFF464656)
 
 val CustomGrey100 = Color(0xFFF4F4F9)
-val CustomGrayF9F9F9 = Color(0xFFF9F9F9)
-val CustomGray9B9B9B = Color(0xFF9B9B9B)
+val CustomGrey200 = Color(0xFFE9EEFF)
+val CustomGray300 = Color(0xFFF9F9F9)
+val CustomGrey400 = Color(0xFFE3E3E3)
+val CustomGrey500 = Color(0xFF9B9B9B)
+val CustomGrey600 = Color(0xFF9590A0)
+val CustomGrey700 = Color(0xFF777777)
 
 val Success100 = Color(0xFF76E8AD)
 val Success200 = Color(0xFF1BBF83)
