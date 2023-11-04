@@ -67,8 +67,8 @@ import androidx.compose.ui.unit.sp
 import com.uliga.app.R
 import com.uliga.app.TopDownToast
 import com.uliga.app.ui.theme.Grey500
-import com.uliga.app.ui.theme.MyApplicationTheme
 import com.uliga.app.ui.theme.Primary
+import com.uliga.app.ui.theme.UligaApplicationTheme
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.main.MainActivity
@@ -88,7 +88,7 @@ class AccountBookGenerationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApplicationTheme {
+            UligaApplicationTheme {
 
                 val context = LocalContext.current
                 val state = viewModel.collectAsState().value

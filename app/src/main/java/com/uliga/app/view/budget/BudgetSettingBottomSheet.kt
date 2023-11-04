@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.uliga.app.R
+import com.uliga.app.ui.theme.CustomGrey200
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.Primary
@@ -216,10 +217,10 @@ fun BudgetSettingBottomSheet(
                         .wrapContentSize()
                         .border(
                             width = 1.dp,
-                            color = Color(0xFFE9EEFF),
+                            color = CustomGrey200,
                             shape = RoundedCornerShape(5.dp)
                         )
-                        .background(Color(0xFFE9EEFF))
+                        .background(CustomGrey200)
                         .padding(
                             horizontal = 16.dp,
                             vertical = 8.dp
@@ -469,10 +470,10 @@ fun BudgetSettingBottomSheetCompose() {
                     .wrapContentSize()
                     .border(
                         width = 1.dp,
-                        color = Color(0xFFE9EEFF),
+                        color = CustomGrey200,
                         shape = RoundedCornerShape(5.dp)
                     )
-                    .background(Color(0xFFE9EEFF))
+                    .background(CustomGrey200)
                     .padding(
                         horizontal = 16.dp,
                         vertical = 8.dp

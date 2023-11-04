@@ -26,6 +26,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.uliga.app.ui.theme.CustomGrey400
+import com.uliga.app.ui.theme.CustomGrey500
+import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
 
@@ -87,7 +90,7 @@ fun ScheduleAlertBottomSheetCompose() {
 
                     Text(
                         text = "안세훈",
-                        color = Color(0xFF464656),
+                        color = Grey700,
                         fontFamily = pretendard,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp,
@@ -97,7 +100,7 @@ fun ScheduleAlertBottomSheetCompose() {
 
                     Text(
                         text = "님 의 금융 일정 할당",
-                        color = Color(0xFF464656),
+                        color = Grey700,
                         fontFamily = pretendard,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp,
@@ -112,7 +115,7 @@ fun ScheduleAlertBottomSheetCompose() {
 
                 Text(
                     text = "월세, 생활비 입금",
-                    color = Color(0xFF464656),
+                    color = Grey700,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 20.sp,
@@ -126,7 +129,7 @@ fun ScheduleAlertBottomSheetCompose() {
 
                 Text(
                     text = "매달 28일 / 600,000원 / 지출",
-                    color = Color(0xFF9B9B9B),
+                    color = CustomGrey500,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp,
@@ -150,7 +153,7 @@ fun ScheduleAlertBottomSheetCompose() {
 
                 Divider(
                     modifier = Modifier,
-                    color = Color(0xFFE3E3E3),
+                    color = CustomGrey400,
                     thickness = 1.dp
                 )
 

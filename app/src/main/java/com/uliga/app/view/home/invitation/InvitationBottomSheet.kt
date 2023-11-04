@@ -35,6 +35,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uliga.app.R
+import com.uliga.app.ui.theme.CustomGrey400
+import com.uliga.app.ui.theme.CustomGrey500
+import com.uliga.app.ui.theme.Grey200
+import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.home.HomeViewModel
@@ -111,7 +115,7 @@ fun InvitationBottomSheet(
                         ) {
                             Text(
                                 text = "${invitation?.get(idx)?.memberName ?: ""}님의 초대",
-                                color = Color(0xFF9B9B9B),
+                                color = CustomGrey500,
                                 fontFamily = pretendard,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 14.sp,
@@ -121,7 +125,7 @@ fun InvitationBottomSheet(
 
                             Text(
                                 text = "${invitation?.get(idx)?.accountBookName}",
-                                color = Color(0xFF464656),
+                                color = Grey700,
                                 fontFamily = pretendard,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 20.sp,
@@ -140,7 +144,7 @@ fun InvitationBottomSheet(
                                 horizontal = 12.dp
                             ),
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(0xFFE9EEFE),
+                                backgroundColor = Grey200,
                             ),
                             shape = RoundedCornerShape(7.dp),
                             onClick = {
@@ -209,7 +213,7 @@ fun InvitationBottomSheet(
                                 start = 16.dp,
                                 end = 16.dp
                             ),
-                        color = Color(0xFFE3E3E3),
+                        color = CustomGrey400,
                         thickness = 1.dp
                     )
 
@@ -278,7 +282,7 @@ fun InvitationBottomSheetCompose() {
                     ) {
                         Text(
                             text = "안세훈님의 초대",
-                            color = Color(0xFF9B9B9B),
+                            color = CustomGrey500,
                             fontFamily = pretendard,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp,
@@ -288,7 +292,7 @@ fun InvitationBottomSheetCompose() {
 
                         Text(
                             text = "첫번째 가계부",
-                            color = Color(0xFF464656),
+                            color = Grey700,
                             fontFamily = pretendard,
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
@@ -307,7 +311,7 @@ fun InvitationBottomSheetCompose() {
                             horizontal = 12.dp
                         ),
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color(0xFFE9EEFE),
+                            backgroundColor = CustomGrey400,
                         ),
                         shape = RoundedCornerShape(7.dp),
                         onClick = {
@@ -361,7 +365,7 @@ fun InvitationBottomSheetCompose() {
                             start = 16.dp,
                             end = 16.dp
                         ),
-                    color = Color(0xFFE3E3E3),
+                    color = CustomGrey400,
                     thickness = 1.dp
                 )
 

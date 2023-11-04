@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.uliga.app.R
 import com.uliga.app.ui.theme.Black
+import com.uliga.app.ui.theme.CustomGrey600
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
@@ -127,7 +128,7 @@ fun NormalSignUpScreen(
 
                 Text(
                     text = "만나서 반가워요! 당신의 건강한 소비 생활을 응원합니다\uD83D\uDE4B\u200D♀️",
-                    color = Color(0xFF9590A0),
+                    color = CustomGrey600,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp,
@@ -372,7 +373,7 @@ fun NormalSignUpScreen(
                 )
                 
                 Text(
-                    color = Color(0xFF9590A0),
+                    color = CustomGrey600,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 12.sp,
