@@ -52,6 +52,10 @@ import androidx.navigation.NavController
 import com.uliga.app.R
 import com.uliga.app.ToastAnimation
 import com.uliga.app.ui.theme.Black
+import com.uliga.app.ui.theme.CustomGrey100
+import com.uliga.app.ui.theme.CustomGrey200
+import com.uliga.app.ui.theme.CustomGrey600
+import com.uliga.app.ui.theme.Grey300
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
@@ -180,7 +184,7 @@ fun SocialSignupScreen(
 
                 Text(
                     text = "만나서 반가워요! 당신의 건강한 소비 생활을 응원합니다\uD83D\uDE4B\u200D♀️",
-                    color = Color(0xFF9590A0),
+                    color = CustomGrey600,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp,
@@ -330,10 +334,8 @@ fun SocialSignupScreen(
                     ),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor =
-                        if (state.isNickNameExisted == null || state.isNickNameExisted) Color(
-                            0xFFE9EEFF
-                        )
-                        else Color(0xFFF2F4F7),
+                        if (state.isNickNameExisted == null || state.isNickNameExisted) CustomGrey200
+                        else CustomGrey100,
                     ),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
@@ -341,7 +343,7 @@ fun SocialSignupScreen(
                     }) {
                     Text(
                         color = if (state.isNickNameExisted == null || state.isNickNameExisted) Primary
-                        else Color(0xFFCCCCCF),
+                        else Grey300,
                         fontFamily = pretendard,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 12.sp,
@@ -365,7 +367,7 @@ fun SocialSignupScreen(
                 )
 
                 Text(
-                    color = Color(0xFF9590A0),
+                    color = CustomGrey600,
                     fontFamily = pretendard,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 12.sp,
