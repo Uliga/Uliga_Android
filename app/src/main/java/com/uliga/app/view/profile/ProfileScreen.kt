@@ -168,9 +168,9 @@ fun ProfileScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 8.dp)
             .background(White)
-            .pullRefresh(pullRefreshState),
+            .pullRefresh(pullRefreshState)
+            .padding(horizontal = 8.dp),
         contentAlignment = Alignment.TopCenter
     ) {
         LazyColumn(
