@@ -315,11 +315,16 @@ fun HomeScreen(
 
                     Box(
                         modifier = Modifier
-                            .padding(
-                                vertical = 8.dp,
-                                horizontal = 4.dp
+                            .border(
+                                width = 1.dp,
+                                color = Grey100,
+                                shape = UligaTheme.shapes.medium
                             )
                             .fillMaxWidth()
+                            .padding(
+                                vertical = 16.dp,
+                                horizontal = 8.dp
+                            )
                     ) {
                         Text(
                             modifier = Modifier.align(Alignment.CenterStart),
@@ -577,7 +582,7 @@ fun HomeScreen(
 
             item {
 
-                VerticalSpacer(height = 8.dp)
+                VerticalSpacer(height = 16.dp)
 
                 Text(
                     text = "이번 달 총 지출",
