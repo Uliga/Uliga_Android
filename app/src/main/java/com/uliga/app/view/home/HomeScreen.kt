@@ -610,6 +610,9 @@ fun HomeScreen(
     if (deleteAlertDialogVisibleState) {
         DeleteAlertDialog(
             onDismissRequest = {
+                deleteAlertDialogVisibleState = false
+            },
+            onDeleteRequest = {
                 viewModel.deleteFinanceScheduleDetail(state.selectedSchedule?.id ?: 0L)
                 deleteAlertDialogVisibleState = false
                 viewModel.updateFinanceSchedule(null)

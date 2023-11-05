@@ -210,6 +210,9 @@ fun FinanceScreen(
     if (deleteAlertDialogVisibleState) {
         DeleteAlertDialog(
             onDismissRequest = {
+                deleteAlertDialogVisibleState = false
+            },
+            onDeleteRequest = {
                 viewModel.deleteAccountBookDayTransaction(selectedDeleteItemId)
                 deleteAlertDialogVisibleState = false
             },
