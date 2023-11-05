@@ -15,12 +15,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,9 +39,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -75,12 +79,16 @@ import com.uliga.app.ui.theme.CustomGrey500
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.LightBlue
 import com.uliga.app.ui.theme.Secondary
+import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.accountBook.input.AccountBookForInputActivity
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionBottomSheet
+import com.uliga.app.view.component.AddingButton
+import com.uliga.app.view.component.HorizontalSpacer
+import com.uliga.app.view.component.VerticalSpacer
 import com.uliga.app.view.main.MainUiState
 import com.uliga.domain.model.accountBook.asset.day.AccountBookAssetItem
 import com.uliga.domain.model.accountBook.asset.month.AccountBookAssetMonth
@@ -141,20 +149,6 @@ fun FinanceScreen(
 
     }
 
-
-//    val accountBookSelectionSheetState = rememberModalBottomSheetState(
-//        ModalBottomSheetValue.Expanded,
-//        skipHalfExpanded = true
-//    )
-//
-//    LaunchedEffect(data.showAccountBookSelectionBottomSheet) {
-//        if(data.showAccountBookSelectionBottomSheet == true) {
-//            accountBookSelectionSheetState.show()
-//        } else {
-//            accountBookSelectionSheetState.hide()
-//        }
-//    }
-
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState()
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -167,11 +161,6 @@ fun FinanceScreen(
                 isSheetOpen = false
             }
         )
-    }
-
-
-    var showDialog by remember {
-        mutableStateOf(false)
     }
 
     val launcher = rememberLauncherForActivityResult(
@@ -192,12 +181,6 @@ fun FinanceScreen(
                 }
             }
         })
-
-//    if (showDialog) {
-//        showSettingDropDownMenu(
-//            showDialog = showDialog,
-//        )
-//    }
 
     var deleteAlertDialogVisibleState by remember {
         mutableStateOf(false)
@@ -299,62 +282,47 @@ fun FinanceScreen(
 
     Box(
         modifier = Modifier
-            .wrapContentSize()
+            .fillMaxSize()
             .pullRefresh(pullRefreshState),
         contentAlignment = Alignment.TopCenter
     ) {
         LazyColumn(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .background(White),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
 
             item {
                 CenterAlignedTopAppBar(
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = White
+                    ),
                     title = {
                         Text(
-                            modifier = Modifier
-                                .clickable {
-                                    isSheetOpen = true
-                                },
-                            text = "안세훈님의 가계부",
-                            color = Color.Black,
-                            fontFamily = pretendard,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
+                            text = "가계부",
+                            color = Grey700,
+                            style = UligaTheme.typography.title2,
                             overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
+                            maxLines = 1,
                         )
-                    },
-                    actions = {
-                        IconButton(onClick = {
-                            showDialog = true
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Add,
-                                contentDescription = "Localized description"
-                            )
-                        }
                     }
                 )
             }
 
             item {
 
+                VerticalSpacer(height = 8.dp)
+
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            start = 32.dp,
-                            end = 32.dp,
-                            top = 8.dp
+                            horizontal = 16.dp
                         ),
-                    text = "${calendarState.firstVisibleMonth.yearMonth.monthValue.toString()}월",
+                    text = "${calendarState.firstVisibleMonth.yearMonth.monthValue}월",
                     color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 18.sp
+                    style = UligaTheme.typography.title1
                 )
 
                 HorizontalCalendar(
@@ -397,44 +365,20 @@ fun FinanceScreen(
                         ),
                         text = selectedDate.value,
                         color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 20.sp
+                        style = UligaTheme.typography.title1
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
 
-
-                    Row(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .clickable {
-                                val intent =
-                                    Intent(context, AccountBookForInputActivity::class.java)
-                                intent.putExtra("selectedDate", selectedDate.value)
-                                launcher.launch(intent)
-                            },
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(16.dp),
-                            painter = painterResource(
-                                id = R.drawable.ic_adding_budget
-                            ),
-                            contentDescription = null
-                        )
-
-                        Spacer(modifier = Modifier.width(4.dp))
-
-                        Text(
-                            text = "가계부 추가하기",
-                            color = Secondary,
-                            fontFamily = pretendard,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 14.sp
-                        )
-                    }
+                    AddingButton(
+                        text = "가계부에 추가하기",
+                        onClick = {
+                            val intent =
+                                Intent(context, AccountBookForInputActivity::class.java)
+                            intent.putExtra("selectedDate", selectedDate.value)
+                            launcher.launch(intent)
+                        }
+                    )
                 }
             }
 
@@ -448,9 +392,6 @@ fun FinanceScreen(
                     selectedDeleteItemId = it.id
                 }
 
-//            Spacer(
-//                modifier = Modifier.height(16.dp)
-//            )
             }
 
 
@@ -468,38 +409,6 @@ fun FinanceScreen(
     }
 
     TopDownToast(toastYOffset = toastYOffset, toastMessage = toastMessage)
-
-
-//    if (!accountBookSelectionSheetState.isVisible) {
-//        AccountBookSelectionBottomSheet(
-//            bottomSheetState = accountBookSelectionSheetState,
-//            sheetContent = {
-//                LazyColumn(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .background(Color.White)
-//                ) {
-//                    item {
-//                        Text(
-//                            modifier = Modifier
-//                                .clickable {
-//
-//                                },
-//                            text = "가계부 목록",
-//                            color = Color.Black,
-//                            fontFamily = pretendard,
-//                            fontWeight = FontWeight.Bold,
-//                            fontSize = 18.sp,
-//                            overflow = TextOverflow.Ellipsis,
-//                            maxLines = 1
-//                        )
-//                    }
-//
-//                }
-//            },
-//            content = {}
-//        )
-//    }
 }
 
 @Composable
@@ -510,6 +419,8 @@ fun DaysOfWeekTitle(daysOfWeek: List<DayOfWeek>) {
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.Center,
                 text = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+                color = Grey700,
+                style = UligaTheme.typography.title2
             )
         }
     }
@@ -529,27 +440,33 @@ fun Day(
         modifier = Modifier
             .aspectRatio(1f)
             .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(
+                    color = Color.Black
+                ),
                 enabled = day.position == DayPosition.MonthDate,
                 onClick = { onClick(day) }
-            ),
+            )
+            .padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Text(
             text = day.date.dayOfMonth.toString(),
-            color = if (day.position == DayPosition.MonthDate) Color.Black else Color.Gray
+            color = if (day.position == DayPosition.MonthDate) Grey700 else Color.Gray,
+            style = UligaTheme.typography.body2
         )
 
         Text(
             text = if (income.isNullOrEmpty()) "" else "+${income[0].value}",
             color = Color.Green,
-            fontSize = 8.sp
+            style = UligaTheme.typography.body9
         )
 
         Text(
             text = if (record.isNullOrEmpty()) "" else "-${record[0].value}",
             color = Color.Red,
-            fontSize = 8.sp
+            style = UligaTheme.typography.body9
         )
     }
 }
@@ -561,17 +478,16 @@ fun TransactionItem(
     currentAccountBookAssetDay: AccountBookAssetItem,
     onDeleteRequest: (AccountBookAssetItem) -> Unit
 ) {
-    Spacer(
-        modifier = Modifier.height(8.dp)
-    )
 
+    VerticalSpacer(height = 8.dp)
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                horizontal = 32.dp
+                horizontal = 16.dp
             )
-            .clip(RoundedCornerShape(6.dp))
+            .clip(UligaTheme.shapes.small)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onLongPress = {
@@ -582,28 +498,6 @@ fun TransactionItem(
             .background(CustomGray300),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
-//        Box(
-//            modifier = Modifier
-//                .padding(16.dp)
-//                .size(52.dp)
-//                .border(width = 1.dp, color = Success100, shape = RoundedCornerShape(5.dp))
-//                .weight(1f)
-//                .background(Success100)
-//                ,
-//        ) {
-//            Text(
-//                modifier = Modifier
-//                    .align(Alignment.Center),
-//                text = "지출",
-//                color = White,
-//                fontFamily = pretendard,
-//                fontWeight = FontWeight.SemiBold,
-//                fontSize = 16.sp,
-//                overflow = TextOverflow.Ellipsis,
-//                maxLines = 1
-//            )
-//        }
 
         Column(
             modifier = Modifier
@@ -627,24 +521,22 @@ fun TransactionItem(
             Text(
                 text = if (currentAccountBookAssetDay.type == "INCOME") "수입" else "지출",
                 color = LightBlue,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 11.sp,
+                style = UligaTheme.typography.body10,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
+            
+            VerticalSpacer(height = 4.dp)
         }
 
 
         Column(
-            modifier = Modifier.weight(3f)
+            modifier = Modifier.weight(4f)
         ) {
             Text(
                 text = "${currentAccountBookAssetDay.category} / ${currentAccountBookAssetDay.account}",
                 color = Grey700,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 16.sp,
+                style = UligaTheme.typography.body11,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
@@ -652,9 +544,7 @@ fun TransactionItem(
             Text(
                 text = "${currentAccountBookAssetDay.value}원 / ${currentAccountBookAssetDay.payment} / by. ${currentAccountBookAssetDay.creator}",
                 color = CustomGrey500,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 11.sp,
+                style = UligaTheme.typography.body10,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
@@ -662,9 +552,7 @@ fun TransactionItem(
             Text(
                 text = currentAccountBookAssetDay.memo,
                 color = LightBlue,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 11.sp,
+                style = UligaTheme.typography.body10,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 2
             )
@@ -672,13 +560,18 @@ fun TransactionItem(
 
         Image(
             modifier = Modifier
-                .padding(16.dp)
-                .size(16.dp)
-                .weight(1f)
-                .clickable {
-                    onDeleteRequest(currentAccountBookAssetDay)
-//                    viewModel.deleteAccountBookDayTransaction(currentAccountBookAssetDay)
-                },
+                .padding(8.dp)
+                .size(20.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(
+                        color = Color.Black
+                    ),
+                    onClick = {
+                        onDeleteRequest(currentAccountBookAssetDay)
+                    }
+                )
+                .padding(4.dp),
             painter = painterResource(
                 id = R.drawable.ic_delete
             ),
