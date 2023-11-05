@@ -20,13 +20,11 @@ import com.uliga.domain.model.accountBook.analyze.byDay.AccountBookAnalyzeRecord
 
 @Composable
 fun HorizontalLineIndicator(
+    modifier: Modifier = Modifier,
     animateNumber: Float
 ) {
     Canvas(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(Constant.indicatorHeight)
-            .padding(horizontal = Constant.indicatorPadding)
+        modifier = modifier
     ) {
 
         drawLine(
@@ -61,7 +59,7 @@ fun ContinuousLineChart(
 
     Column(
         modifier = Modifier.padding(
-            horizontal = 12.dp,
+            horizontal = 16.dp,
             vertical = 8.dp
         )
     ) {
