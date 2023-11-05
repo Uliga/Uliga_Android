@@ -49,6 +49,7 @@ import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
+import com.uliga.app.utils.Constant
 import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
@@ -314,10 +315,11 @@ fun HomeScreen(
 
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
                             .padding(
-                                vertical = 8.dp
+                                vertical = 8.dp,
+                                horizontal = 4.dp
                             )
+                            .fillMaxWidth()
                     ) {
                         Text(
                             modifier = Modifier.align(Alignment.CenterStart),
@@ -332,10 +334,6 @@ fun HomeScreen(
                             color = Grey600,
                             style = UligaTheme.typography.body3
                         )
-                    }
-
-                    Row {
-
                     }
 
                     VerticalSpacer(height = 16.dp)
@@ -370,6 +368,7 @@ fun HomeScreen(
                 VerticalSpacer(height = 8.dp)
 
                 Text(
+                    modifier = Modifier.padding(horizontal = 4.dp),
                     text = if (currentMonthResult >= 0) "${currentMonthResult}원 남음" else "${currentMonthResult * (-1)}원 부족",
                     color = Grey600,
                     style = UligaTheme.typography.body3
@@ -378,6 +377,10 @@ fun HomeScreen(
                 VerticalSpacer(height = 24.dp)
 
                 HorizontalLineIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(Constant.indicatorHeight)
+                        .padding(horizontal = Constant.indicatorPadding + 4.dp),
                     animateNumber = animateNumber.value
                 )
 
@@ -479,6 +482,7 @@ fun HomeScreen(
                                 color = Grey100,
                                 shape = UligaTheme.shapes.medium
                             )
+                            .padding(horizontal = 4.dp)
                     ) {
                         Text(
                             modifier = Modifier.align(Alignment.Center),
@@ -515,8 +519,9 @@ fun HomeScreen(
                         .fillMaxWidth()
                         .background(
                             color = CustomGrey100,
-                            shape = RoundedCornerShape(8.dp)
-                        ),
+                            shape = UligaTheme.shapes.medium
+                        )
+                        .padding(4.dp),
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
@@ -583,6 +588,7 @@ fun HomeScreen(
                 VerticalSpacer(height = 8.dp)
 
                 Text(
+                    modifier =  Modifier.padding(4.dp),
                     text = "${currentMonthRecord}원",
                     color = Grey600,
                     style = UligaTheme.typography.body3

@@ -103,9 +103,7 @@ fun FinanceScheduleItem(
             Text(
                 text = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
                 color = Grey700,
-                fontSize = 18.sp,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Medium
+                style = UligaTheme.typography.body8
             )
 
             Text(
@@ -116,9 +114,7 @@ fun FinanceScheduleItem(
                     ) "수입" else "지출"
                 }",
                 color = Grey400,
-                fontSize = 14.sp,
-                fontFamily = pretendard,
-                fontWeight = FontWeight.Medium
+                style = UligaTheme.typography.body7
             )
         }
 
