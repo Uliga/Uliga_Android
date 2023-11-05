@@ -5,17 +5,20 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +33,7 @@ import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.Success200
+import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.home.HomeUiState
@@ -47,29 +51,36 @@ fun FinanceScheduleItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                val financeSchedule = FinanceSchedule(
-                    id = state.financeSchedules?.schedules?.get(idx)?.id ?: 0L,
-                    notificationDay = state.financeSchedules?.schedules?.get(idx)?.notificationDay
-                        ?: 0L,
-                    name = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
-                    isIncome = state.financeSchedules?.schedules?.get(idx)?.isIncome
-                        ?: false,
-                    value = state.financeSchedules?.schedules?.get(idx)?.value ?: 0L,
-                    creatorId = 0L,
-                    creator = "",
-                    accountBookName = ""
-                )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(
+                    color = Color.Black
+                ),
+                onClick = {
+                    val financeSchedule = FinanceSchedule(
+                        id = state.financeSchedules?.schedules?.get(idx)?.id ?: 0L,
+                        notificationDay = state.financeSchedules?.schedules?.get(idx)?.notificationDay
+                            ?: 0L,
+                        name = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
+                        isIncome = state.financeSchedules?.schedules?.get(idx)?.isIncome
+                            ?: false,
+                        value = state.financeSchedules?.schedules?.get(idx)?.value ?: 0L,
+                        creatorId = 0L,
+                        creator = "",
+                        accountBookName = ""
+                    )
 
-                onFinanceScheduleUpdateRequest(financeSchedule)
-
-            }
+                    onFinanceScheduleUpdateRequest(financeSchedule)
+                }
+            )
+            .padding(4.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
                 .height(48.dp)
                 .width(64.dp)
-                .clip(RoundedCornerShape(6.dp))
+                .clip(UligaTheme.shapes.small)
                 .background(
                     notificationDayColor(
                         currentDay,
@@ -82,7 +93,7 @@ fun FinanceScheduleItem(
                 modifier = Modifier.align(Alignment.Center),
                 color = White,
                 text = "${state.financeSchedules?.schedules?.get(idx)?.notificationDay ?: 0}일",
-                fontSize = 16.sp
+                style = UligaTheme.typography.body2
             )
         }
 
@@ -115,29 +126,36 @@ fun FinanceScheduleItem(
 
         Image(
             modifier = Modifier
-                .size(30.dp)
-                .clickable {
-                    val financeSchedule = FinanceSchedule(
-                        id = state.financeSchedules?.schedules?.get(idx)?.id ?: 0L,
-                        notificationDay = state.financeSchedules?.schedules?.get(idx)?.notificationDay
-                            ?: 0L,
-                        name = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
-                        isIncome = state.financeSchedules?.schedules?.get(idx)?.isIncome
-                            ?: false,
-                        value = state.financeSchedules?.schedules?.get(idx)?.value
-                            ?: 0L,
-                        creatorId = 0L,
-                        creator = "",
-                        accountBookName = ""
-                    )
+                .size(20.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(
+                        color = Color.Black
+                    ),
+                    onClick = {
+                        val financeSchedule = FinanceSchedule(
+                            id = state.financeSchedules?.schedules?.get(idx)?.id ?: 0L,
+                            notificationDay = state.financeSchedules?.schedules?.get(idx)?.notificationDay
+                                ?: 0L,
+                            name = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
+                            isIncome = state.financeSchedules?.schedules?.get(idx)?.isIncome
+                                ?: false,
+                            value = state.financeSchedules?.schedules?.get(idx)?.value
+                                ?: 0L,
+                            creatorId = 0L,
+                            creator = "",
+                            accountBookName = ""
+                        )
 
-                    onFinanceScheduleDeleteRequest(financeSchedule)
+                        onFinanceScheduleDeleteRequest(financeSchedule)
 //                            viewModel.deleteFinanceScheduleDetail(
 //                                state.financeSchedules?.schedules?.get(
 //                                    idx
 //                                )?.id ?: 0L
 //                            )
-                },
+                    }
+                )
+                .padding(4.dp),
             painter = painterResource(
                 id = R.drawable.ic_cancel
             ),

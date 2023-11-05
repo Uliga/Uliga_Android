@@ -37,10 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.uliga.app.R
@@ -52,7 +49,6 @@ import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
-import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
@@ -494,19 +490,21 @@ fun HomeScreen(
                 }
             } else {
                 items(totalSize) { idx ->
-                    FinanceScheduleItem(
-                        state = state,
-                        idx = idx,
-                        currentDay = currentDay,
-                        onFinanceScheduleUpdateRequest = { financeSchedule ->
-                            viewModel.updateFinanceSchedule(financeSchedule)
-                            isScheduleSheetStateOpen = true
-                        },
-                        onFinanceScheduleDeleteRequest = { financeSchedule ->
-                            viewModel.updateFinanceSchedule(financeSchedule)
-                            deleteAlertDialogVisibleState = true
-                        }
-                    )
+                    if (idx <= 2) {
+                        FinanceScheduleItem(
+                            state = state,
+                            idx = idx,
+                            currentDay = currentDay,
+                            onFinanceScheduleUpdateRequest = { financeSchedule ->
+                                viewModel.updateFinanceSchedule(financeSchedule)
+                                isScheduleSheetStateOpen = true
+                            },
+                            onFinanceScheduleDeleteRequest = { financeSchedule ->
+                                viewModel.updateFinanceSchedule(financeSchedule)
+                                deleteAlertDialogVisibleState = true
+                            }
+                        )
+                    }
 
                 }
             }
