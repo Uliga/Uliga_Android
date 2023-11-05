@@ -20,13 +20,15 @@ val Pretendard = FontFamily(
 class UligaTypography internal constructor(
     val title1: TextStyle,
     val title2: TextStyle,
+    val title3: TextStyle,
     val subTitle1: TextStyle,
     val subTitle2: TextStyle,
     val body1: TextStyle,
     val body2: TextStyle,
     val body3: TextStyle,
     val body4: TextStyle,
-    val body5: TextStyle
+    val body5: TextStyle,
+    val body6: TextStyle
 ) {
     constructor(
         defaultFontFamily: FontFamily = Pretendard,
@@ -38,6 +40,11 @@ class UligaTypography internal constructor(
         title2: TextStyle = TextStyle(
             fontWeight = FontWeight.Bold,
             fontSize = 18.scaledSpOutside,
+            platformStyle = PlatformTextStyle(includeFontPadding = false)
+        ),
+        title3: TextStyle = TextStyle(
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.scaledSpOutside,
             platformStyle = PlatformTextStyle(includeFontPadding = false)
         ),
         subTitle1: TextStyle = TextStyle(
@@ -74,17 +81,24 @@ class UligaTypography internal constructor(
             fontWeight = FontWeight.Medium,
             fontSize = 11.scaledSpOutside,
             platformStyle = PlatformTextStyle(includeFontPadding = false)
-        )
+        ),
+        body6: TextStyle = TextStyle(
+            fontWeight = FontWeight.Medium,
+            fontSize = 15.scaledSpOutside,
+            platformStyle = PlatformTextStyle(includeFontPadding = false)
+        ),
     ) : this(
         title1 = title1.withDefaultFontFamily(defaultFontFamily),
         title2 = title2.withDefaultFontFamily(defaultFontFamily),
+        title3 = title3.withDefaultFontFamily(defaultFontFamily),
         subTitle1 = subTitle1.withDefaultFontFamily(defaultFontFamily),
         subTitle2 = subTitle2.withDefaultFontFamily(defaultFontFamily),
         body1 = body1.withDefaultFontFamily(defaultFontFamily),
         body2 = body2.withDefaultFontFamily(defaultFontFamily),
         body3 = body3.withDefaultFontFamily(defaultFontFamily),
         body4 = body4.withDefaultFontFamily(defaultFontFamily),
-        body5 = body5.withDefaultFontFamily(defaultFontFamily)
+        body5 = body5.withDefaultFontFamily(defaultFontFamily),
+        body6 = body6.withDefaultFontFamily(defaultFontFamily)
     )
 
     fun copy(

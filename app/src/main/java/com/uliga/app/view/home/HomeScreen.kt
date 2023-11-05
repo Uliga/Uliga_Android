@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,13 +35,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,14 +46,10 @@ import androidx.navigation.NavController
 import com.uliga.app.R
 import com.uliga.app.TopDownToast
 import com.uliga.app.ui.theme.CustomGrey100
-import com.uliga.app.ui.theme.Danger100
 import com.uliga.app.ui.theme.Grey100
-import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Primary
-import com.uliga.app.ui.theme.Secondary
-import com.uliga.app.ui.theme.Success200
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
@@ -76,9 +68,6 @@ import com.uliga.app.view.home.invitation.InvitationBottomSheet
 import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
 import com.uliga.app.view.schedule.ScheduleBottomSheet
-import com.uliga.chart.line.LineChart
-import com.uliga.domain.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDay
-import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.time.LocalDate
@@ -316,34 +305,41 @@ fun HomeScreen(
             item {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 16.dp),
+                        .fillMaxWidth(),
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
                         text = "현재 가계부",
                         color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = Bold,
-                        fontSize = 22.sp
+                        style = UligaTheme.typography.title3
                     )
 
                     VerticalSpacer(height = 8.dp)
 
-                    Row {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                vertical = 8.dp
+                            )
+                    ) {
                         Text(
-                            text = "안세훈님의 가계부",
+                            modifier = Modifier.align(Alignment.CenterStart),
+                            text = state.currentAccountInfo?.first ?: "",
                             color = Grey600,
                             style = UligaTheme.typography.body3
                         )
 
-                        Spacer(Modifier.weight(1f))
-
                         Text(
+                            modifier = Modifier.align(Alignment.CenterEnd),
                             text = "변경 버튼",
                             color = Grey600,
                             style = UligaTheme.typography.body3
                         )
+                    }
+
+                    Row {
+
                     }
 
                     VerticalSpacer(height = 16.dp)
@@ -362,9 +358,7 @@ fun HomeScreen(
                     Text(
                         text = "이번 달 예산",
                         color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = Bold,
-                        fontSize = 22.sp
+                        style = UligaTheme.typography.title3
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -399,12 +393,7 @@ fun HomeScreen(
                     )
                 )
 
-                Spacer(
-                    modifier = Modifier.height(
-                        12.dp
-                    )
-                )
-
+                VerticalSpacer(height = 12.dp)
 
                 Row(
                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -425,9 +414,7 @@ fun HomeScreen(
                     Text(
                         text = "${currentMonthBudget}원",
                         color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 15.sp
+                        style = UligaTheme.typography.body4
                     )
                 }
 
@@ -452,9 +439,7 @@ fun HomeScreen(
                     Text(
                         text = "${currentMonthBudget / currentDate.dayOfMonth}원",
                         color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 15.sp
+                        style = UligaTheme.typography.body4
                     )
                 }
 
@@ -470,9 +455,7 @@ fun HomeScreen(
                     Text(
                         text = "다가오는 금융 일정",
                         color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = Bold,
-                        fontSize = 22.sp
+                        style = UligaTheme.typography.title3
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -596,9 +579,7 @@ fun HomeScreen(
                 Text(
                     text = "이번 달 총 지출",
                     color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = Bold,
-                    fontSize = 22.sp
+                    style = UligaTheme.typography.title3
                 )
 
                 VerticalSpacer(height = 8.dp)
