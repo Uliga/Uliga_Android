@@ -5,9 +5,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -38,13 +37,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.FontWeight.Companion.Medium
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,18 +51,27 @@ import com.uliga.app.R
 import com.uliga.app.TopDownToast
 import com.uliga.app.ui.theme.CustomGrey100
 import com.uliga.app.ui.theme.Danger100
-import com.uliga.app.ui.theme.Grey300
+import com.uliga.app.ui.theme.Grey100
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.Success200
+import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.DeleteAlertDialog
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
+import com.uliga.app.view.component.AddingButton
+import com.uliga.app.view.component.ContinuousLineChart
+import com.uliga.app.view.component.FinanceScheduleItem
+import com.uliga.app.view.component.HorizontalLineIndicator
+import com.uliga.app.view.component.HorizontalSpacer
+import com.uliga.app.view.component.OneThicknessDivider
+import com.uliga.app.view.component.TextWithDotImage
+import com.uliga.app.view.component.VerticalSpacer
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
 import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
@@ -252,6 +259,7 @@ fun HomeScreen(
     Box(
         modifier = Modifier
             .wrapContentSize()
+            .background(White)
             .pullRefresh(pullRefreshState),
         contentAlignment = Alignment.TopCenter
     ) {
@@ -263,8 +271,7 @@ fun HomeScreen(
                 .padding(
                     horizontal = 16.dp,
                     vertical = 16.dp
-                )
-                .background(White),
+                ),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
@@ -276,7 +283,7 @@ fun HomeScreen(
                         painter = painterResource(
                             id = R.drawable.uliga_logo
                         ),
-                        contentDescription = "uliga logo"
+                        contentDescription = null
                     )
 
                     Text(
@@ -285,9 +292,7 @@ fun HomeScreen(
                         ),
                         text = "우리가",
                         color = Primary,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp
+                        style = UligaTheme.typography.title1
                     )
 
                     Spacer(
@@ -303,20 +308,8 @@ fun HomeScreen(
                         painter = painterResource(
                             id = R.drawable.uliga_logo
                         ),
-                        contentDescription = "tmp invitiation"
+                        contentDescription = null
                     )
-
-//                Image(
-//                    modifier = Modifier
-//                        .size(40.dp)
-//                        .clickable {
-//                            isScheduleAlertSheetOpen = true
-//                        },
-//                    painter = painterResource(
-//                        id = R.drawable.uliga_logo
-//                    ),
-//                    contentDescription = "tmp schedule"
-//                )
                 }
             }
 
@@ -328,41 +321,32 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.Start
                 ) {
                     Text(
-                        modifier = Modifier.padding(
-                            start = 16.dp
-                        ),
                         text = "현재 가계부",
                         color = Grey700,
                         fontFamily = pretendard,
-                        fontWeight = Medium,
-                        fontSize = 20.sp
+                        fontWeight = Bold,
+                        fontSize = 22.sp
                     )
+
+                    VerticalSpacer(height = 8.dp)
 
                     Row {
                         Text(
-                            modifier = Modifier.padding(
-                                start = 16.dp,
-                            ),
                             text = "안세훈님의 가계부",
                             color = Grey600,
-                            fontFamily = pretendard,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 28.sp
+                            style = UligaTheme.typography.body3
                         )
 
                         Spacer(Modifier.weight(1f))
 
                         Text(
-                            modifier = Modifier.padding(
-                                start = 16.dp,
-                            ),
                             text = "변경 버튼",
                             color = Grey600,
-                            fontFamily = pretendard,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 28.sp
+                            style = UligaTheme.typography.body3
                         )
                     }
+
+                    VerticalSpacer(height = 16.dp)
 
                 }
             }
@@ -371,108 +355,48 @@ fun HomeScreen(
 
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 16.dp),
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+
                     Text(
-                        modifier = Modifier.padding(
-                            start = 16.dp
-                        ),
                         text = "이번 달 예산",
                         color = Grey700,
                         fontFamily = pretendard,
-                        fontWeight = Medium,
-                        fontSize = 20.sp
+                        fontWeight = Bold,
+                        fontSize = 22.sp
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
 
-
-                    Row(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .clickable {
-                                isBudgetSettingSheetOpen = true
-
-                            },
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(16.dp),
-                            painter = painterResource(
-                                id = R.drawable.ic_adding_budget
-                            ),
-                            contentDescription = null
-                        )
-
-                        Spacer(modifier = Modifier.width(4.dp))
-
-                        Text(
-                            text = "예산 설정하러 가기",
-                            color = Secondary,
-                            fontFamily = pretendard,
-                            fontWeight = Medium,
-                            fontSize = 14.sp
-                        )
-                    }
+                    AddingButton(
+                        text = "예산 설정하러 가기",
+                        onClick = {
+                            isBudgetSettingSheetOpen = true
+                        }
+                    )
                 }
+
+                VerticalSpacer(height = 8.dp)
 
                 Text(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                    ),
                     text = if (currentMonthResult >= 0) "${currentMonthResult}원 남음" else "${currentMonthResult * (-1)}원 부족",
                     color = Grey600,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 28.sp
+                    style = UligaTheme.typography.body3
                 )
 
-                val indicatorHeight = 24.dp
-                val indicatorPadding = 24.dp
+                VerticalSpacer(height = 24.dp)
 
-                Canvas(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(indicatorHeight)
-                        .padding(start = indicatorPadding, end = indicatorPadding)
-                ) {
-
-                    drawLine(
-                        color = Color.LightGray.copy(alpha = 0.3f),
-                        cap = StrokeCap.Round,
-                        strokeWidth = size.height,
-                        start = Offset(x = 0f, y = 0f),
-                        end = Offset(x = size.width, y = 0f)
-                    )
-
-                    val progress =
-                        (animateNumber.value) * size.width
-
-                    drawLine(
-                        color = Danger100,
-                        cap = StrokeCap.Round,
-                        strokeWidth = size.height,
-                        start = Offset(x = 0f, y = 0f),
-                        end = Offset(x = progress, y = 0f)
-                    )
-
-                }
-
-                Spacer(
-                    modifier = Modifier.height(
-                        16.dp
-                    )
+                HorizontalLineIndicator(
+                    animateNumber = animateNumber.value
                 )
 
-                Divider(
+                VerticalSpacer(height = 8.dp)
+
+                OneThicknessDivider(
                     modifier = Modifier.padding(
                         horizontal = 8.dp,
-                    ),
-                    color = Grey300,
-                    thickness = 1.dp
+                    )
                 )
 
                 Spacer(
@@ -481,35 +405,23 @@ fun HomeScreen(
                     )
                 )
 
+
                 Row(
-                    modifier = Modifier.padding(
-                        start = 16.dp
-                    ),
+                    modifier = Modifier.padding(horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        modifier = Modifier,
+                    TextWithDotImage(
+                        text = "${currentDate.monthValue}월 설정 예산",
                         painter = painterResource(
                             id = R.drawable.ic_gray_dot
                         ),
-                        contentDescription = "gary dot"
+                        imageSize = 12.dp,
+                        textStyle = UligaTheme.typography.body4,
+                        textColor = Grey700
                     )
 
-                    Spacer(
-                        modifier = Modifier.width(8.dp)
-                    )
+                    Spacer(modifier = Modifier.weight(1f))
 
-                    Text(
-                        text = "${currentDate.monthValue}월 설정 예산",
-                        color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 15.sp
-                    )
-
-                    Spacer(
-                        modifier = Modifier.width(24.dp)
-                    )
                     Text(
                         text = "${currentMonthBudget}원",
                         color = Grey700,
@@ -517,45 +429,26 @@ fun HomeScreen(
                         fontWeight = FontWeight.Medium,
                         fontSize = 15.sp
                     )
-
                 }
 
-                Spacer(
-                    modifier = Modifier.height(
-                        12.dp
-                    )
-                )
-
+                VerticalSpacer(height = 4.dp)
 
                 Row(
-                    modifier = Modifier.padding(
-                        start = 16.dp
-                    ),
+                    modifier = Modifier.padding(horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        modifier = Modifier,
+                    TextWithDotImage(
+                        text = "남은 1일 예산",
                         painter = painterResource(
                             id = R.drawable.ic_gray_dot
                         ),
-                        contentDescription = "gary dot"
+                        imageSize = 12.dp,
+                        textStyle = UligaTheme.typography.body4,
+                        textColor = Grey700
                     )
 
-                    Spacer(
-                        modifier = Modifier.width(8.dp)
-                    )
+                    Spacer(modifier = Modifier.weight(1f))
 
-                    Text(
-                        text = "남은 1일 예산",
-                        color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 15.sp
-                    )
-
-                    Spacer(
-                        modifier = Modifier.width(24.dp)
-                    )
                     Text(
                         text = "${currentMonthBudget / currentDate.dayOfMonth}원",
                         color = Grey700,
@@ -565,185 +458,73 @@ fun HomeScreen(
                     )
                 }
 
-                Spacer(
-                    modifier = Modifier
-                        .height(16.dp)
-                )
-
-//            Column(
-//                modifier = Modifier
-//                    .padding(8.dp)
-//                    .border(
-//                        width = 1.dp,
-//                        color = Grey300,
-//                        shape = RoundedCornerShape(12.dp)
-//                    )
-//            ) {
-//
-//            }
+                VerticalSpacer(height = 16.dp)
             }
 
             item {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 16.dp),
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        modifier = Modifier.padding(
-                            start = 16.dp
-                        ),
                         text = "다가오는 금융 일정",
                         color = Grey700,
                         fontFamily = pretendard,
-                        fontWeight = Medium,
-                        fontSize = 20.sp
+                        fontWeight = Bold,
+                        fontSize = 22.sp
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
 
-
-                    Row(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .clickable {
-                                isScheduleSheetStateOpen = true
-                            },
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(16.dp),
-                            painter = painterResource(
-                                id = R.drawable.ic_adding_budget
-                            ),
-                            contentDescription = null
-                        )
-
-                        Spacer(modifier = Modifier.width(4.dp))
-
-                        Text(
-                            text = "금융 일정 추가하기",
-                            color = Secondary,
-                            fontFamily = pretendard,
-                            fontWeight = Medium,
-                            fontSize = 14.sp
-                        )
-                    }
+                    AddingButton(
+                        text = "금융 일정 추가하기",
+                        onClick = {
+                            isScheduleSheetStateOpen = true
+                        }
+                    )
                 }
 
             }
 
-            items(state.financeSchedules?.schedules?.size ?: 0) { idx ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            val financeSchedule = FinanceSchedule(
-                                id = state.financeSchedules?.schedules?.get(idx)?.id ?: 0L,
-                                notificationDay = state.financeSchedules?.schedules?.get(idx)?.notificationDay
-                                    ?: 0L,
-                                name = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
-                                isIncome = state.financeSchedules?.schedules?.get(idx)?.isIncome
-                                    ?: false,
-                                value = state.financeSchedules?.schedules?.get(idx)?.value ?: 0L,
-                                creatorId = 0L,
-                                creator = "",
-                                accountBookName = ""
-                            )
+            val totalSize = state.financeSchedules?.schedules?.size ?: 0
 
-                            viewModel.updateFinanceSchedule(financeSchedule)
-
-                            isScheduleSheetStateOpen = true
-                        }
-                ) {
-                    Spacer(
-                        modifier = Modifier.width(16.dp)
-                    )
-
+            if (totalSize == 0) {
+                item {
                     Box(
                         modifier = Modifier
-                            .height(48.dp)
-                            .width(64.dp)
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(
-                                notificationDayColor(
-                                    currentDay,
-                                    state.financeSchedules?.schedules?.get(idx)?.notificationDay
-                                        ?: 0
-                                )
+                            .fillMaxWidth()
+                            .height(210.dp)
+                            .border(
+                                width = 1.dp,
+                                color = Grey100,
+                                shape = UligaTheme.shapes.medium
                             )
                     ) {
                         Text(
                             modifier = Modifier.align(Alignment.Center),
-                            color = White,
-                            text = "${state.financeSchedules?.schedules?.get(idx)?.notificationDay ?: 0}일",
-                            fontSize = 16.sp
+                            text = "금융 일정이 존재하지 않습니다.",
+                            color = Grey600,
+                            style = UligaTheme.typography.body5,
                         )
                     }
-
-                    Spacer(
-                        modifier = Modifier.width(16.dp)
+                }
+            } else {
+                items(totalSize) { idx ->
+                    FinanceScheduleItem(
+                        state = state,
+                        idx = idx,
+                        currentDay = currentDay,
+                        onFinanceScheduleUpdateRequest = { financeSchedule ->
+                            viewModel.updateFinanceSchedule(financeSchedule)
+                            isScheduleSheetStateOpen = true
+                        },
+                        onFinanceScheduleDeleteRequest = { financeSchedule ->
+                            viewModel.updateFinanceSchedule(financeSchedule)
+                            deleteAlertDialogVisibleState = true
+                        }
                     )
 
-                    Column {
-                        Text(
-                            text = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
-                            color = Grey700,
-                            fontSize = 18.sp,
-                            fontFamily = pretendard,
-                            fontWeight = FontWeight.Medium
-                        )
-
-                        Text(
-                            text = "${state.financeSchedules?.schedules?.get(idx)?.value ?: ""}원 / ${
-                                if (state.financeSchedules?.schedules?.get(
-                                        idx
-                                    )?.isIncome != false
-                                ) "수입" else "지출"
-                            }",
-                            color = Grey400,
-                            fontSize = 14.sp,
-                            fontFamily = pretendard,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-                    Image(
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clickable {
-                                val financeSchedule = FinanceSchedule(
-                                    id = state.financeSchedules?.schedules?.get(idx)?.id ?: 0L,
-                                    notificationDay = state.financeSchedules?.schedules?.get(idx)?.notificationDay
-                                        ?: 0L,
-                                    name = state.financeSchedules?.schedules?.get(idx)?.name ?: "",
-                                    isIncome = state.financeSchedules?.schedules?.get(idx)?.isIncome
-                                        ?: false,
-                                    value = state.financeSchedules?.schedules?.get(idx)?.value
-                                        ?: 0L,
-                                    creatorId = 0L,
-                                    creator = "",
-                                    accountBookName = ""
-                                )
-
-                                viewModel.updateFinanceSchedule(financeSchedule)
-
-                                deleteAlertDialogVisibleState = true
-
-//                            viewModel.deleteFinanceScheduleDetail(
-//                                state.financeSchedules?.schedules?.get(
-//                                    idx
-//                                )?.id ?: 0L
-//                            )
-                            },
-                        painter = painterResource(
-                            id = R.drawable.ic_cancel
-                        ),
-                        contentDescription = null
-                    )
                 }
             }
 
@@ -751,8 +532,6 @@ fun HomeScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
-
                         .background(
                             color = CustomGrey100,
                             shape = RoundedCornerShape(8.dp)
@@ -760,133 +539,79 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Spacer(
-                        modifier = Modifier.height(8.dp)
-                    )
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(8.dp),
+                    VerticalSpacer(height = 8.dp)
+
+                    Row {
+                        TextWithDotImage(
+                            text = "약 3일 미만의 기간이 남음",
                             painter = painterResource(
                                 id = R.drawable.ic_red_dot
                             ),
-                            contentDescription = "red dot"
+                            imageSize = 8.dp,
+                            textStyle = UligaTheme.typography.body5,
+                            textColor = Grey600
                         )
 
-                        Spacer(
-                            modifier = Modifier
-                                .width(8.dp)
-                        )
-
-                        Text(
-                            text = "3일 미만의 기간이 남음",
-                            color = Grey600,
-                            fontFamily = pretendard,
-                            fontWeight = Medium,
-                            fontSize = 11.sp
-                        )
-
-                        Spacer(modifier = Modifier.width(16.dp))
-
+                        HorizontalSpacer(width = 16.dp)
                     }
 
-                    //
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(8.dp),
+                    Row {
+                        TextWithDotImage(
+                            text = "일주일 미만의 기간이 남음",
                             painter = painterResource(
                                 id = R.drawable.ic_orange_dot
                             ),
-                            contentDescription = "orange dot"
+                            imageSize = 10.dp,
+                            textStyle = UligaTheme.typography.body5,
+                            textColor = Grey600
                         )
 
-                        Spacer(
-                            modifier = Modifier
-                                .width(8.dp)
-                        )
-
-                        Text(
-                            text = "일주일 미만의 기간이 남음",
-                            color = Grey600,
-                            fontFamily = pretendard,
-                            fontWeight = Medium,
-                            fontSize = 11.sp
-                        )
-
-                        Spacer(modifier = Modifier.width(16.dp))
-
+                        HorizontalSpacer(width = 16.dp)
                     }
 
-                    //
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            modifier = Modifier
-                                .size(8.dp),
+                    Row {
+                        TextWithDotImage(
+                            text = "일주일 이상의 기간이 남음",
                             painter = painterResource(
                                 id = R.drawable.ic_green_dot
                             ),
-                            contentDescription = "red dot"
+                            imageSize = 8.dp,
+                            textStyle = UligaTheme.typography.body5,
+                            textColor = Grey600
                         )
 
-                        Spacer(
-                            modifier = Modifier
-                                .width(8.dp)
-                        )
-
-                        Text(
-                            text = "일주일 이상의 기간이 남음",
-                            color = Grey600,
-                            fontFamily = pretendard,
-                            fontWeight = Medium,
-                            fontSize = 11.sp
-                        )
-
-                        Spacer(modifier = Modifier.width(16.dp))
+                        HorizontalSpacer(width = 16.dp)
                     }
 
-                    //
+                    VerticalSpacer(height = 8.dp)
 
-                    Spacer(
-                        modifier = Modifier.height(8.dp)
-                    )
                 }
             }
 
             item {
+
+                VerticalSpacer(height = 8.dp)
+
                 Text(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 8.dp
-                    ),
                     text = "이번 달 총 지출",
                     color = Grey700,
                     fontFamily = pretendard,
-                    fontWeight = Medium,
-                    fontSize = 20.sp
+                    fontWeight = Bold,
+                    fontSize = 22.sp
                 )
+
+                VerticalSpacer(height = 8.dp)
 
                 Text(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                    ),
                     text = "${currentMonthRecord}원",
                     color = Grey600,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 28.sp
+                    style = UligaTheme.typography.body3
                 )
 
-                LineChartScreenContent(state.accountBookAnalyzeRecordByDay)
+                ContinuousLineChart(
+                    accountBookAnalyzeRecordByDay = state.accountBookAnalyzeRecordByDay
+                )
             }
 
         }
@@ -916,50 +641,6 @@ fun HomeScreen(
     TopDownToast(toastYOffset = toastYOffset, toastMessage = toastMessage)
 }
 
-@Composable
-fun LineChartScreenContent(
-    accountBookAnalyzeRecordByDay: AccountBookAnalyzeRecordByDay?
-) {
-    if (accountBookAnalyzeRecordByDay == null) return
-
-    val lineChartDataModel = LineChartDataModel(accountBookAnalyzeRecordByDay.records)
-
-    Column(
-        modifier = Modifier.padding(
-            horizontal = 12.dp,
-            vertical = 8.dp
-        )
-    ) {
-        LineChartRow(lineChartDataModel)
-    }
-}
-
-@Composable
-fun LineChartRow(lineChartDataModel: LineChartDataModel) {
-    Box(
-        modifier = Modifier
-            .height(250.dp)
-            .fillMaxWidth()
-    ) {
-
-        LineChart(
-            linesChartData = listOf(lineChartDataModel.lineChartData),
-            horizontalOffset = lineChartDataModel.horizontalOffset,
-        )
-    }
-}
-
-fun notificationDayColor(currentDay: Int, notificationDay: Long): Color {
-
-    return if (currentDay - notificationDay < 3) {
-        Danger100
-    } else if (currentDay - notificationDay < 7) {
-        Secondary
-    } else {
-        Success200
-    }
-
-}
 
 @RequiresApi(Build.VERSION_CODES.Q)
 
@@ -984,15 +665,3 @@ private fun handleSideEffect(
         }
     }
 }
-
-//@RequiresApi(Build.VERSION_CODES.Q)
-//@Preview
-//@Composable
-//fun Preview() {
-//    HomeScreen(
-//        navController = NavController(context = LocalContext.current),
-//        data = MainUiState(),
-//        onEvent = {
-//
-//        })
-//}
