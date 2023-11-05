@@ -37,6 +37,7 @@ import com.uliga.app.ui.theme.pretendard
 @Composable
 fun DeleteAlertDialog(
     onDismissRequest: () -> Unit,
+    onDeleteRequest: () -> Unit,
     properties: DialogProperties = DialogProperties(),
     title: String,
     subTitle: String
@@ -122,7 +123,7 @@ fun DeleteAlertDialog(
                     ),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
-                        onDismissRequest()
+                        onDeleteRequest()
                     }) {
 
 
@@ -146,6 +147,7 @@ fun DeleteAlertDialog(
 fun Preview() {
     DeleteAlertDialog(
         onDismissRequest = {},
+        onDeleteRequest = {},
         title = "안세훈님의 가계부 삭제",
         subTitle = "정말 안세훈님의 가계부를 삭제하시겠어요?"
     )
