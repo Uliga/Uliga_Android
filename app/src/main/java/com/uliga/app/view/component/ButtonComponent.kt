@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
@@ -23,12 +24,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.uliga.app.R
+import com.uliga.app.ui.theme.Grey200
 import com.uliga.app.ui.theme.Grey700
+import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.UligaTheme
+import com.uliga.app.ui.theme.White
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
@@ -114,5 +119,101 @@ fun AddingButton(
             style = UligaTheme.typography.body6
         )
     }
+}
 
+@Composable
+fun PositiveButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    contentPadding: PaddingValues,
+    onClick: () -> Unit,
+    textStyle: TextStyle = UligaTheme.typography.body11
+) {
+    Button(
+        modifier = modifier,
+        contentPadding = contentPadding,
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Primary,
+        ),
+        shape = UligaTheme.shapes.large,
+        onClick = { onClick() }) {
+        Text(
+            color = White,
+            style = textStyle,
+            text = text
+        )
+    }
+}
+
+@Composable
+fun NegativeButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    contentPadding: PaddingValues,
+    onClick: () -> Unit,
+    textStyle: TextStyle = UligaTheme.typography.body11
+) {
+    Button(
+        modifier = modifier,
+        contentPadding = contentPadding,
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = White,
+        ),
+        shape = UligaTheme.shapes.large,
+        onClick = { onClick() }) {
+        Text(
+            color = Primary,
+            style = textStyle,
+            text = text
+        )
+    }
+}
+
+@Composable
+fun DeclineButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    contentPadding: PaddingValues,
+    onClick: () -> Unit
+) {
+    Button(
+        modifier = modifier,
+        contentPadding = contentPadding,
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Grey200,
+        ),
+        shape = UligaTheme.shapes.large,
+        onClick = { onClick() }) {
+        Text(
+            color = Primary,
+            style = UligaTheme.typography.body11,
+            text = text
+        )
+    }
+}
+
+@Composable
+fun CheckButton(
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues,
+    backgroundColor: ButtonColors,
+    textColor: Color,
+    text: String,
+    onClick: () -> Unit,
+) {
+    Button(
+        enabled = enabled,
+        modifier = modifier,
+        contentPadding = contentPadding,
+        colors = backgroundColor,
+        shape = UligaTheme.shapes.large,
+        onClick = { onClick() }
+    ) {
+        Text(
+            color = textColor,
+            style = UligaTheme.typography.body11,
+            text = text
+        )
+    }
 }
