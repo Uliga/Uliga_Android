@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.sp
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
-import com.uliga.app.view.accountBook.generation.AccountBookGenerationSideEffect
 import com.uliga.app.view.home.HomeSideEffect
 import com.uliga.app.view.home.HomeViewModel
 import org.orbitmvi.orbit.compose.collectAsState
@@ -59,7 +58,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleBottomSheet(
+fun  ScheduleBottomSheet(
     sheetState: SheetState,
     viewModel: HomeViewModel,
     onDismissRequest: () -> Unit
