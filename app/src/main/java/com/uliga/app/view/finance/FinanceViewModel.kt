@@ -4,7 +4,6 @@ import com.uliga.app.base.BaseViewModel
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionIds
 import com.uliga.domain.model.member.Member
 import com.uliga.domain.usecase.accountbook.GetAccountBookMonthTransactionUseCase
-import com.uliga.domain.usecase.accountbook.PostAccountBookTransactionUseCase
 import com.uliga.domain.usecase.accountbook.remote.DeleteAccountBookDayTransactionUseCase
 import com.uliga.domain.usecase.accountbook.remote.GetAccountBookDayTransactionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +18,6 @@ import javax.inject.Inject
 class FinanceViewModel @Inject constructor(
     private val getAccountBookMonthTransactionUseCase: GetAccountBookMonthTransactionUseCase,
     private val getAccountBookDayTransactionUseCase: GetAccountBookDayTransactionUseCase,
-    private val postAccountBookTransactionUseCase: PostAccountBookTransactionUseCase,
     private val deleteAccountBookDayTransactionUseCase: DeleteAccountBookDayTransactionUseCase
 ) : ContainerHost<FinanceUiState, FinanceSideEffect>, BaseViewModel() {
 
@@ -37,41 +35,6 @@ class FinanceViewModel @Inject constructor(
                 }
             }
         }
-
-//    fun postAccountBookTransaction(
-//        transactionType: String,
-//        category: String,
-//        payment: String,
-//        date: String,
-//        account: String,
-//        value: Long,
-//        memo: String
-//    ) = intent {
-//
-//        val currentAccountBookInfo = state.currentAccountInfo ?: return@intent
-//
-//        val accountBookTransactionRequest = AccountBookTransactionRequest(
-//            id = currentAccountBookInfo.second,
-//            category = category,
-//            payment = payment,
-//            date = date,
-//            account = account,
-//            value = value,
-//            memo = memo,
-//            sharedAccountBook = listOf(0)
-//        )
-//
-//
-//        postAccountBookTransactionUseCase(transactionType, accountBookTransactionRequest)
-//            .onSuccess {
-//                reduce {
-//                    state.copy(
-//                        currentAccountBookTransaction = it
-//                    )
-//                }
-//
-//            }
-//    }
 
     fun getAccountBookDayTransaction(year: Int, month: Int, day: Int) = intent {
         launch {

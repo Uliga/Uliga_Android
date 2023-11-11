@@ -1,6 +1,7 @@
 package com.uliga.app.view.budget
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -43,6 +45,7 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
+import com.uliga.app.view.component.BasicTextField
 import com.uliga.app.view.component.HorizontalSpacer
 import com.uliga.app.view.component.PositiveButton
 import com.uliga.app.view.component.VerticalSpacer
@@ -136,31 +139,13 @@ fun BudgetSettingBottomSheet(
 
             VerticalSpacer(height = 8.dp)
 
-            TextField(
-                modifier = Modifier
-                    .border(width = 1.dp, color = Grey400, shape = UligaTheme.shapes.large)
-                    .fillMaxWidth(),
+            BasicTextField(
                 value = budgetTextState.value,
                 onValueChange = {
                     budgetTextState.value = it
                 },
-                label = {
-                    Text(
-                        text = if (state.currentMonthAccountBookAsset?.budget?.value == null || state.currentMonthAccountBookAsset.budget.value == 0L) "이번 달 예산 금액을 입력해주세요." else "${state.currentMonthAccountBookAsset.budget.value}원",
-                        color = Grey500,
-                        style = UligaTheme.typography.body12,
-                        maxLines = 1
-                    )
-                },
-                textStyle = TextStyle(
-                    color = Color.Black, fontSize = 20.sp
-                ),
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                ),
-                singleLine = true,
+                keyboardType = KeyboardType.Number,
+                hint = "이번 달 예산 금액을 입력해주세요."
             )
 
             VerticalSpacer(height = 16.dp)
@@ -173,7 +158,8 @@ fun BudgetSettingBottomSheet(
                         .wrapContentSize()
                         .background(
                             color = CustomGrey200,
-                            shape = UligaTheme.shapes.medium)
+                            shape = UligaTheme.shapes.medium
+                        )
                         .padding(
                             horizontal = 16.dp,
                             vertical = 8.dp
@@ -261,19 +247,19 @@ fun BudgetSettingBottomSheet(
                     vertical = 16.dp
                 ),
                 onClick = {
-                    val currentAccountBookBudget = state.currentMonthAccountBookAsset?.budget ?: 0L
+                    val currentAccountBookBudget = state.currentMonthAccountBookAsset?.budget?.value ?: return@PositiveButton
 
                     if (currentAccountBookBudget == 0L) {
                         viewModel.postAccountBookBudget(
                             currentDate.year.toLong(),
                             currentDate.monthValue.toLong(),
-                            budgetTextState.value.toLong()
+                            budgetTextState.value
                         )
                     } else {
                         viewModel.patchAccountBookBudget(
                             currentDate.year.toLong(),
                             currentDate.monthValue.toLong(),
-                            budgetTextState.value.toLong()
+                            budgetTextState.value
                         )
                     }
                 }

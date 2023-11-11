@@ -26,7 +26,6 @@ import javax.inject.Inject
 class ScheduleGenerationViewModel @Inject constructor(
     private val patchFinanceScheduleUseCase: PatchFinanceScheduleUseCase,
     private val postFinanceScheduleToAccountBookUseCase: PostFinanceScheduleToAccountBookUseCase,
-    private val getFinanceScheduleUseCase: GetFinanceScheduleUseCase,
     private val fetchIdUseCase: FetchIdUseCase,
     private val fetchCurrentAccountBookInfoUseCase: FetchCurrentAccountBookInfoUseCase,
     private val getMemberUseCase: GetMemberUseCase
@@ -42,7 +41,7 @@ class ScheduleGenerationViewModel @Inject constructor(
         getMember()
     }
 
-    fun fetchCurrentAccountBookInfo() = intent {
+    private fun fetchCurrentAccountBookInfo() = intent {
         fetchCurrentAccountBookInfoUseCase()
             .onSuccess {
                 reduce {
@@ -50,13 +49,12 @@ class ScheduleGenerationViewModel @Inject constructor(
                         currentAccountInfo = it
                     )
                 }
-            }
-            .onFailure {
-
+            }.onFailure {
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("가계부 정보를 가져오는데 실패했습니다."))
             }
     }
 
-    fun fetchId() = intent {
+    private fun fetchId() = intent {
         fetchIdUseCase()
             .onSuccess {
                 reduce {
@@ -66,11 +64,11 @@ class ScheduleGenerationViewModel @Inject constructor(
                 }
             }
             .onFailure {
-
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("사용자 정보를 가져오는데 실패했습니다."))
             }
     }
 
-    fun getMember() = intent {
+    private fun getMember() = intent {
         getMemberUseCase()
             .onSuccess {
                 reduce {
@@ -80,7 +78,7 @@ class ScheduleGenerationViewModel @Inject constructor(
                 }
             }
             .onFailure {
-
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("사용자 정보를 가져오는데 실패했습니다."))
             }
     }
     fun postFinanceScheduleToAccountBook(
