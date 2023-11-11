@@ -1,6 +1,7 @@
 package com.uliga.app.view.analyze
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,10 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -29,11 +28,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.Grey700
+import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pieChartColor
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CircularProgress
+import com.uliga.app.view.component.HorizontalSpacer
+import com.uliga.app.view.component.VerticalSpacer
 import com.uliga.app.view.main.MainUiState
 import com.uliga.chart.pie.PieChart
 import com.uliga.chart.pie.renderer.PieSliceDrawer
@@ -66,78 +69,77 @@ fun AnalyzeByCategoryScreen(viewModel: AnalyzeViewModel, mainUiState: MainUiStat
                 .background(White),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+
             item {
+
+                VerticalSpacer(height = 32.dp)
+
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            start = 32.dp,
-                            end = 32.dp,
-                            top = 8.dp
-                        ),
+                        .padding(horizontal = 16.dp),
                     text = "카테고리별 분석",
                     color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    style = UligaTheme.typography.title3
                 )
 
             }
 
             item {
+
+                VerticalSpacer(height = 16.dp)
+
                 PieChartScreenContent(state.accountBookAnalyzeRecordByMonthForCategory?.categories)
+
+                VerticalSpacer(height = 16.dp)
             }
 
             items(state.accountBookAnalyzeRecordByMonthForCategory?.categories?.size ?: 0) { idx ->
 
                 if (state.accountBookAnalyzeRecordByMonthForCategory?.categories == null) return@items
 
-                Row {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                ) {
                     Box(
                         modifier = Modifier
                             .size(20.dp)
                             .background(
                                 color = pieChartColor(state.accountBookAnalyzeRecordByMonthForCategory.categories[idx].name),
-                                shape = RoundedCornerShape(4.dp)
+                                shape = UligaTheme.shapes.small
                             )
                     )
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                    HorizontalSpacer(width = 12.dp)
 
                     Text(
                         text = state.accountBookAnalyzeRecordByMonthForCategory.categories[idx].name,
-                        color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 18.sp
+                        color = Grey500,
+                        style = UligaTheme.typography.body12
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
 
                     Text(
                         text = "${state.accountBookAnalyzeRecordByMonthForCategory.categories[idx].value}원",
-                        color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 18.sp
+                        color = Grey500,
+                        style = UligaTheme.typography.body12
                     )
                 }
             }
 
             item {
+
+                VerticalSpacer(height = 24.dp)
+
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            start = 32.dp,
-                            end = 32.dp,
-                            top = 8.dp
-                        ),
+                        .padding(horizontal = 16.dp),
                     text = "나의 고정 지출",
                     color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    style = UligaTheme.typography.title3
                 )
             }
 
@@ -146,39 +148,32 @@ fun AnalyzeByCategoryScreen(viewModel: AnalyzeViewModel, mainUiState: MainUiStat
                 val fixedRecordList =
                     state.accountBookAnalyzeFixedRecordByMonth?.schedules ?: return@items
 
-                Row {
+                Row(
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                ) {
                     Text(
                         text = "${fixedRecordList[idx].day}일",
-                        color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 18.sp
+                        color = Grey500,
+                        style = UligaTheme.typography.body12
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
 
                     Text(
                         text = fixedRecordList[idx].name,
-                        color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 18.sp
+                        color = Grey500,
+                        style = UligaTheme.typography.body12
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
 
                     Text(
                         text = "${fixedRecordList[idx].value}원",
-                        color = Grey700,
-                        fontFamily = pretendard,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 18.sp
+                        color = Grey500,
+                        style = UligaTheme.typography.body12
                     )
                 }
-
             }
-
-
         }
 
         PullRefreshIndicator(
@@ -200,6 +195,8 @@ private fun PieChartScreenContent(accountBookAnalyzeRecordByMonthForCategoryList
 
     val pieChartDataModel =
         remember { PieChartDataModel(accountBookAnalyzeRecordByMonthForCategoryList) }
+
+    Log.d("launchedEffect", pieChartDataModel.hashCode().toString())
 
     Column(
         modifier = Modifier.padding(

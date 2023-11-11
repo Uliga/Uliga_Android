@@ -27,9 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.Grey700
+import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CircularProgress
+import com.uliga.app.view.component.VerticalSpacer
 import com.uliga.app.view.main.MainUiState
 import com.uliga.chart.bar.HorizontalBarChart
 import com.uliga.chart.bar.VerticalBarChart
@@ -75,71 +77,58 @@ fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel, mainUiState: MainUiState) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
+
+                VerticalSpacer(height = 32.dp)
+                
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            start = 32.dp,
-                            end = 32.dp,
-                            top = 8.dp
-                        ),
+                        .padding(horizontal = 16.dp),
                     text = "${currentDate.monthValue}월 분석",
                     color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    style = UligaTheme.typography.title3,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
+
+                VerticalSpacer(height = 8.dp)
 
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            start = 32.dp,
-                            end = 32.dp,
-                            top = 8.dp
-                        ),
+                        .padding(horizontal = 20.dp),
                     text = "이번 달에는 지난 달보다 ${abs(differenceValueWithLastMonth)}원 ${if (differenceValueWithLastMonth >= 0) "더" else "덜"} 쓰셨어요!",
                     color = Grey500,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Light,
-                    fontSize = 15.sp,
+                    style = UligaTheme.typography.body12,
                     overflow = TextOverflow.Ellipsis,
-                    maxLines = 2,
-
-                    )
+                    maxLines = 2
+                )
 
                 HorizontalBarChartScreenContent(compareList)
+
+                VerticalSpacer(height = 40.dp)
             }
 
             item {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = 32.dp,
-                            end = 32.dp,
-                            top = 8.dp
-                        ),
-                    text = "${currentDate.monthValue}월 주간별 분석",
-                    color = Grey700,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
 
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            start = 32.dp,
-                            end = 32.dp,
-                            top = 8.dp
-                        ),
+                        .padding(horizontal = 16.dp),
+                    text = "${currentDate.monthValue}월 주간별 분석",
+                    color = Grey700,
+                    style = UligaTheme.typography.title3
+                )
+
+                VerticalSpacer(height = 8.dp)
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
                     text = "이번 달 지출을 주간별로 확인해보세요!",
                     color = Grey500,
-                    fontFamily = pretendard,
-                    fontWeight = FontWeight.Light,
-                    fontSize = 15.sp,
+                    style = UligaTheme.typography.body12,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2
                 )
@@ -221,7 +210,6 @@ private fun HorizonBarChartRow(barChartDataModel: HorizontalBarChartDataModel) {
         modifier = Modifier
             .fillMaxWidth()
             .height(250.dp)
-            .padding(vertical = 16.dp)
     ) {
         HorizontalBarChart(
             barChartData = barChartDataModel.barChartData,
