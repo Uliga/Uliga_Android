@@ -1,7 +1,11 @@
 package com.uliga.app.view.home
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -9,23 +13,25 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,8 +41,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -52,19 +60,19 @@ import com.uliga.app.ui.theme.White
 import com.uliga.app.utils.Constant
 import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.DeleteAlertDialog
+import com.uliga.app.view.accountBook.selection.AccountBookSelectionActivity
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.component.AddingButton
 import com.uliga.app.view.component.ContinuousLineChart
-import com.uliga.app.view.component.FinanceScheduleItem
 import com.uliga.app.view.component.HorizontalLineIndicator
 import com.uliga.app.view.component.HorizontalSpacer
 import com.uliga.app.view.component.OneThicknessDivider
 import com.uliga.app.view.component.TextWithDotImage
 import com.uliga.app.view.component.VerticalSpacer
+import com.uliga.app.view.component.item.FinanceScheduleItem
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
 import com.uliga.app.view.main.MainUiState
-import com.uliga.app.view.schedule.ScheduleAlertBottomSheet
-import com.uliga.app.view.schedule.ScheduleBottomSheet
+import com.uliga.app.view.schedule.ScheduleGenerationActivity
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
 import java.time.LocalDate
@@ -99,6 +107,18 @@ fun HomeScreen(
     val currentMonthRecord = currentMonthAsset?.record?.value ?: 0L
     val currentMonthResult = currentMonthBudget - currentMonthRecord
 
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = {
+            when (it.resultCode) {
+                ComponentActivity.RESULT_OK -> {
+                    viewModel.getFinanceSchedule()
+                }
+            }
+        }
+    )
+
     val budgetSettingSheetState = androidx.compose.material3.rememberModalBottomSheetState()
     var isBudgetSettingSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -131,37 +151,8 @@ fun HomeScreen(
         )
     }
 
-    val scheduleAlertSheetState = androidx.compose.material3.rememberModalBottomSheetState()
-    var isScheduleAlertSheetOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
-
     var deleteAlertDialogVisibleState by remember {
         mutableStateOf(false)
-    }
-
-    if (isScheduleAlertSheetOpen) {
-        ScheduleAlertBottomSheet(
-            sheetState = scheduleAlertSheetState,
-            onDismissRequest = {
-                isScheduleAlertSheetOpen = false
-            }
-        )
-    }
-
-    val scheduleSheetState = androidx.compose.material3.rememberModalBottomSheetState()
-    var isScheduleSheetStateOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    if (isScheduleSheetStateOpen) {
-        ScheduleBottomSheet(
-            sheetState = scheduleSheetState,
-            viewModel = viewModel,
-            onDismissRequest = {
-                isScheduleSheetStateOpen = false
-            }
-        )
     }
 
     var recordValue = state.currentMonthAccountBookAsset?.record?.value?.toFloat()
@@ -210,9 +201,6 @@ fun HomeScreen(
         handleSideEffect(
             sideEffect = sideEffect,
             context = context,
-            onFinishScheduleBottomSheet = {
-                isScheduleAlertSheetOpen = false
-            },
             onFinishBudgetSettingBottomSheet = {
                 isBudgetSettingSheetOpen = false
             },
@@ -253,16 +241,12 @@ fun HomeScreen(
 
         LazyColumn(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = 16.dp,
-                    vertical = 16.dp
-                ),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
 
-                Row {
+                Row(modifier = Modifier.padding(16.dp)) {
                     Image(
                         modifier = Modifier
                             .size(40.dp),
@@ -302,6 +286,7 @@ fun HomeScreen(
             item {
                 Column(
                     modifier = Modifier
+                        .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.Start
                 ) {
@@ -334,7 +319,21 @@ fun HomeScreen(
                         )
 
                         Text(
-                            modifier = Modifier.align(Alignment.CenterEnd),
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = rememberRipple(
+                                        color = Color.Black
+                                    ),
+                                    onClick = {
+                                        val intent = Intent(
+                                            context,
+                                            AccountBookSelectionActivity::class.java
+                                        )
+                                        context.startActivity(intent)
+                                    }
+                                ),
                             text = "변경 버튼",
                             color = Grey600,
                             style = UligaTheme.typography.body3
@@ -350,7 +349,8 @@ fun HomeScreen(
 
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
@@ -373,7 +373,9 @@ fun HomeScreen(
                 VerticalSpacer(height = 8.dp)
 
                 Text(
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth(),
                     text = if (currentMonthResult >= 0) "${currentMonthResult}원 남음" else "${currentMonthResult * (-1)}원 부족",
                     color = Grey600,
                     style = UligaTheme.typography.body3
@@ -385,22 +387,23 @@ fun HomeScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(Constant.indicatorHeight)
-                        .padding(horizontal = Constant.indicatorPadding + 4.dp),
+                        .padding(horizontal = Constant.indicatorPadding + 20.dp),
                     animateNumber = animateNumber.value
                 )
 
                 VerticalSpacer(height = 8.dp)
 
                 OneThicknessDivider(
-                    modifier = Modifier.padding(
-                        horizontal = 8.dp,
-                    )
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp),
                 )
 
                 VerticalSpacer(height = 12.dp)
 
                 Row(
-                    modifier = Modifier.padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextWithDotImage(
@@ -425,7 +428,9 @@ fun HomeScreen(
                 VerticalSpacer(height = 4.dp)
 
                 Row(
-                    modifier = Modifier.padding(horizontal = 8.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextWithDotImage(
@@ -453,7 +458,8 @@ fun HomeScreen(
             item {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -467,7 +473,8 @@ fun HomeScreen(
                     AddingButton(
                         text = "금융 일정 추가하기",
                         onClick = {
-                            isScheduleSheetStateOpen = true
+                            val intent = Intent(context, ScheduleGenerationActivity::class.java)
+                            launcher.launch(intent)
                         }
                     )
                 }
@@ -480,6 +487,7 @@ fun HomeScreen(
                 item {
                     Box(
                         modifier = Modifier
+                            .padding(horizontal = 20.dp)
                             .fillMaxWidth()
                             .height(210.dp)
                             .border(
@@ -505,12 +513,16 @@ fun HomeScreen(
                             idx = idx,
                             currentDay = currentDay,
                             onFinanceScheduleUpdateRequest = { financeSchedule ->
-                                viewModel.updateFinanceSchedule(financeSchedule)
-                                isScheduleSheetStateOpen = true
+                                val intent = Intent(context, ScheduleGenerationActivity::class.java)
+                                intent.putExtra("notificationDay", financeSchedule.notificationDay)
+                                intent.putExtra("isIncome", financeSchedule.isIncome)
+                                intent.putExtra("name", financeSchedule.name)
+                                intent.putExtra("value", financeSchedule.value)
+                                intent.putExtra("scheduleId", financeSchedule.id)
+                                launcher.launch(intent)
                             },
                             onFinanceScheduleDeleteRequest = { financeSchedule ->
                                 viewModel.updateFinanceSchedule(financeSchedule)
-                                deleteAlertDialogVisibleState = true
                             }
                         )
                     }
@@ -522,6 +534,7 @@ fun HomeScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
                         .background(
                             color = CustomGrey100,
                             shape = UligaTheme.shapes.medium
@@ -585,6 +598,10 @@ fun HomeScreen(
                 VerticalSpacer(height = 16.dp)
 
                 Text(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Start,
                     text = "이번 달 총 지출",
                     color = Grey700,
                     style = UligaTheme.typography.title3
@@ -593,7 +610,10 @@ fun HomeScreen(
                 VerticalSpacer(height = 8.dp)
 
                 Text(
-                    modifier =  Modifier.padding(4.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Start,
                     text = "${currentMonthRecord}원",
                     color = Grey600,
                     style = UligaTheme.typography.body3
@@ -612,13 +632,13 @@ fun HomeScreen(
         )
     }
 
-    if (deleteAlertDialogVisibleState) {
+    if (state.selectedSchedule != null) {
         DeleteAlertDialog(
             onDismissRequest = {
                 deleteAlertDialogVisibleState = false
             },
             onDeleteRequest = {
-                viewModel.deleteFinanceScheduleDetail(state.selectedSchedule?.id ?: 0L)
+                viewModel.deleteFinanceScheduleDetail(state.selectedSchedule.id)
                 deleteAlertDialogVisibleState = false
                 viewModel.updateFinanceSchedule(null)
             },
@@ -640,15 +660,10 @@ fun HomeScreen(
 private fun handleSideEffect(
     sideEffect: HomeSideEffect,
     context: Context,
-    onFinishScheduleBottomSheet: () -> Unit,
     onFinishBudgetSettingBottomSheet: () -> Unit,
     onShowToast: (String) -> Unit
 ) {
     when (sideEffect) {
-        is HomeSideEffect.FinishScheduleBottomSheet -> {
-            onFinishScheduleBottomSheet()
-        }
-
         is HomeSideEffect.FinishBudgetSettingBottomSheet -> {
             onFinishBudgetSettingBottomSheet()
         }
