@@ -1,8 +1,7 @@
 package com.uliga.app.view.accountBook.generation
 
+import androidx.compose.runtime.Immutable
 import com.uliga.domain.model.accountBook.AccountBooks
-import javax.annotation.concurrent.Immutable
-
 
 @Immutable
 data class AccountBookGenerationUiState(
