@@ -50,13 +50,13 @@ import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.DeleteAlertDialog
-import com.uliga.app.view.accountBook.input.AccountBookForInputActivity
-import com.uliga.app.view.accountBook.selection.AccountBookSelectionBottomSheet
+import com.uliga.app.view.accountBook.input.AccountBookInputActivity
+import com.uliga.app.view.accountBook.AccountBookSelectionBottomSheet
 import com.uliga.app.view.component.AddingButton
 import com.uliga.app.view.component.Day
 import com.uliga.app.view.component.DaysOfWeekTitle
-import com.uliga.app.view.component.TransactionItem
 import com.uliga.app.view.component.VerticalSpacer
+import com.uliga.app.view.component.item.TransactionItem
 import com.uliga.app.view.main.MainUiState
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -319,7 +319,7 @@ fun FinanceScreen(
                         text = "가계부에 추가하기",
                         onClick = {
                             val intent =
-                                Intent(context, AccountBookForInputActivity::class.java)
+                                Intent(context, AccountBookInputActivity::class.java)
                             intent.putExtra("selectedDate", selectedDate.value)
                             launcher.launch(intent)
                         }
