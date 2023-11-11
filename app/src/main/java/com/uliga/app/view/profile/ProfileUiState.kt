@@ -6,7 +6,6 @@ import javax.annotation.concurrent.Immutable
 @Immutable
 data class ProfileUiState(
     val isLoading: Boolean = false,
-    val exception: Exception? = null,
     val id: Long? = null,
     val currentAccountInfo: Pair<String, Long>? = null,
     val member: Member? = null
@@ -14,7 +13,6 @@ data class ProfileUiState(
     companion object {
         fun empty() = ProfileUiState(
             isLoading = false,
-            exception = null,
             id = null,
             currentAccountInfo = null,
             member = null

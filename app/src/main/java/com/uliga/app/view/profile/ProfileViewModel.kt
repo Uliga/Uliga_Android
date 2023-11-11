@@ -19,10 +19,6 @@ class ProfileViewModel @Inject constructor(
 ) : ContainerHost<ProfileUiState, ProfileSideEffect>, BaseViewModel() {
     override val container = container<ProfileUiState, ProfileSideEffect>(ProfileUiState.empty())
 
-    init {
-
-    }
-
     fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
         intent {
             launch {

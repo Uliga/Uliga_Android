@@ -1,11 +1,13 @@
 package com.uliga.app.view.accountBook.input
 
 import com.uliga.app.base.BaseViewModel
+import com.uliga.app.view.schedule.ScheduleGenerationSideEffect
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
 import com.uliga.domain.usecase.accountbook.PostAccountBookTransactionUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
 import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -75,20 +77,21 @@ class AccountBookInputViewModel @Inject constructor(
         }
     }
 
-    fun fetchCurrentAccountBookInfo() = intent {
-        launch {
-            fetchCurrentAccountBookInfoUseCase()
-                .onSuccess {
-                    reduce {
-                        state.copy(
-                            currentAccountInfo = it
-                        )
-                    }
+    private fun fetchCurrentAccountBookInfo() = intent {
+        fetchCurrentAccountBookInfoUseCase()
+            .onSuccess {
+                reduce {
+                    state.copy(
+                        currentAccountInfo = it
+                    )
                 }
-        }
+            }.onFailure {
+                postSideEffect(AccountBookInputSideEffect.ToastMessage("가계부 정보를 가져오는데 실패했습니다."))
+            }
     }
 
-    fun fetchId() = intent {
+
+    private fun fetchId() = intent {
         launch {
             fetchIdUseCase()
                 .onSuccess {
@@ -97,6 +100,9 @@ class AccountBookInputViewModel @Inject constructor(
                             id = it
                         )
                     }
+                }
+                .onFailure {
+                    postSideEffect(AccountBookInputSideEffect.ToastMessage("사용자 정보를 가져오는데 실패했습니다."))
                 }
         }
     }

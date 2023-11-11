@@ -28,18 +28,12 @@ class AuthViewModel @Inject constructor(
 
     override val container = container<AuthUiState, AuthSideEffect>(AuthUiState.empty())
 
-    init {
-
-    }
-
-
     fun socialLogin(
         type: AuthType,
         checkedIdToken: String?,
         checkedEmail: String?,
         checkedName: String?
     ) = intent {
-
         launch {
 
             val socialLoginResult =
@@ -79,31 +73,34 @@ class AuthViewModel @Inject constructor(
     }
 
     fun getIsNickNameExisted(nickName: String) = intent {
-        if (nickName.isEmpty()) {
-            postSideEffect(AuthSideEffect.ToastMessage("닉네임을 적어주세요."))
-            return@intent
-        }
-
-
-        getUserAuthDataExistedUseCase("nickname", nickName)
-            .onSuccess {
-
-                reduce {
-                    state.copy(
-                        isLoading = false,
-                        isNickNameExisted = it.exists
-                    )
-                }
+        launch {
+            if (nickName.isEmpty()) {
+                postSideEffect(AuthSideEffect.ToastMessage("닉네임을 적어주세요."))
+                return@launch
             }
 
+
+            getUserAuthDataExistedUseCase("nickname", nickName)
+                .onSuccess {
+
+                    reduce {
+                        state.copy(
+                            isLoading = false,
+                            isNickNameExisted = it.exists
+                        )
+                    }
+                }
+        }
 
     }
 
     fun fetchIsPrivacyChecked(isPrivacyChecked: Boolean) = intent {
-        reduce {
-            state.copy(
-                isPrivacyChecked = isPrivacyChecked
-            )
+        launch {
+            reduce {
+                state.copy(
+                    isPrivacyChecked = isPrivacyChecked
+                )
+            }
         }
     }
 
@@ -119,8 +116,6 @@ class AuthViewModel @Inject constructor(
                 return@launch
             }
 
-
-
             val socialLoginRequest = SocialLoginRequest(
                 email = email,
                 userName = userName,
@@ -134,9 +129,6 @@ class AuthViewModel @Inject constructor(
                     postSideEffect(AuthSideEffect.Finish)
                     postSideEffect(AuthSideEffect.NavigateToAccountBookGenerationActivity)
                 }
-
-
-
         }
     }
 

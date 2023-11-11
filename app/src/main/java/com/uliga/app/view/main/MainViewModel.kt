@@ -1,12 +1,14 @@
 package com.uliga.app.view.main
 
-import androidx.lifecycle.ViewModel
+import com.uliga.app.base.BaseViewModel
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
 import com.uliga.domain.usecase.member.GetMemberUseCase
 import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
 import javax.inject.Inject
@@ -16,7 +18,7 @@ class MainViewModel @Inject constructor(
     private val fetchIdUseCase: FetchIdUseCase,
     private val fetchCurrentAccountBookInfoUseCase: FetchCurrentAccountBookInfoUseCase,
     private val getMemberUseCase: GetMemberUseCase
-) : ContainerHost<MainUiState, MainSideEffect>, ViewModel() {
+) : ContainerHost<MainUiState, MainSideEffect>, BaseViewModel() {
     override val container = container<MainUiState, MainSideEffect>(
         MainUiState.empty()
     )
@@ -27,21 +29,20 @@ class MainViewModel @Inject constructor(
         getMember()
     }
 
-    fun fetchCurrentAccountBookInfo() = intent {
-        fetchCurrentAccountBookInfoUseCase()
-            .onSuccess {
-                reduce {
-                    state.copy(
-                        currentAccountInfo = it
-                    )
+    private fun fetchCurrentAccountBookInfo() = intent {
+        launch {
+            fetchCurrentAccountBookInfoUseCase()
+                .onSuccess {
+                    reduce {
+                        state.copy(
+                            currentAccountInfo = it
+                        )
+                    }
                 }
-            }
-            .onFailure {
-
-            }
+        }
     }
 
-    fun fetchId() = intent {
+    private fun fetchId() = intent {
         fetchIdUseCase()
             .onSuccess {
                 reduce {
@@ -50,12 +51,10 @@ class MainViewModel @Inject constructor(
                     )
                 }
             }
-            .onFailure {
 
-            }
     }
 
-    fun getMember() = intent {
+    private fun getMember() = intent {
         getMemberUseCase()
             .onSuccess {
                 reduce {
@@ -64,8 +63,17 @@ class MainViewModel @Inject constructor(
                     )
                 }
             }
-            .onFailure {
+    }
 
-            }
+    override fun onShowErrorToast(message: String) = intent {
+        postSideEffect(MainSideEffect.ToastMessage(message))
+    }
+
+    override fun updateIsLoading(isLoading: Boolean): Job = intent {
+        reduce {
+            state.copy(
+                isLoading = isLoading,
+            )
+        }
     }
 }
