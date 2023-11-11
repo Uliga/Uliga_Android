@@ -2,13 +2,10 @@ package com.uliga.app.view.accountBook.generation
 
 sealed class AccountBookGenerationSideEffect {
 
-    object NavigateToMainActivity: AccountBookGenerationSideEffect()
+    object Finish : AccountBookGenerationSideEffect()
 
-    object FinishAccountBookGenerationBottomSheet: AccountBookGenerationSideEffect()
+    object AddEmailChip : AccountBookGenerationSideEffect()
 
-    object AddEmailChip: AccountBookGenerationSideEffect()
-
-    data class ToastMessage(val toastMessage: String): AccountBookGenerationSideEffect()
-
+    data class ToastMessage(val toastMessage: String) : AccountBookGenerationSideEffect()
 
 }

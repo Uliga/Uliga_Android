@@ -2,7 +2,6 @@ package com.uliga.app.view.accountBook.generation
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,103 +10,94 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.absolutePadding
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.uliga.app.R
 import com.uliga.app.TopDownToast
+import com.uliga.app.ui.theme.CustomGrey200
 import com.uliga.app.ui.theme.Grey500
+import com.uliga.app.ui.theme.Grey600
+import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.UligaApplicationTheme
-import com.uliga.app.ui.theme.pretendard
+import com.uliga.app.ui.theme.UligaTheme
+import com.uliga.app.ui.theme.White
 import com.uliga.app.view.CircularProgress
-import com.uliga.app.view.main.MainActivity
+import com.uliga.app.view.component.BasicTextField
+import com.uliga.app.view.component.CheckButton
+import com.uliga.app.view.component.Chips
+import com.uliga.app.view.component.ChipsWithDelete
+import com.uliga.app.view.component.PositiveButton
+import com.uliga.app.view.component.VerticalSpacer
 import dagger.hilt.android.AndroidEntryPoint
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
-
 
 @AndroidEntryPoint
 class AccountBookGenerationActivity : ComponentActivity() {
 
     private val viewModel: AccountBookGenerationViewModel by viewModels()
 
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnrememberedMutableState")
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             UligaApplicationTheme {
 
                 val context = LocalContext.current
                 val state = viewModel.collectAsState().value
 
-                var selectedIndex by remember { mutableStateOf(-1) }
-                val onItemClick = { index: Int -> selectedIndex = index }
-
-                var isAccountBookGenerationState by rememberSaveable {
-                    mutableStateOf(false)
+                var accountBookName by remember {
+                    mutableStateOf("")
                 }
 
-                var showAccountBookGenerationDialog by remember {
-                    mutableStateOf(false)
+                var relationship by remember {
+                    mutableStateOf("")
                 }
 
-                if (isAccountBookGenerationState) {
-                    showAccountBookGenerationDropDownMenu(viewModel) {
-                        showAccountBookGenerationDialog = false
-                    }
+
+                var accountBookInvitation by remember {
+                    mutableStateOf("")
+                }
+
+                val invitationElementList = remember {
+                    mutableStateListOf("")
+                }
+
+                var accountBookCategory by remember {
+                    mutableStateOf("")
+                }
+
+                val categoryElementList = remember {
+                    mutableStateListOf("식비", "식비", "카페 간식", "생활", "편의점,마트, 잡화")
                 }
 
                 /**
@@ -137,396 +127,276 @@ class AccountBookGenerationActivity : ComponentActivity() {
                  * SideEffect
                  */
 
-                viewModel.collectSideEffect { sideEffect ->
+                viewModel.collectSideEffect {
                     handleSideEffect(
-                        sideEffect = sideEffect,
-                        context = this,
+                        sideEffect = it,
+                        context = context,
+                        onEmailAddingRequest = {
+                            invitationElementList.add(accountBookInvitation)
+                        },
+                        onFinishRequest = {
+                            setResult(RESULT_OK)
+                            finish()
+                        },
                         onShowToast = {
                             isToastAnimating = true
                             toastMessage = it
-                        },
+                        }
                     )
                 }
 
-                /**
-                 * Pull-To-Refresh
-                 */
-
-                val pullRefreshState = rememberPullRefreshState(
-                    refreshing = state.isLoading,
-                    onRefresh = {
-                        viewModel.getAccountBooks()
-                    }
-                )
-
                 Box(
                     modifier = Modifier
-                        .wrapContentSize()
-                        .pullRefresh(pullRefreshState),
+                        .wrapContentSize(),
                     contentAlignment = Alignment.TopCenter
                 ) {
                     LazyColumn(
-                        state = rememberLazyListState(),
                         modifier = Modifier
-                            .fillMaxSize()
+                            .wrapContentSize()
                             .background(Color.White),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
 
                         item {
-
                             CenterAlignedTopAppBar(
-                                modifier = Modifier.background(Color.White),
+                                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                                    containerColor = White
+                                ),
                                 title = {
-                                    Row {
-                                        Image(
-                                            modifier = Modifier
-                                                .size(40.dp),
-                                            painter = painterResource(
-                                                id = R.drawable.uliga_logo
-                                            ),
-                                            contentDescription = "uliga logo"
-                                        )
+                                    Text(
+                                        text = "가계부 만들기",
+                                        color = Grey700,
+                                        style = UligaTheme.typography.title2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        maxLines = 1,
+                                    )
+                                }
+                            )
+                        }
 
-                                        Text(
-                                            modifier = Modifier.padding(
-                                                end = 12.dp
-                                            ),
-                                            text = "우리가",
-                                            color = Primary,
-                                            fontFamily = pretendard,
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 24.sp
-                                        )
+                        item {
+                            Text(
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                                text = "가계부 이름",
+                                color = Grey600,
+                                style = UligaTheme.typography.body3
+                            )
+
+                            VerticalSpacer(height = 8.dp)
+
+                            Row(
+                                modifier = Modifier.padding(horizontal = 20.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                BasicTextField(
+                                    value = accountBookName,
+                                    onValueChange = {
+                                        accountBookName = it
+                                    },
+                                    keyboardType = KeyboardType.Text,
+                                    hint = "가계부 이름을 입력해주세요."
+                                )
+                            }
+                        }
+
+                        item {
+                            Text(
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                                text = "관계",
+                                color = Grey600,
+                                style = UligaTheme.typography.body3
+                            )
+
+                            VerticalSpacer(height = 8.dp)
+
+                            Row(
+                                modifier = Modifier.padding(horizontal = 20.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+
+                                BasicTextField(
+                                    value = relationship,
+                                    onValueChange = {
+                                        relationship = it
+                                    },
+                                    keyboardType = KeyboardType.Text,
+                                    hint = "공유 가계부 조직의 관계를 입력해주세요."
+                                )
+                            }
+                        }
+
+                        item {
+                            Text(
+                                textAlign = TextAlign.Start,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                                text = "사용자 초대",
+                                color = Grey600,
+                                style = UligaTheme.typography.body3
+                            )
+
+                            VerticalSpacer(height = 8.dp)
+
+                            Row(
+                                modifier = Modifier.padding(horizontal = 20.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Row(
+                                    modifier = Modifier.weight(3.5f)
+                                ) {
+                                    BasicTextField(
+                                        value = accountBookInvitation,
+                                        onValueChange = {
+                                            accountBookInvitation = it
+                                        },
+                                        keyboardType = KeyboardType.Text,
+                                        hint = "사용자의 이메일을 입력해주세요."
+                                    )
+                                }
+
+                                CheckButton(
+                                    enabled = true,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                        .padding(horizontal = 4.dp),
+                                    contentPadding = PaddingValues(
+                                        vertical = 4.dp
+                                    ),
+                                    textColor = Primary,
+                                    backgroundColor = ButtonDefaults.buttonColors(
+                                        backgroundColor = CustomGrey200
+                                    ),
+                                    text = "초대",
+                                    onClick = {
+                                        viewModel.getIsEmailExisted(accountBookInvitation)
                                     }
-                                },
-                                actions = {
-                                    IconButton(onClick = {
-                                        isAccountBookGenerationState = true
-                                    }) {
-                                        Icon(
-                                            imageVector = Icons.Filled.Add,
-                                            contentDescription = "Localized description"
-                                        )
-                                    }
+                                )
+                            }
+
+                            ChipsWithDelete(
+                                modifier = Modifier
+                                    .padding(horizontal = 20.dp),
+                                elements = invitationElementList,
+                                onDeleteButtonClicked = { content ->
+                                    invitationElementList.remove(content)
                                 }
                             )
 
                         }
 
                         item {
+
                             Text(
-                                modifier = Modifier
-                                    .padding(
-                                        horizontal = 16.dp
-                                    )
-                                    .clickable {
-
-                                    },
-                                text = "가계부 목록",
-                                color = Color.Black,
-                                fontFamily = pretendard,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
-
-                            Spacer(
-                                modifier = Modifier
-                                    .height(16.dp)
-                            )
-                        }
-
-                        items(state.accountBooks?.accountBooks?.size ?: 0) {
-
-                            val accountBookName =
-                                state.accountBooks?.accountBooks?.get(it)?.info?.accountBookName
-                                    ?: ""
-
-                            Row(
+                                textAlign = TextAlign.Start,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .padding(
-                                        horizontal = 16.dp,
-                                    )
-                                    .clickable {
-                                        onItemClick(it)
-                                    }
-                                    .border(
-                                        width = 1.dp,
-                                        color = if (selectedIndex == it) Primary else Grey500,
-                                        shape = RoundedCornerShape(5.dp)
-                                    )
-                                    .background(Color.White),
+                                    .padding(horizontal = 16.dp),
+                                text = "카테고리 추가",
+                                color = Grey600,
+                                style = UligaTheme.typography.body3
+                            )
+
+                            VerticalSpacer(height = 8.dp)
+
+                            Row(
+                                modifier = Modifier.padding(horizontal = 20.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    modifier = Modifier.padding(start = 16.dp),
-                                    text = accountBookName,
-                                    color = if (selectedIndex == it) Primary else Grey500,
-                                    fontFamily = pretendard,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp,
-                                    overflow = TextOverflow.Ellipsis,
-                                    maxLines = 1
-                                )
 
-                                Spacer(
-                                    Modifier.weight(1f)
-                                )
+                                Row(
+                                    modifier = Modifier.weight(3.5f)
+                                ) {
+                                    BasicTextField(
+                                        value = accountBookInvitation,
+                                        onValueChange = {
+                                            accountBookInvitation = it
+                                        },
+                                        keyboardType = KeyboardType.Text,
+                                        hint = "추가할 카테고리명을 입력해주세요."
+                                    )
+                                }
 
-                                Image(
+                                CheckButton(
+                                    enabled = true,
                                     modifier = Modifier
-                                        .padding(
-                                            top = 16.dp,
-                                            bottom = 16.dp,
-                                            end = 16.dp
-                                        )
-                                        .alpha(if (selectedIndex == it) 1f else 0f)
-                                        .size(40.dp),
-                                    painter = painterResource(
-                                        id = R.drawable.ic_account_book_select
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                        .padding(horizontal = 4.dp),
+                                    contentPadding = PaddingValues(
+                                        vertical = 4.dp
                                     ),
-                                    contentDescription = "uliga logo"
+                                    textColor = Primary,
+                                    backgroundColor = ButtonDefaults.buttonColors(
+                                        backgroundColor = CustomGrey200
+                                    ),
+                                    text = "추가",
+                                    onClick = {
+                                        categoryElementList.add(accountBookCategory)
+                                    }
                                 )
-                            }
 
+
+                            }
                         }
 
                         item {
-                            Button(
+
+                            Text(
+                                textAlign = TextAlign.Start,
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
+                                text = "현재 카테고리",
+                                color = Grey500,
+                                style = UligaTheme.typography.body3
+                            )
+
+                            Chips(
+                                modifier = Modifier.padding(horizontal = 20.dp),
+                                elements = categoryElementList
+                            )
+                        }
+
+                        item {
+
+                            PositiveButton(
+                                modifier = Modifier
+                                    .padding(horizontal = 16.dp)
+                                    .fillMaxWidth()
                                     .wrapContentHeight(),
+                                text = "공유 가계부 만들기",
                                 contentPadding = PaddingValues(
                                     vertical = 16.dp
                                 ),
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = Primary,
-                                ),
-                                shape = RoundedCornerShape(10.dp),
                                 onClick = {
-
-                                    viewModel.updateAccountBook(selectedIndex, state.accountBooks)
-
-                                }) {
-                                Text(
-                                    color = Color.White,
-                                    fontFamily = pretendard,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 16.sp,
-                                    text = "우리가 시작하기"
-                                )
-                            }
+                                    viewModel.postAccountBook(
+                                        name = accountBookName,
+                                        relationship = relationship,
+                                        categoryList = categoryElementList.toList(),
+                                        emailList = invitationElementList.toList()
+                                    )
+                                }
+                            )
                         }
                     }
 
-                    Button(onClick = { viewModel.deleteMember() }) {
-
+                    if (state.isLoading) {
+                        CircularProgress()
                     }
 
-                    PullRefreshIndicator(
-                        refreshing = state.isLoading,
-                        state = pullRefreshState
-                    )
-                }
+                    TopDownToast(toastYOffset = toastYOffset, toastMessage = toastMessage)
 
-                if (state.isLoading) {
-                    CircularProgress()
-                }
-
-                TopDownToast(toastYOffset = toastYOffset, toastMessage = toastMessage)
-
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@RequiresApi(Build.VERSION_CODES.Q)
-@Composable
-fun selectedAccountBook(
-    index: Int,
-    accountBookName: String,
-    selected: Boolean,
-    onClick: (Int) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(
-                horizontal = 16.dp,
-            )
-            .clickable {
-                onClick(index)
-            }
-            .border(
-                width = 1.dp,
-                color = if (selected) Primary else Grey500,
-                shape = RoundedCornerShape(5.dp)
-            )
-            .background(Color.White),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.padding(start = 16.dp),
-            text = accountBookName,
-            color = if (selected) Primary else Grey500,
-            fontFamily = pretendard,
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1
-        )
-
-        Spacer(
-            Modifier.weight(1f)
-        )
-
-        Image(
-            modifier = Modifier
-                .padding(
-                    top = 16.dp,
-                    bottom = 16.dp,
-                    end = 16.dp
-                )
-                .alpha(if (selected) 1f else 0f)
-                .size(40.dp),
-            painter = painterResource(
-                id = R.drawable.ic_account_book_select
-            ),
-            contentDescription = "uliga logo"
-        )
-
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.Q)
-@Composable
-fun unselectedAccountBook() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(
-                horizontal = 16.dp,
-            )
-            .clickable {
-
-            }
-            .border(width = 1.dp, color = Grey500, shape = RoundedCornerShape(5.dp))
-            .background(Color.White),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            modifier = Modifier.padding(start = 16.dp),
-            text = "안세훈",
-            color = Grey500,
-            fontFamily = pretendard,
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1
-        )
-
-        Text(
-            text = "님의 공유 가계부",
-            color = Grey500,
-            fontFamily = pretendard,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 18.sp,
-            overflow = TextOverflow.Ellipsis,
-            maxLines = 1
-        )
-
-        Spacer(
-            Modifier.weight(1f)
-        )
-
-        Image(
-            modifier = Modifier
-                .alpha(0f)
-                .padding(
-                    top = 16.dp,
-                    bottom = 16.dp,
-                    end = 16.dp
-                )
-                .size(40.dp),
-            painter = painterResource(
-                id = R.drawable.ic_account_book_select
-            ),
-            contentDescription = null
-        )
-    }
-
-}
-
-@RequiresApi(Build.VERSION_CODES.Q)
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun showAccountBookGenerationDropDownMenu(
-    viewModel: AccountBookGenerationViewModel,
-    showDialogRequest: () -> Unit,
-) {
-    val accountBookGenerationSheetState = androidx.compose.material3.rememberModalBottomSheetState()
-    var isAccountBookGenerationSheetStateOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    if (isAccountBookGenerationSheetStateOpen) {
-        AccountBookGenerationBottomSheet(
-            viewModel = viewModel,
-            sheetState = accountBookGenerationSheetState,
-            onDismissRequest = {
-                isAccountBookGenerationSheetStateOpen = false
-            },
-
-            )
-    }
-
-    var expanded by remember { mutableStateOf(true) }
-    val items = listOf(
-        "가계부 추가하기"
-    )
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentSize(Alignment.TopEnd)
-            .absolutePadding(top = 45.dp, right = 20.dp)
-    ) {
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .wrapContentWidth()
-                .background(
-                    Color.White
-                )
-        ) {
-            items.forEachIndexed { index, s ->
-                DropdownMenuItem(onClick = {
-                    expanded = false
-                    showDialogRequest()
-
-                    when (index) {
-                        0 -> {
-                            isAccountBookGenerationSheetStateOpen = true
-                        }
-                    }
-
-                }) {
-                    Text(text = s)
-                    if (index < 3) {
-                        Spacer(modifier = Modifier.height(4.dp))
-                    }
                 }
             }
         }
-
-
     }
 }
 
@@ -534,6 +404,8 @@ fun showAccountBookGenerationDropDownMenu(
 private fun handleSideEffect(
     sideEffect: AccountBookGenerationSideEffect,
     context: Context,
+    onFinishRequest: () -> Unit,
+    onEmailAddingRequest: () -> Unit,
     onShowToast: (String) -> Unit,
 ) {
     when (sideEffect) {
@@ -541,9 +413,12 @@ private fun handleSideEffect(
             onShowToast(sideEffect.toastMessage)
         }
 
-        is AccountBookGenerationSideEffect.NavigateToMainActivity -> {
-            val intent = Intent(context, MainActivity::class.java)
-            context.startActivity(intent)
+        is AccountBookGenerationSideEffect.Finish -> {
+            onFinishRequest()
+        }
+
+        is AccountBookGenerationSideEffect.AddEmailChip -> {
+            onEmailAddingRequest()
         }
 
         else -> { // no-op
