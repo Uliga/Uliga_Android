@@ -9,15 +9,18 @@ class UligaShapes(
     val small: CornerBasedShape = RoundedCornerShape(5.dp),
     val medium: CornerBasedShape = RoundedCornerShape(7.dp),
     val large: CornerBasedShape = RoundedCornerShape(10.dp),
+    val xlarge: CornerBasedShape = RoundedCornerShape(36.dp)
 ) {
     fun copy(
         small: CornerBasedShape = this.small,
         medium: CornerBasedShape = this.medium,
-        large: CornerBasedShape = this.large
+        large: CornerBasedShape = this.large,
+        xlarge: CornerBasedShape = this.xlarge
     ): UligaShapes = UligaShapes(
         small = small,
         medium = medium,
-        large = large
+        large = large,
+        xlarge = xlarge
     )
 
     override fun equals(other: Any?): Boolean {
