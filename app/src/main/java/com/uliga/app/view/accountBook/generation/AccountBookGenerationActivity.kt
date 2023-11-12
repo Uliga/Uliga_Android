@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,15 +33,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.uliga.app.TOAST_DURATION_MILLIS
+import com.uliga.app.TOAST_END_POSITION
+import com.uliga.app.TOAST_START_POSITION
 import com.uliga.app.TopDownToast
 import com.uliga.app.ui.theme.CustomGrey200
-import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Primary
@@ -75,28 +79,28 @@ class AccountBookGenerationActivity : ComponentActivity() {
                 val context = LocalContext.current
                 val state = viewModel.collectAsState().value
 
-                var accountBookName by remember {
+                var accountBookNameTextState by remember {
                     mutableStateOf("")
                 }
 
-                var relationship by remember {
+                var relationshipTextState by remember {
                     mutableStateOf("")
                 }
 
 
-                var accountBookInvitation by remember {
+                var accountBookInvitationTextState by remember {
                     mutableStateOf("")
                 }
 
-                val invitationElementList = remember {
+                val invitationElementListState = remember {
                     mutableStateListOf("")
                 }
 
-                var accountBookCategory by remember {
+                var accountBookCategoryTextState by remember {
                     mutableStateOf("")
                 }
 
-                val categoryElementList = remember {
+                val categoryElementListState = remember {
                     mutableStateListOf("식비", "식비", "카페 간식", "생활", "편의점,마트, 잡화")
                 }
 
@@ -113,14 +117,14 @@ class AccountBookGenerationActivity : ComponentActivity() {
                 }
 
                 val toastYOffset by animateFloatAsState(
-                    targetValue = if (isToastAnimating) 25f else -100f,
-                    animationSpec = tween(durationMillis = 1500),
+                    targetValue = if (isToastAnimating) TOAST_END_POSITION else TOAST_START_POSITION,
+                    animationSpec = tween(durationMillis = TOAST_DURATION_MILLIS),
                     finishedListener = { endValue ->
-                        if (endValue == 25f) {
+                        if (endValue == TOAST_END_POSITION) {
                             isToastAnimating = false
                         }
                     },
-                    label = ""
+                    label = "",
                 )
 
                 /**
@@ -132,7 +136,7 @@ class AccountBookGenerationActivity : ComponentActivity() {
                         sideEffect = it,
                         context = context,
                         onEmailAddingRequest = {
-                            invitationElementList.add(accountBookInvitation)
+                            invitationElementListState.add(accountBookInvitationTextState)
                         },
                         onFinishRequest = {
                             setResult(RESULT_OK)
@@ -145,256 +149,252 @@ class AccountBookGenerationActivity : ComponentActivity() {
                     )
                 }
 
-                Box(
-                    modifier = Modifier
-                        .wrapContentSize(),
-                    contentAlignment = Alignment.TopCenter
-                ) {
-                    LazyColumn(
+                Scaffold(
+                    topBar = {
+                        CenterAlignedTopAppBar(
+                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                                containerColor = White
+                            ),
+                            title = {
+                                Text(
+                                    text = "가계부 만들기",
+                                    color = Grey700,
+                                    style = UligaTheme.typography.title2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1,
+                                )
+                            },
+                            modifier = Modifier.shadow(5.dp)
+                        )
+                    },
+                    bottomBar = {
+                        PositiveButton(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            text = "공유 가계부 만들기",
+                            contentPadding = PaddingValues(
+                                vertical = 16.dp
+                            ),
+                            onClick = {
+                                viewModel.postAccountBook(
+                                    name = accountBookNameTextState,
+                                    relationship = relationshipTextState,
+                                    categoryList = categoryElementListState.toList(),
+                                    emailList = invitationElementListState.toList()
+                                )
+                            }
+                        )
+                    }
+                ) { paddingValues ->
+                    Box(
                         modifier = Modifier
-                            .wrapContentSize()
-                            .background(Color.White),
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                            .padding(paddingValues)
+                            .wrapContentSize(),
+                        contentAlignment = Alignment.TopCenter
                     ) {
+                        LazyColumn(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .background(Color.White),
+                            verticalArrangement = Arrangement.spacedBy(20.dp)
+                        ) {
 
-                        item {
-                            CenterAlignedTopAppBar(
-                                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                                    containerColor = White
-                                ),
-                                title = {
-                                    Text(
-                                        text = "가계부 만들기",
-                                        color = Grey700,
-                                        style = UligaTheme.typography.title2,
-                                        overflow = TextOverflow.Ellipsis,
-                                        maxLines = 1,
-                                    )
-                                }
-                            )
-                        }
+                            item {
 
-                        item {
-                            Text(
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp),
-                                text = "가계부 이름",
-                                color = Grey600,
-                                style = UligaTheme.typography.body3
-                            )
+                                VerticalSpacer(height = 32.dp)
 
-                            VerticalSpacer(height = 8.dp)
-
-                            Row(
-                                modifier = Modifier.padding(horizontal = 20.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                BasicTextField(
-                                    value = accountBookName,
-                                    onValueChange = {
-                                        accountBookName = it
-                                    },
-                                    keyboardType = KeyboardType.Text,
-                                    hint = "가계부 이름을 입력해주세요."
-                                )
-                            }
-                        }
-
-                        item {
-                            Text(
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp),
-                                text = "관계",
-                                color = Grey600,
-                                style = UligaTheme.typography.body3
-                            )
-
-                            VerticalSpacer(height = 8.dp)
-
-                            Row(
-                                modifier = Modifier.padding(horizontal = 20.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-
-                                BasicTextField(
-                                    value = relationship,
-                                    onValueChange = {
-                                        relationship = it
-                                    },
-                                    keyboardType = KeyboardType.Text,
-                                    hint = "공유 가계부 조직의 관계를 입력해주세요."
-                                )
-                            }
-                        }
-
-                        item {
-                            Text(
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp),
-                                text = "사용자 초대",
-                                color = Grey600,
-                                style = UligaTheme.typography.body3
-                            )
-
-                            VerticalSpacer(height = 8.dp)
-
-                            Row(
-                                modifier = Modifier.padding(horizontal = 20.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(
-                                    modifier = Modifier.weight(3.5f)
-                                ) {
-                                    BasicTextField(
-                                        value = accountBookInvitation,
-                                        onValueChange = {
-                                            accountBookInvitation = it
-                                        },
-                                        keyboardType = KeyboardType.Text,
-                                        hint = "사용자의 이메일을 입력해주세요."
-                                    )
-                                }
-
-                                CheckButton(
-                                    enabled = true,
+                                Text(
+                                    textAlign = TextAlign.Start,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .weight(1f)
-                                        .padding(horizontal = 4.dp),
-                                    contentPadding = PaddingValues(
-                                        vertical = 4.dp
-                                    ),
-                                    textColor = Primary,
-                                    backgroundColor = ButtonDefaults.buttonColors(
-                                        backgroundColor = CustomGrey200
-                                    ),
-                                    text = "초대",
-                                    onClick = {
-                                        viewModel.getIsEmailExisted(accountBookInvitation)
+                                        .padding(horizontal = 16.dp),
+                                    text = "가계부 이름",
+                                    color = Grey600,
+                                    style = UligaTheme.typography.body3
+                                )
+
+                                VerticalSpacer(height = 8.dp)
+
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 20.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    BasicTextField(
+                                        value = accountBookNameTextState,
+                                        onValueChange = {
+                                            accountBookNameTextState = it
+                                        },
+                                        keyboardType = KeyboardType.Text,
+                                        hint = "가계부 이름을 입력해주세요."
+                                    )
+                                }
+                            }
+
+                            item {
+                                Text(
+                                    textAlign = TextAlign.Start,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp),
+                                    text = "관계",
+                                    color = Grey600,
+                                    style = UligaTheme.typography.body3
+                                )
+
+                                VerticalSpacer(height = 8.dp)
+
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 20.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+
+                                    BasicTextField(
+                                        value = relationshipTextState,
+                                        onValueChange = {
+                                            relationshipTextState = it
+                                        },
+                                        keyboardType = KeyboardType.Text,
+                                        hint = "공유 가계부 조직의 관계를 입력해주세요."
+                                    )
+                                }
+                            }
+
+                            item {
+                                Text(
+                                    textAlign = TextAlign.Start,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp),
+                                    text = "사용자 초대",
+                                    color = Grey600,
+                                    style = UligaTheme.typography.body3
+                                )
+
+                                VerticalSpacer(height = 8.dp)
+
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 20.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(
+                                        modifier = Modifier.weight(3.5f)
+                                    ) {
+                                        BasicTextField(
+                                            value = accountBookInvitationTextState,
+                                            onValueChange = {
+                                                accountBookInvitationTextState = it
+                                            },
+                                            keyboardType = KeyboardType.Text,
+                                            hint = "사용자의 이메일을 입력해주세요."
+                                        )
                                     }
-                                )
-                            }
 
-                            ChipsWithDelete(
-                                modifier = Modifier
-                                    .padding(horizontal = 20.dp),
-                                elements = invitationElementList,
-                                onDeleteButtonClicked = { content ->
-                                    invitationElementList.remove(content)
-                                }
-                            )
-
-                        }
-
-                        item {
-
-                            Text(
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp),
-                                text = "카테고리 추가",
-                                color = Grey600,
-                                style = UligaTheme.typography.body3
-                            )
-
-                            VerticalSpacer(height = 8.dp)
-
-                            Row(
-                                modifier = Modifier.padding(horizontal = 20.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-
-                                Row(
-                                    modifier = Modifier.weight(3.5f)
-                                ) {
-                                    BasicTextField(
-                                        value = accountBookInvitation,
-                                        onValueChange = {
-                                            accountBookInvitation = it
-                                        },
-                                        keyboardType = KeyboardType.Text,
-                                        hint = "추가할 카테고리명을 입력해주세요."
+                                    CheckButton(
+                                        enabled = true,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(1f)
+                                            .padding(horizontal = 4.dp),
+                                        contentPadding = PaddingValues(
+                                            vertical = 4.dp
+                                        ),
+                                        textColor = Primary,
+                                        backgroundColor = ButtonDefaults.buttonColors(
+                                            backgroundColor = CustomGrey200
+                                        ),
+                                        text = "초대",
+                                        onClick = {
+                                            viewModel.getIsEmailExisted(
+                                                accountBookInvitationTextState
+                                            )
+                                        }
                                     )
                                 }
 
-                                CheckButton(
-                                    enabled = true,
+                                ChipsWithDelete(
                                     modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(1f)
-                                        .padding(horizontal = 4.dp),
-                                    contentPadding = PaddingValues(
-                                        vertical = 4.dp
-                                    ),
-                                    textColor = Primary,
-                                    backgroundColor = ButtonDefaults.buttonColors(
-                                        backgroundColor = CustomGrey200
-                                    ),
-                                    text = "추가",
-                                    onClick = {
-                                        categoryElementList.add(accountBookCategory)
+                                        .padding(horizontal = 20.dp),
+                                    elements = invitationElementListState.apply {
+                                        remove("")
+                                    },
+                                    onDeleteButtonClicked = { content ->
+                                        invitationElementListState.remove(content)
                                     }
                                 )
 
-
                             }
-                        }
 
-                        item {
+                            item {
 
-                            Text(
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp),
-                                text = "현재 카테고리",
-                                color = Grey500,
-                                style = UligaTheme.typography.body3
-                            )
+                                Text(
+                                    textAlign = TextAlign.Start,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp),
+                                    text = "카테고리 추가",
+                                    color = Grey600,
+                                    style = UligaTheme.typography.body3
+                                )
 
-                            Chips(
-                                modifier = Modifier.padding(horizontal = 20.dp),
-                                elements = categoryElementList
-                            )
-                        }
+                                VerticalSpacer(height = 8.dp)
 
-                        item {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 20.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
 
-                            PositiveButton(
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(),
-                                text = "공유 가계부 만들기",
-                                contentPadding = PaddingValues(
-                                    vertical = 16.dp
-                                ),
-                                onClick = {
-                                    viewModel.postAccountBook(
-                                        name = accountBookName,
-                                        relationship = relationship,
-                                        categoryList = categoryElementList.toList(),
-                                        emailList = invitationElementList.toList()
+                                    Row(
+                                        modifier = Modifier.weight(3.5f)
+                                    ) {
+                                        BasicTextField(
+                                            value = accountBookCategoryTextState,
+                                            onValueChange = {
+                                                accountBookCategoryTextState = it
+                                            },
+                                            keyboardType = KeyboardType.Text,
+                                            hint = "추가할 카테고리명을 입력해주세요."
+                                        )
+                                    }
+
+                                    CheckButton(
+                                        enabled = true,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(1f)
+                                            .padding(horizontal = 4.dp),
+                                        contentPadding = PaddingValues(
+                                            vertical = 4.dp
+                                        ),
+                                        textColor = Primary,
+                                        backgroundColor = ButtonDefaults.buttonColors(
+                                            backgroundColor = CustomGrey200
+                                        ),
+                                        text = "추가",
+                                        onClick = {
+                                            categoryElementListState.add(
+                                                accountBookCategoryTextState
+                                            )
+                                        }
                                     )
                                 }
-                            )
+
+                                Chips(
+                                    modifier = Modifier.padding(horizontal = 20.dp),
+                                    elements = categoryElementListState
+                                )
+                            }
                         }
                     }
-
-                    if (state.isLoading) {
-                        CircularProgress()
-                    }
-
-                    TopDownToast(toastYOffset = toastYOffset, toastMessage = toastMessage)
-
                 }
+
+                if (state.isLoading) {
+                    CircularProgress()
+                }
+
+                TopDownToast(toastYOffset = toastYOffset, toastMessage = toastMessage)
+
             }
         }
     }
