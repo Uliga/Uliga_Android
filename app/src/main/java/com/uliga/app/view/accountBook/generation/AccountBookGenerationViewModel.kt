@@ -45,7 +45,7 @@ class AccountBookGenerationViewModel @Inject constructor(
             }
 
             val accountBookGenerationRequest = AccountBookGenerationRequest(
-                name = name,
+                name = name + "님의 가계부",
                 categories = categoryList,
                 emails = emailList,
                 relationship = relationship
@@ -72,7 +72,7 @@ class AccountBookGenerationViewModel @Inject constructor(
 
         launch {
             if (email.isEmpty()) {
-                postSideEffect(AccountBookGenerationSideEffect.ToastMessage("닉네임을 적어주세요."))
+                postSideEffect(AccountBookGenerationSideEffect.ToastMessage("이메일을 적어주세요."))
                 updateIsLoading(false)
                 return@launch
             }
