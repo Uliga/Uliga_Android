@@ -94,28 +94,16 @@ fun MainNavigationComponent(
             Modifier.padding(innerPadding)
         ) {
             composable(MainRoute.HOME.route) {
-                HomeScreen(
-                    navController = navController,
-                    mainUiState = state
-                )
+                HomeScreen(mainUiState = state)
             }
             composable(MainRoute.FINANCE.route) {
-                FinanceScreen(
-                    navController = navController,
-                    mainUiState = state
-                )
+                FinanceScreen(mainUiState = state)
             }
             composable(MainRoute.ANALYZE.route) {
-                AnalyzeScreen(
-                    navController = navController,
-                    mainUiState = state
-                )
+                AnalyzeScreen(mainUiState = state)
             }
             composable(MainRoute.PROFILE.route) {
-                ProfileScreen(
-                    navController = navController,
-                    mainUiState = state
-                )
+                ProfileScreen(mainUiState = state)
             }
         }
     }
