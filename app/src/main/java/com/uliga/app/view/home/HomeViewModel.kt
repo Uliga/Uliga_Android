@@ -40,7 +40,6 @@ class HomeViewModel @Inject constructor(
 
     override val container = container<HomeUiState, HomeSideEffect>(HomeUiState.empty())
 
-
     init {
         initialize()
     }
