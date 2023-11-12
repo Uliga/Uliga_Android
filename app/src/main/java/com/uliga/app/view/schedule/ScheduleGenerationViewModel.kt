@@ -1,5 +1,6 @@
 package com.uliga.app.view.schedule
 
+import androidx.core.text.isDigitsOnly
 import com.uliga.app.base.BaseViewModel
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
 import com.uliga.domain.model.accountBook.financeSchedule.common.AccountBookFinanceScheduleAssignment
@@ -84,8 +85,8 @@ class ScheduleGenerationViewModel @Inject constructor(
     fun postFinanceScheduleToAccountBook(
         name: String,
         isIncome: Boolean,
-        notificationDate: Long,
-        value: Long,
+        notificationDate: String,
+        value: String,
     ) = intent {
         launch {
 
@@ -93,9 +94,29 @@ class ScheduleGenerationViewModel @Inject constructor(
             val userId = state.id
 
             if (currentAccountBookInfo == null || userId == null) {
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("사용자 정보 혹은 가계부 정보를 불러올 수 없습니다."))
                 updateIsLoading(false)
                 return@launch
             }
+
+            if(notificationDate.isEmpty() || notificationDate.toLong() > 31 || !notificationDate.isDigitsOnly()) {
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("날짜 정보를 확인해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if(name.isEmpty()) {
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("일정 이름을 확인해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if(value.isEmpty() || !value.isDigitsOnly()) {
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("금액을 확인해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
+
 
             val accountBookFinanceScheduleRequest = AccountBookFinanceScheduleRequest(
                 id = currentAccountBookInfo.second,
@@ -103,13 +124,13 @@ class ScheduleGenerationViewModel @Inject constructor(
                     AccountBookFinanceScheduleResult(
                         name = name,
                         isIncome = isIncome,
-                        notificationDate = notificationDate,
-                        value = value,
+                        notificationDate = notificationDate.toLong(),
+                        value = value.toLong(),
                         assignments = listOf(
                             AccountBookFinanceScheduleAssignment(
                                 id = userId,
                                 username = "",
-                                value = value
+                                value = value.toLong()
                             )
                         )
                     )
@@ -133,12 +154,31 @@ class ScheduleGenerationViewModel @Inject constructor(
         scheduleId: Long,
         name: String,
         isIncome: Boolean,
-        notificationDate: Long,
-        value: Long,
+        notificationDate: String,
+        value: String,
     ) = intent {
         launch {
             val userId = state.id
             if (userId == null) {
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("사용자 정보를 불러올 수 없습니다."))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if(notificationDate.toLong() > 31 || notificationDate.isEmpty() || !notificationDate.isDigitsOnly()) {
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("날짜 정보를 확인해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if(name.isEmpty()) {
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("일정 이름을 확인해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if(value.isEmpty() || !value.isDigitsOnly()) {
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("금액을 확인해주세요."))
                 updateIsLoading(false)
                 return@launch
             }
@@ -147,10 +187,10 @@ class ScheduleGenerationViewModel @Inject constructor(
                 id = scheduleId,
                 name = name,
                 isIncome = isIncome,
-                notificationDate = notificationDate,
-                value = value,
+                notificationDate = notificationDate.toLong(),
+                value = value.toLong(),
                 assignments = hashMapOf<Long, Long>().apply {
-                    this[userId] = value
+                    this[userId] = value.toLong()
                 }
             )
 
