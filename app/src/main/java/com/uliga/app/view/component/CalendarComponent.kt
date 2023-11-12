@@ -1,5 +1,6 @@
 package com.uliga.app.view.component
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
@@ -47,6 +48,7 @@ fun Day(
     onClick: (CalendarDay) -> Unit
 ) {
 
+    Log.d("accountBookAssetMonth", accountBookAssetMonth.toString())
     val income = accountBookAssetMonth?.incomes?.filter { it.day.toInt() == day.date.dayOfMonth }
     val record = accountBookAssetMonth?.records?.filter { it.day.toInt() == day.date.dayOfMonth }
 
