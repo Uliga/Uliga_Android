@@ -33,7 +33,6 @@ class AuthActivity : ComponentActivity(), UligaActivity {
         setContent {
             UligaApplicationTheme {
 
-
                 val navController = rememberNavController()
 
                 NavHost(
@@ -65,7 +64,6 @@ class AuthActivity : ComponentActivity(), UligaActivity {
                         val paramName = it.arguments?.getString("name") ?: ""
 
                         SocialSignupScreen(
-                            navController = navController,
                             viewModel = viewModel,
                             paramEmail = paramEmail,
                             paramName = paramName

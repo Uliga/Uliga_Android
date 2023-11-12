@@ -1,6 +1,9 @@
 package com.uliga.app.view.auth
 
+import android.util.Log
 import com.uliga.app.base.BaseViewModel
+import com.uliga.app.ext.isEmailValid
+import com.uliga.app.ext.isNickNameTypeValid
 import com.uliga.domain.AuthType
 import com.uliga.domain.model.userAuth.NormalLoginRequest
 import com.uliga.domain.model.userAuth.SocialLoginRequest
@@ -74,18 +77,17 @@ class AuthViewModel @Inject constructor(
 
     fun getIsNickNameExisted(nickName: String) = intent {
         launch {
-            if (nickName.isEmpty()) {
-                postSideEffect(AuthSideEffect.ToastMessage("닉네임을 적어주세요."))
+            if (nickName.isEmpty() || !isNickNameTypeValid(nickName)) {
+                postSideEffect(AuthSideEffect.ToastMessage("입력된 닉네임을 확인해주세요."))
+                updateIsLoading(false)
                 return@launch
             }
-
 
             getUserAuthDataExistedUseCase("nickname", nickName)
                 .onSuccess {
 
                     reduce {
                         state.copy(
-                            isLoading = false,
                             isNickNameExisted = it.exists
                         )
                     }
@@ -111,8 +113,33 @@ class AuthViewModel @Inject constructor(
         privacyCheckBoxState: Boolean
     ) = intent {
         launch {
-            if (!privacyCheckBoxState) {
+            if (email.isEmpty() || !isEmailValid(email)) {
+                postSideEffect(AuthSideEffect.ToastMessage("입력된 이메일을 확인해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
 
+            if (userName.isEmpty()) {
+                postSideEffect(AuthSideEffect.ToastMessage("입력된 사용자 이름을 확인해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if (nickName.isEmpty() || !isNickNameTypeValid(nickName)) {
+                postSideEffect(AuthSideEffect.ToastMessage("입력된 닉네임을 확인해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if(state.isNickNameExisted != false) {
+                postSideEffect(AuthSideEffect.ToastMessage("닉네임 중복 여부를 확인해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if (!privacyCheckBoxState) {
+                postSideEffect(AuthSideEffect.ToastMessage("권한 정보를 확인해주세요."))
+                updateIsLoading(false)
                 return@launch
             }
 
