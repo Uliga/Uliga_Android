@@ -1,5 +1,6 @@
 package com.uliga.app.view.accountBook.input
 
+import androidx.core.text.isDigitsOnly
 import com.uliga.app.base.BaseViewModel
 import com.uliga.app.view.schedule.ScheduleGenerationSideEffect
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
@@ -42,15 +43,46 @@ class AccountBookInputViewModel @Inject constructor(
         transactionType: String,
         category: String,
         payment: String,
-        date: String,
+        date: String?,
         account: String,
-        value: Long,
+        value: String,
         memo: String,
     ) = intent {
         launch {
 
             val currentAccountBookInfo = state.currentAccountInfo
             if (currentAccountBookInfo == null) {
+                postSideEffect(AccountBookInputSideEffect.ToastMessage("가계부 정보를 가져오는데 실패했습니다."))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if(date == null) {
+                postSideEffect(AccountBookInputSideEffect.ToastMessage("날짜 정보를 가져오는데 실패했습니다"))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if(category.isEmpty()) {
+                postSideEffect(AccountBookInputSideEffect.ToastMessage("카테고리를 선택해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if(payment.isEmpty()) {
+                postSideEffect(AccountBookInputSideEffect.ToastMessage("결제수단을 선택해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if(account.isEmpty()) {
+                postSideEffect(AccountBookInputSideEffect.ToastMessage("입력된 거래처을 확해주세요."))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            if(value.isEmpty() || !value.isDigitsOnly()) {
+                postSideEffect(AccountBookInputSideEffect.ToastMessage("입력된 금액을 확인해주세요."))
                 updateIsLoading(false)
                 return@launch
             }
@@ -61,7 +93,7 @@ class AccountBookInputViewModel @Inject constructor(
                 payment = payment,
                 date = date,
                 account = account,
-                value = value,
+                value = value.toLong(),
                 memo = memo,
                 sharedAccountBook = listOf()
             )
