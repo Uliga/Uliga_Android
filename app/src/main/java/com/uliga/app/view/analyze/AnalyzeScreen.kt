@@ -5,12 +5,17 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Scaffold
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRowDefaults
@@ -27,6 +32,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -40,19 +46,24 @@ import com.uliga.app.ui.theme.Black
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
+import com.uliga.app.view.component.PositiveButton
 import com.uliga.app.view.main.MainUiState
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.compose.collectAsState
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class,
+    ExperimentalMaterial3Api::class
+)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun AnalyzeScreen(
-    navController: NavController,
     mainUiState: MainUiState,
     viewModel: AnalyzeViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
+
+    /**
+     * Initialize
+     */
 
     viewModel.initializeBaseInfo(
         id = mainUiState.id,
@@ -75,22 +86,43 @@ fun AnalyzeScreen(
         }
     )
 
+    Scaffold(
+        topBar = {
 
-    Column(
-        modifier = Modifier
-            .wrapContentSize()
-    ) {
-        AnalyzeTabs(pagerState = pagerState)
-        AnalyzeTabsContent(
-            pagerState = pagerState,
-            mainUiState = mainUiState,
-            viewModel = viewModel
-        )
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = White
+                ),
+                title = {
+                    Text(
+                        text = "분석",
+                        color = Grey700,
+                        style = UligaTheme.typography.title2,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                    )
+                }
+            )
+        }
+    ) { paddingValues ->
 
-        PullRefreshIndicator(
-            refreshing = state.isLoading,
-            state = pullRefreshState
-        )
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .wrapContentSize()
+        ) {
+            AnalyzeTabs(pagerState = pagerState)
+            AnalyzeTabsContent(
+                pagerState = pagerState,
+                mainUiState = mainUiState,
+                viewModel = viewModel
+            )
+
+            PullRefreshIndicator(
+                refreshing = state.isLoading,
+                state = pullRefreshState
+            )
+        }
     }
 }
 
@@ -114,23 +146,9 @@ fun AnalyzeTabs(pagerState: PagerState) {
         tabWidthStateList
     }
 
-    CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = White
-        ),
-        title = {
-            Text(
-                text = "분석",
-                color = Grey700,
-                style = UligaTheme.typography.title2,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-            )
-        }
-    )
-
     TabRow(
         modifier = Modifier
+            .shadow(5.dp)
             .wrapContentWidth(),
         selectedTabIndex = selectedTabIndex,
         containerColor = Color.White,
@@ -187,8 +205,8 @@ fun AnalyzeTabsContent(
         pageCount = analyzeScreenList.size
     ) { page ->
         when (page) {
-            0 -> AnalyzeByTimeScreen(viewModel, mainUiState)
-            1 -> AnalyzeByCategoryScreen(viewModel, mainUiState)
+            0 -> AnalyzeByTimeScreen(viewModel)
+            1 -> AnalyzeByCategoryScreen(viewModel)
         }
     }
 }

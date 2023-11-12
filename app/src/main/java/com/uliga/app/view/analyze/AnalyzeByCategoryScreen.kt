@@ -25,19 +25,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pieChartColor
-import com.uliga.app.ui.theme.pretendard
 import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.component.HorizontalSpacer
 import com.uliga.app.view.component.VerticalSpacer
-import com.uliga.app.view.main.MainUiState
 import com.uliga.chart.pie.PieChart
 import com.uliga.chart.pie.renderer.PieSliceDrawer
 import com.uliga.domain.model.accountBook.analyze.byMonth.category.AccountBookAnalyzeRecordByMonthForCategoryElement
@@ -46,7 +42,7 @@ import org.orbitmvi.orbit.compose.collectAsState
 @OptIn(ExperimentalMaterialApi::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun AnalyzeByCategoryScreen(viewModel: AnalyzeViewModel, mainUiState: MainUiState) {
+fun AnalyzeByCategoryScreen(viewModel: AnalyzeViewModel) {
 
     val state = viewModel.collectAsState().value
 
