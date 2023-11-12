@@ -45,7 +45,7 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterialApi::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel, mainUiState: MainUiState) {
+fun AnalyzeByTimeScreen(viewModel: AnalyzeViewModel) {
 
     val state = viewModel.collectAsState().value
 
