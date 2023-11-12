@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -40,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -49,6 +51,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.uliga.app.BuildConfig
 import com.uliga.app.R
+import com.uliga.app.TOAST_DURATION_MILLIS
+import com.uliga.app.TOAST_END_POSITION
+import com.uliga.app.TOAST_START_POSITION
 import com.uliga.app.TopDownToast
 import com.uliga.app.ui.theme.Grey100
 import com.uliga.app.ui.theme.Grey600
@@ -70,10 +75,14 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @SuppressLint("NewApi")
 @Composable
 fun ProfileScreen(
-    navController: NavController,
     mainUiState: MainUiState,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
+
+    /**
+     * Initialize
+     */
+
     val context = LocalContext.current
     val state = viewModel.collectAsState().value
 
@@ -96,16 +105,15 @@ fun ProfileScreen(
     }
 
     val toastYOffset by animateFloatAsState(
-        targetValue = if (isToastAnimating) 25f else -100f,
-        animationSpec = tween(durationMillis = 1500),
+        targetValue = if (isToastAnimating) TOAST_END_POSITION else TOAST_START_POSITION,
+        animationSpec = tween(durationMillis = TOAST_DURATION_MILLIS),
         finishedListener = { endValue ->
-            if (endValue == 25f) {
+            if (endValue == TOAST_END_POSITION) {
                 isToastAnimating = false
             }
         },
-        label = ""
+        label = "",
     )
-
 
     /**
      * Logout / SignOut Alert Dialog
@@ -155,312 +163,319 @@ fun ProfileScreen(
         }
     )
 
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = White
+                ),
+                title = {
+                    Text(
+                        text = "마이페이지",
+                        color = Grey700,
+                        style = UligaTheme.typography.title2,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                    )
+                },
+                modifier = Modifier.shadow(5.dp)
+            )
+        }
+    ) { paddingValues ->
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(White)
-            .pullRefresh(pullRefreshState)
-            .padding(horizontal = 8.dp),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        LazyColumn(
+
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(White),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(White)
+                .pullRefresh(pullRefreshState)
+                .padding(horizontal = 8.dp),
+            contentAlignment = Alignment.TopCenter
         ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(White),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                item {
 
-            item {
-                CenterAlignedTopAppBar(
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = White
-                    ),
-                    title = {
-                        Text(
-                            text = "마이페이지",
-                            color = Grey700,
-                            style = UligaTheme.typography.title2,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1,
-                        )
-                    }
-                )
-            }
+                    VerticalSpacer(height = 32.dp)
 
-            item {
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(horizontal = 16.dp)
-                        .border(
-                            width = 1.dp,
-                            color = Grey100,
-                            shape = UligaTheme.shapes.medium
-                        )
-                        .padding(
-                            vertical = 12.dp,
-                            horizontal = 8.dp
-                        ),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
+                    Row(
                         modifier = Modifier
-                            .size(48.dp),
-                        painter = painterResource(
-                            id = R.drawable.ic_my
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(horizontal = 16.dp)
+                            .border(
+                                width = 1.dp,
+                                color = Grey100,
+                                shape = UligaTheme.shapes.medium
+                            )
+                            .padding(
+                                vertical = 12.dp,
+                                horizontal = 8.dp
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(48.dp),
+                            painter = painterResource(
+                                id = R.drawable.ic_my
+                            ),
+                            contentDescription = null
+                        )
+
+                        HorizontalSpacer(width = 16.dp)
+
+                        Column {
+                            Text(
+                                modifier = Modifier.padding(
+                                    end = 12.dp
+                                ),
+                                text = state.member?.memberInfo?.userName ?: "",
+                                color = Grey600,
+                                style = UligaTheme.typography.body3,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
+
+                            VerticalSpacer(height = 4.dp)
+
+                            Text(
+                                modifier = Modifier.padding(
+                                    end = 12.dp
+                                ),
+                                text = state.member?.memberInfo?.email ?: "",
+                                color = Grey600,
+                                style = UligaTheme.typography.body3,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1
+                            )
+                        }
+
+                    }
+                }
+
+
+                item {
+
+
+                    Text(
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            top = 16.dp,
+                            bottom = 16.dp
                         ),
-                        contentDescription = null
+                        text = "설정",
+                        color = Grey700,
+                        style = UligaTheme.typography.title1
                     )
 
-                    HorizontalSpacer(width = 16.dp)
+                    OneThicknessDivider(
+                        modifier = Modifier
+                            .padding(
+                                horizontal = 16.dp
+                            )
+                    )
 
-                    Column {
-                        Text(
-                            modifier = Modifier.padding(
-                                end = 12.dp
-                            ),
-                            text = state.member?.memberInfo?.userName ?: "",
-                            color = Grey600,
-                            style = UligaTheme.typography.body3,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
-
-                        VerticalSpacer(height = 4.dp)
-
-                        Text(
-                            modifier = Modifier.padding(
-                                end = 12.dp
-                            ),
-                            text = state.member?.memberInfo?.email ?: "",
-                            color = Grey600,
-                            style = UligaTheme.typography.body3,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1
-                        )
-                    }
-
-                }
-            }
-
-
-            item {
-
-
-                Text(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 16.dp,
-                        bottom = 16.dp
-                    ),
-                    text = "설정",
-                    color = Grey700,
-                    style = UligaTheme.typography.title1
-                )
-
-                OneThicknessDivider(
-                    modifier = Modifier
-                        .padding(
-                            horizontal = 16.dp
-                        )
-                )
-
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            vertical = 8.dp,
-                            horizontal = 12.dp
-                        )
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(
-                                color = Color.Black
-                            ),
-                            onClick = {
-                            }
-                        )
-                        .padding(4.dp),
-                    text = "기본 정보",
-                    color = Grey600,
-                    style = UligaTheme.typography.body3,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
-
-                OneThicknessDivider(
-                    modifier = Modifier
-                        .padding(
-                            horizontal = 16.dp
-                        )
-                )
-
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            vertical = 8.dp,
-                            horizontal = 12.dp
-                        )
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(
-                                color = Color.Black
-                            ),
-                            onClick = {
-                            }
-                        )
-                        .padding(4.dp),
-                    text = "가계부 정보",
-                    color = Grey600,
-                    style = UligaTheme.typography.body3,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
-
-                OneThicknessDivider(
-                    modifier = Modifier
-                        .padding(
-                            horizontal = 16.dp
-                        )
-                )
-
-                Row {
                     Text(
                         modifier = Modifier
-                            .wrapContentWidth()
+                            .fillMaxWidth()
                             .padding(
                                 vertical = 8.dp,
                                 horizontal = 12.dp
                             )
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = rememberRipple(
+                                    color = Color.Black
+                                ),
+                                onClick = {
+                                }
+                            )
                             .padding(4.dp),
-                        text = "버전 정보",
+                        text = "기본 정보",
                         color = Grey600,
                         style = UligaTheme.typography.body3,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
 
-                    Spacer(modifier = Modifier.weight(1f))
+                    OneThicknessDivider(
+                        modifier = Modifier
+                            .padding(
+                                horizontal = 16.dp
+                            )
+                    )
 
                     Text(
                         modifier = Modifier
-                            .wrapContentWidth()
+                            .fillMaxWidth()
                             .padding(
                                 vertical = 8.dp,
                                 horizontal = 12.dp
                             )
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = rememberRipple(
+                                    color = Color.Black
+                                ),
+                                onClick = {
+                                }
+                            )
                             .padding(4.dp),
-                        text = BuildConfig.VERSION_NAME,
+                        text = "가계부 정보",
                         color = Grey600,
                         style = UligaTheme.typography.body3,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1
                     )
+
+                    OneThicknessDivider(
+                        modifier = Modifier
+                            .padding(
+                                horizontal = 16.dp
+                            )
+                    )
+
+                    Row {
+                        Text(
+                            modifier = Modifier
+                                .wrapContentWidth()
+                                .padding(
+                                    vertical = 8.dp,
+                                    horizontal = 12.dp
+                                )
+                                .padding(4.dp),
+                            text = "버전 정보",
+                            color = Grey600,
+                            style = UligaTheme.typography.body3,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Text(
+                            modifier = Modifier
+                                .wrapContentWidth()
+                                .padding(
+                                    vertical = 8.dp,
+                                    horizontal = 12.dp
+                                )
+                                .padding(4.dp),
+                            text = BuildConfig.VERSION_NAME,
+                            color = Grey600,
+                            style = UligaTheme.typography.body3,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1
+                        )
+                    }
+
+                    OneThicknessDivider(
+                        modifier = Modifier
+                            .padding(
+                                horizontal = 16.dp
+                            )
+                    )
+
                 }
 
-                OneThicknessDivider(
-                    modifier = Modifier
-                        .padding(
-                            horizontal = 16.dp
-                        )
-                )
+                item {
 
+                    Text(
+                        modifier = Modifier.padding(
+                            start = 16.dp,
+                            top = 16.dp,
+                            bottom = 16.dp
+                        ),
+                        text = "계정",
+                        color = Grey700,
+                        style = UligaTheme.typography.title1
+                    )
+
+                    OneThicknessDivider(
+                        modifier = Modifier
+                            .padding(
+                                horizontal = 16.dp
+                            )
+                    )
+
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                vertical = 8.dp,
+                                horizontal = 12.dp
+                            )
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = rememberRipple(
+                                    color = Color.Black
+                                ),
+                                onClick = {
+                                    logoutAlertDialogVisibleState = true
+                                }
+                            )
+                            .padding(4.dp),
+                        text = "로그아웃",
+                        color = Grey600,
+                        style = UligaTheme.typography.body3,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+
+                    OneThicknessDivider(
+                        modifier = Modifier
+                            .padding(
+                                horizontal = 16.dp
+                            )
+                    )
+
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                vertical = 8.dp,
+                                horizontal = 12.dp
+                            )
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = rememberRipple(
+                                    color = Color.Black
+                                ),
+                                onClick = {
+                                    signOutAlertDialogVisibleState = true
+                                }
+                            )
+                            .padding(4.dp),
+
+                        text = "탈퇴하기",
+                        color = Grey600,
+                        style = UligaTheme.typography.body3,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
+
+                    OneThicknessDivider(
+                        modifier = Modifier
+                            .padding(
+                                horizontal = 16.dp
+                            )
+                    )
+
+                }
             }
 
-            item {
-
-                Text(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        top = 16.dp,
-                        bottom = 16.dp
-                    ),
-                    text = "계정",
-                    color = Grey700,
-                    style = UligaTheme.typography.title1
-                )
-
-                OneThicknessDivider(
-                    modifier = Modifier
-                        .padding(
-                            horizontal = 16.dp
-                        )
-                )
-
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            vertical = 8.dp,
-                            horizontal = 12.dp
-                        )
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(
-                                color = Color.Black
-                            ),
-                            onClick = {
-                                logoutAlertDialogVisibleState = true
-                            }
-                        )
-                        .padding(4.dp),
-                    text = "로그아웃",
-                    color = Grey600,
-                    style = UligaTheme.typography.body3,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
-
-                OneThicknessDivider(
-                    modifier = Modifier
-                        .padding(
-                            horizontal = 16.dp
-                        )
-                )
-
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            vertical = 8.dp,
-                            horizontal = 12.dp
-                        )
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(
-                                color = Color.Black
-                            ),
-                            onClick = {
-                                signOutAlertDialogVisibleState = true
-                            }
-                        )
-                        .padding(4.dp),
-
-                    text = "탈퇴하기",
-                    color = Grey600,
-                    style = UligaTheme.typography.body3,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
-
-                OneThicknessDivider(
-                    modifier = Modifier
-                        .padding(
-                            horizontal = 16.dp
-                        )
-                )
-
-            }
+            PullRefreshIndicator(
+                refreshing = state.isLoading,
+                state = pullRefreshState
+            )
         }
 
-        PullRefreshIndicator(
-            refreshing = state.isLoading,
-            state = pullRefreshState
-        )
     }
 
     if (logoutAlertDialogVisibleState) {
