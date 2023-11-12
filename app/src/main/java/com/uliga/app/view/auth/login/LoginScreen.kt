@@ -89,7 +89,7 @@ fun LoginScreen(
                     task.result.displayName
                 )
             } else {
-
+                viewModel.onShowErrorToast("구글 로그인에 실패했습니다.")
             }
         }
 
