@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,9 +26,9 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -44,10 +45,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.uliga.app.TOAST_DURATION_MILLIS
+import com.uliga.app.TOAST_END_POSITION
+import com.uliga.app.TOAST_START_POSITION
 import com.uliga.app.TopDownToast
 import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.Grey700
@@ -57,6 +62,7 @@ import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.view.CircularProgress
 import com.uliga.app.view.accountBook.generation.AccountBookGenerationActivity
+import com.uliga.app.view.auth.AuthActivity
 import com.uliga.app.view.component.PositiveButton
 import com.uliga.app.view.component.VerticalSpacer
 import com.uliga.app.view.component.item.AccountBookItem
@@ -82,7 +88,15 @@ class AccountBookSelectionActivity : ComponentActivity() {
                 val context = LocalContext.current
                 val state = viewModel.collectAsState().value
 
-                var selectedIndex by remember { mutableStateOf(-1) }
+                BackHandler {
+                    if (intent.getStringExtra("from") == "home") {
+                        finish()
+                    } else {
+                        viewModel.deleteMember()
+                    }
+                }
+
+                var currentIndexState by remember { mutableStateOf(-1) }
 
                 val launcher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartActivityForResult(),
@@ -108,14 +122,14 @@ class AccountBookSelectionActivity : ComponentActivity() {
                 }
 
                 val toastYOffset by animateFloatAsState(
-                    targetValue = if (isToastAnimating) 25f else -100f,
-                    animationSpec = tween(durationMillis = 1500),
+                    targetValue = if (isToastAnimating) TOAST_END_POSITION else TOAST_START_POSITION,
+                    animationSpec = tween(durationMillis = TOAST_DURATION_MILLIS),
                     finishedListener = { endValue ->
-                        if (endValue == 25f) {
+                        if (endValue == TOAST_END_POSITION) {
                             isToastAnimating = false
                         }
                     },
-                    label = ""
+                    label = "",
                 )
 
                 /**
@@ -130,6 +144,9 @@ class AccountBookSelectionActivity : ComponentActivity() {
                             isToastAnimating = true
                             toastMessage = it
                         },
+                        onFinishRequest = {
+                            finish()
+                        }
                     )
                 }
 
@@ -144,114 +161,113 @@ class AccountBookSelectionActivity : ComponentActivity() {
                     }
                 )
 
-                Box(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .pullRefresh(pullRefreshState),
-                    contentAlignment = Alignment.TopCenter
-                ) {
-                    LazyColumn(
-                        state = rememberLazyListState(),
+                Scaffold(
+                    topBar = {
+                        CenterAlignedTopAppBar(
+                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                                containerColor = White
+                            ),
+                            title = {
+                                Row {
+                                    Text(
+                                        text = "가계부 선택하기",
+                                        color = Grey700,
+                                        style = UligaTheme.typography.title2,
+                                        overflow = TextOverflow.Ellipsis,
+                                        maxLines = 1,
+                                    )
+                                }
+                            },
+                            actions = {
+                                IconButton(
+                                    onClick = {
+                                        val intent = Intent(
+                                            context,
+                                            AccountBookGenerationActivity::class.java
+                                        )
+                                        launcher.launch(intent)
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Add,
+                                        contentDescription = null
+                                    )
+                                }
+                            },
+                            modifier = Modifier.shadow(5.dp)
+                        )
+                    },
+                    bottomBar = {
+                        PositiveButton(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            text = "우리가 시작하기",
+                            contentPadding = PaddingValues(
+                                vertical = 16.dp
+                            ),
+                            onClick = {
+                                viewModel.updateAccountBook(currentIndexState, state.accountBooks)
+                            }
+                        )
+                    }
+                ) { paddingValues ->
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.White),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                            .padding(paddingValues)
+                            .wrapContentSize()
+                            .pullRefresh(pullRefreshState),
+                        contentAlignment = Alignment.TopCenter
                     ) {
+                        LazyColumn(
+                            state = rememberLazyListState(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.White),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
 
-                        item {
+                            item {
 
-                            CenterAlignedTopAppBar(
-                                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                                    containerColor = White
-                                ),
-                                title = {
-                                    Row {
-                                        Text(
-                                            text = "가계부 선택하기",
-                                            color = Grey700,
-                                            style = UligaTheme.typography.title2,
-                                            overflow = TextOverflow.Ellipsis,
-                                            maxLines = 1,
-                                        )
-                                    }
-                                },
-                                actions = {
-                                    IconButton(
-                                        onClick = {
-                                            val intent = Intent(
-                                                context,
-                                                AccountBookGenerationActivity::class.java
-                                            )
-                                            launcher.launch(intent)
-                                        }
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Filled.Add,
-                                            contentDescription = null
-                                        )
-                                    }
-                                }
-                            )
+                                VerticalSpacer(height = 32.dp)
 
-                        }
+                                Text(
+                                    modifier = Modifier.padding(
+                                        horizontal = 16.dp
+                                    ),
+                                    text = "가계부 목록",
+                                    color = Grey700,
+                                    style = UligaTheme.typography.title1,
+                                )
 
-                        item {
-                            Text(
-                                modifier = Modifier.padding(
-                                    horizontal = 16.dp
-                                ),
-                                text = "가계부 목록",
-                                color = Grey700,
-                                style = UligaTheme.typography.title1,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1
-                            )
+                                VerticalSpacer(height = 16.dp)
 
-                            VerticalSpacer(height = 16.dp)
+                            }
+
+                            items(state.accountBooks?.accountBooks?.size ?: 0) {
+
+                                val accountBookName =
+                                    state.accountBooks?.accountBooks?.get(it)?.info?.accountBookName
+                                        ?: ""
+
+                                AccountBookItem(
+                                    accountBookName = accountBookName,
+                                    accountBookColor = if (currentIndexState == it) Primary else Grey500,
+                                    accountBookImageAlpha = if (currentIndexState == it) 1f else 0f,
+                                    onClick = { currentIndexState = it }
+                                )
+                            }
 
                         }
 
-                        items(state.accountBooks?.accountBooks?.size ?: 0) {
-
-                            val accountBookName =
-                                state.accountBooks?.accountBooks?.get(it)?.info?.accountBookName
-                                    ?: ""
-
-                            AccountBookItem(
-                                accountBookName = accountBookName,
-                                accountBookColor = if (selectedIndex == it) Primary else Grey500,
-                                accountBookImageAlpha = if (selectedIndex == it) 1f else 0f,
-                                onClick = { selectedIndex = it }
-                            )
-                        }
-
-                        item {
-
-                            PositiveButton(
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(),
-                                text = "우리가 시작하기",
-                                contentPadding = PaddingValues(
-                                    vertical = 16.dp
-                                ),
-                                onClick = {
-                                    viewModel.updateAccountBook(selectedIndex, state.accountBooks)
-                                }
-                            )
-                        }
+                        PullRefreshIndicator(
+                            refreshing = state.isLoading,
+                            state = pullRefreshState
+                        )
                     }
-
-                    Button(onClick = { viewModel.deleteMember() }) {
-
-                    }
-
-                    PullRefreshIndicator(
-                        refreshing = state.isLoading,
-                        state = pullRefreshState
-                    )
                 }
+
 
                 if (state.isLoading) {
                     CircularProgress()
@@ -269,6 +285,7 @@ private fun handleSideEffect(
     sideEffect: AccountBookSelectionSideEffect,
     context: Context,
     onShowToast: (String) -> Unit,
+    onFinishRequest: () -> Unit
 ) {
     when (sideEffect) {
         is AccountBookSelectionSideEffect.ToastMessage -> {
@@ -278,9 +295,13 @@ private fun handleSideEffect(
         is AccountBookSelectionSideEffect.NavigateToMainActivity -> {
             val intent = Intent(context, MainActivity::class.java)
             context.startActivity(intent)
+            onFinishRequest()
         }
 
-        else -> { // no-op
+        is AccountBookSelectionSideEffect.NavigateToLoginScreen -> {
+            val intent = Intent(context, AuthActivity::class.java)
+            context.startActivity(intent)
+            onFinishRequest()
         }
     }
 }

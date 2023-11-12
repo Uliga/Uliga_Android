@@ -34,7 +34,9 @@ class AccountBookSelectionViewModel @Inject constructor(
 
     fun deleteMember() = intent {
         launch {
-            deleteMemberUseCase()
+            deleteMemberUseCase().onSuccess {
+                postSideEffect(AccountBookSelectionSideEffect.NavigateToLoginScreen)
+            }
         }
     }
 
@@ -52,9 +54,9 @@ class AccountBookSelectionViewModel @Inject constructor(
         }
     }
 
-    fun updateAccountBook(selectedIndex: Int, accountBooks: AccountBooks?) = intent {
+    fun updateAccountBook(currentIndexState: Int, accountBooks: AccountBooks?) = intent {
         launch {
-            if (selectedIndex == -1) {
+            if (currentIndexState == -1) {
                 postSideEffect(AccountBookSelectionSideEffect.ToastMessage("가계부를 선택해주세요."))
                 updateIsLoading(false)
                 return@launch
@@ -66,8 +68,8 @@ class AccountBookSelectionViewModel @Inject constructor(
                 return@launch
             }
 
-            val accountBookName = accountBooks.accountBooks[selectedIndex].info.accountBookName
-            val accountBookId = accountBooks.accountBooks[selectedIndex].info.accountBookId
+            val accountBookName = accountBooks.accountBooks[currentIndexState].info.accountBookName
+            val accountBookId = accountBooks.accountBooks[currentIndexState].info.accountBookId
 
             updateAccountBookUseCase(accountBookName, accountBookId)
                 .onSuccess {
