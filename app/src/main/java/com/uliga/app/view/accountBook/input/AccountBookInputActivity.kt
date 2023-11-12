@@ -11,7 +11,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,6 +26,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,12 +34,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.uliga.app.TOAST_DURATION_MILLIS
+import com.uliga.app.TOAST_END_POSITION
+import com.uliga.app.TOAST_START_POSITION
 import com.uliga.app.TopDownToast
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Grey700
@@ -73,11 +77,11 @@ class AccountBookInputActivity : ComponentActivity() {
                 val state = viewModel.collectAsState().value
 
 
-                val selectedDate = getIntent().getStringExtra("selectedDate")
+                val selectedDate = intent.getStringExtra("selectedDate")
 
                 val scheduleTypeList = listOf("지출", "수입")
 
-                var accountBookSelectedDate by remember {
+                val accountBookSelectedDate by remember {
                     mutableStateOf(
                         selectedDate
                             ?.replace(" ", "-")
@@ -143,14 +147,14 @@ class AccountBookInputActivity : ComponentActivity() {
                 }
 
                 val toastYOffset by animateFloatAsState(
-                    targetValue = if (isToastAnimating) 25f else -100f,
-                    animationSpec = tween(durationMillis = 1500),
+                    targetValue = if (isToastAnimating) TOAST_END_POSITION else TOAST_START_POSITION,
+                    animationSpec = tween(durationMillis = TOAST_DURATION_MILLIS),
                     finishedListener = { endValue ->
-                        if (endValue == 25f) {
+                        if (endValue == TOAST_END_POSITION) {
                             isToastAnimating = false
                         }
                     },
-                    label = ""
+                    label = "",
                 )
 
                 /**
@@ -160,7 +164,6 @@ class AccountBookInputActivity : ComponentActivity() {
                 viewModel.collectSideEffect { sideEffect ->
                     handleSideEffect(
                         sideEffect = sideEffect,
-                        context = context,
                         onFinishRequest = {
                             setResult(RESULT_OK)
                             finish()
@@ -172,49 +175,65 @@ class AccountBookInputActivity : ComponentActivity() {
                     )
                 }
 
-//                viewModel.collectSideEffect { sideEffect ->
-//                    when (sideEffect) {
-//                        is AccountBookInputSideEffect.Finish -> {
-//                            setResult(RESULT_OK)
-//                            finish()
-//                        }
-//
-//                        is AccountBookInputSideEffect.ToastMessage -> {
-//
-//                        }
-//                    }
-//                }
 
-                Box(
-                    modifier = Modifier
-                        .wrapContentSize(),
-                    contentAlignment = Alignment.TopCenter
-                ) {
+                Scaffold(
+                    containerColor = White,
+                    topBar = {
+                        CenterAlignedTopAppBar(
+                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                                containerColor = White
+                            ),
+                            title = {
+                                Text(
+                                    text = "가계부에 일정 추가하기",
+                                    color = Grey700,
+                                    style = UligaTheme.typography.title2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1,
+                                )
+                            },
+                            modifier = Modifier
+                                .shadow(5.dp)
+                        )
+                    },
+                    bottomBar = {
+                        PositiveButton(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            text = "가계부 추가하기",
+                            contentPadding = PaddingValues(
+                                vertical = 16.dp
+                            ),
+                            onClick = {
+                                viewModel.postAccountBookTransaction(
+                                    transactionType = accountBookTypeTextState,
+                                    category = accountBookCategoryTextState,
+                                    payment = accountBookPaymentMethodTextState,
+                                    date = accountBookSelectedDate,
+                                    account = accountBookAccountTextState,
+                                    value = accountBookCostTextState,
+                                    memo = accountBookMemoTextState
+                                )
+                            }
+                        )
+                    }
+                ) { contentPadding ->
+
+
                     LazyColumn(
                         modifier = Modifier
+                            .padding(contentPadding)
                             .wrapContentSize()
                             .background(Color.White),
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
 
                         item {
-                            CenterAlignedTopAppBar(
-                                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                                    containerColor = White
-                                ),
-                                title = {
-                                    Text(
-                                        text = "가계부에 일정 추가하기",
-                                        color = Grey700,
-                                        style = UligaTheme.typography.title2,
-                                        overflow = TextOverflow.Ellipsis,
-                                        maxLines = 1,
-                                    )
-                                }
-                            )
-                        }
 
-                        item {
+                            VerticalSpacer(height = 32.dp)
+
                             Text(
                                 modifier = Modifier.padding(
                                     horizontal = 16.dp
@@ -433,33 +452,6 @@ class AccountBookInputActivity : ComponentActivity() {
                                 }
                             }
                         }
-
-                        item {
-
-                            PositiveButton(
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(),
-                                text = "가계부 추가하기",
-                                contentPadding = PaddingValues(
-                                    vertical = 16.dp
-                                ),
-                                onClick = {
-                                    if (accountBookSelectedDate == null) return@PositiveButton
-
-                                    viewModel.postAccountBookTransaction(
-                                        transactionType = accountBookTypeTextState,
-                                        category = accountBookCategoryTextState,
-                                        payment = accountBookPaymentMethodTextState,
-                                        date = accountBookSelectedDate!!,
-                                        account = accountBookAccountTextState,
-                                        value = accountBookCostTextState.toLong(),
-                                        memo = accountBookMemoTextState
-                                    )
-                                }
-                            )
-                        }
                     }
                 }
 
@@ -479,7 +471,6 @@ class AccountBookInputActivity : ComponentActivity() {
 @RequiresApi(Build.VERSION_CODES.Q)
 private fun handleSideEffect(
     sideEffect: AccountBookInputSideEffect,
-    context: Context,
     onFinishRequest: () -> Unit,
     onShowToast: (String) -> Unit
 ) {
