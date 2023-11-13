@@ -243,12 +243,18 @@ fun HomeScreen(
 
                         Image(
                             modifier = Modifier
-                                .size(40.dp)
-                                .clickable {
-                                    isInvitationListBottomSheetSheetOpen = true
-                                },
+                                .size(28.dp)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = rememberRipple(
+                                        color = Color.Black
+                                    ),
+                                    onClick = {
+                                        isInvitationListBottomSheetSheetOpen = true
+                                    }
+                                ),
                             painter = painterResource(
-                                id = R.drawable.uliga_logo
+                                id = R.drawable.ic_notification
                             ),
                             contentDescription = null
                         )
