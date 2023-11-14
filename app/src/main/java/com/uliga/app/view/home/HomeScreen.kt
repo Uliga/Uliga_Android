@@ -27,8 +27,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -319,7 +323,9 @@ fun HomeScreen(
                                 style = UligaTheme.typography.body3
                             )
 
-                            Text(
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = null,
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
                                     .clickable(
@@ -335,10 +341,7 @@ fun HomeScreen(
                                             intent.putExtra("from", "home")
                                             context.startActivity(intent)
                                         }
-                                    ),
-                                text = "변경 버튼",
-                                color = Grey600,
-                                style = UligaTheme.typography.body3
+                                    )
                             )
                         }
                     }
