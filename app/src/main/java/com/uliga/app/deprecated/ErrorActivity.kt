@@ -1,4 +1,4 @@
-package com.uliga.app.view
+package com.uliga.app.deprecated
 
 import android.os.Build
 import android.os.Bundle

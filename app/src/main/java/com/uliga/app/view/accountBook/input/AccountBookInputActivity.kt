@@ -1,6 +1,5 @@
 package com.uliga.app.view.accountBook.input
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -41,16 +40,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.uliga.app.TOAST_DURATION_MILLIS
-import com.uliga.app.TOAST_END_POSITION
-import com.uliga.app.TOAST_START_POSITION
-import com.uliga.app.TopDownToast
+import com.uliga.app.view.component.toast.TOAST_DURATION_MILLIS
+import com.uliga.app.view.component.toast.TOAST_END_POSITION
+import com.uliga.app.view.component.toast.TOAST_START_POSITION
+import com.uliga.app.view.component.toast.TopDownToast
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.UligaApplicationTheme
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
-import com.uliga.app.view.CircularProgress
+import com.uliga.app.ext.CircularProgress
 import com.uliga.app.view.component.BasicTextField
 import com.uliga.app.view.component.ClassifierRadioButton
 import com.uliga.app.view.component.DropDownTextField

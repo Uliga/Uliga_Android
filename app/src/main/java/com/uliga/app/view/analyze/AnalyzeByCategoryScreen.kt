@@ -31,7 +31,7 @@ import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ui.theme.pieChartColor
-import com.uliga.app.view.CircularProgress
+import com.uliga.app.ext.CircularProgress
 import com.uliga.app.view.component.HorizontalSpacer
 import com.uliga.app.view.component.VerticalSpacer
 import com.uliga.chart.pie.PieChart

@@ -41,10 +41,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.uliga.app.R
-import com.uliga.app.TOAST_DURATION_MILLIS
-import com.uliga.app.TOAST_END_POSITION
-import com.uliga.app.TOAST_START_POSITION
-import com.uliga.app.TopDownToast
+import com.uliga.app.view.component.toast.TOAST_DURATION_MILLIS
+import com.uliga.app.view.component.toast.TOAST_END_POSITION
+import com.uliga.app.view.component.toast.TOAST_START_POSITION
+import com.uliga.app.view.component.toast.TopDownToast
 import com.uliga.app.ext.getGoogleSignInClient
 import com.uliga.app.ui.theme.CustomGrey100
 import com.uliga.app.ui.theme.CustomGrey700
@@ -53,7 +53,7 @@ import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.KakaoYellow
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
-import com.uliga.app.view.CircularProgress
+import com.uliga.app.ext.CircularProgress
 import com.uliga.app.view.auth.AuthActivity
 import com.uliga.app.view.auth.AuthSideEffect
 import com.uliga.app.view.auth.AuthViewModel

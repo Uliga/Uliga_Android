@@ -41,10 +41,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.uliga.app.R
-import com.uliga.app.TOAST_DURATION_MILLIS
-import com.uliga.app.TOAST_END_POSITION
-import com.uliga.app.TOAST_START_POSITION
-import com.uliga.app.ToastAnimation
+import com.uliga.app.view.component.toast.TOAST_DURATION_MILLIS
+import com.uliga.app.view.component.toast.TOAST_END_POSITION
+import com.uliga.app.view.component.toast.TOAST_START_POSITION
+import com.uliga.app.view.component.toast.ToastAnimation
 import com.uliga.app.ui.theme.CustomGrey100
 import com.uliga.app.ui.theme.CustomGrey200
 import com.uliga.app.ui.theme.Grey500
@@ -52,7 +52,7 @@ import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
-import com.uliga.app.view.CircularProgress
+import com.uliga.app.ext.CircularProgress
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionActivity
 import com.uliga.app.view.auth.AuthSideEffect
 import com.uliga.app.view.auth.AuthViewModel

@@ -1,4 +1,4 @@
-package com.uliga.app.view
+package com.uliga.app.view.component.dialog
 
 import android.os.Build
 import androidx.annotation.RequiresApi

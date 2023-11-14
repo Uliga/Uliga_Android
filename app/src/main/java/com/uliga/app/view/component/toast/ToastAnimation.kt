@@ -1,4 +1,4 @@
-package com.uliga.app
+package com.uliga.app.view.component.toast
 
 import android.os.Build
 import androidx.annotation.RequiresApi

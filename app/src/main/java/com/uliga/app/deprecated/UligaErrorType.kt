@@ -1,4 +1,4 @@
-package com.uliga.app
+package com.uliga.app.deprecated
 
 enum class UligaErrorType {
     TOAST

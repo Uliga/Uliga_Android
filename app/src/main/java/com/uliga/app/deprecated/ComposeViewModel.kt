@@ -1,4 +1,4 @@
-package com.uliga.app.base
+package com.uliga.app.deprecated
 
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle

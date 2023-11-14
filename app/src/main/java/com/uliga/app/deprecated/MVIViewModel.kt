@@ -1,8 +1,7 @@
-package com.uliga.app.base
+package com.uliga.app.deprecated
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.uliga.app.UligaErrorType
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -24,7 +24,7 @@
             android:name=".view.accountBook.generation.AccountBookGenerationActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ErrorActivity"
+            android:name=".deprecated.ErrorActivity"
             android:exported="false" />
         <activity
             android:name=".view.accountBook.selection.AccountBookSelectionActivity"

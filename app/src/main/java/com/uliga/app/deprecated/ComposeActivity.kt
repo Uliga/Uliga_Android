@@ -1,8 +1,9 @@
-package com.uliga.app.base
+package com.uliga.app.deprecated
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.annotation.StyleRes
+import com.uliga.app.base.repeatOnStarted
 import kotlinx.coroutines.flow.collectLatest
 
 abstract class ComposeActivity<VM : ComposeViewModel<*, EVENT>, EVENT : ComposeViewModel.UiEvent> :

@@ -1,4 +1,4 @@
-package com.uliga.app.base
+package com.uliga.app.deprecated
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

@@ -48,7 +48,7 @@ import com.uliga.app.ui.theme.CustomGrey600
 import com.uliga.app.ui.theme.Grey400
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.pretendard
-import com.uliga.app.view.CircularProgress
+import com.uliga.app.ext.CircularProgress
 import com.uliga.app.view.auth.AuthViewModel
 import com.uliga.app.view.main.MainActivity
 import org.orbitmvi.orbit.compose.collectAsState

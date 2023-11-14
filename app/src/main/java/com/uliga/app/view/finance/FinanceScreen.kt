@@ -43,12 +43,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.daysOfWeek
-import com.uliga.app.TopDownToast
+import com.uliga.app.view.component.toast.TopDownToast
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
-import com.uliga.app.view.CircularProgress
-import com.uliga.app.view.DeleteAlertDialog
+import com.uliga.app.ext.CircularProgress
+import com.uliga.app.view.component.dialog.DeleteAlertDialog
 import com.uliga.app.view.accountBook.input.AccountBookInputActivity
 import com.uliga.app.view.component.AddingButton
 import com.uliga.app.view.component.Day

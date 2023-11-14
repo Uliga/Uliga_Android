@@ -1,4 +1,4 @@
-package com.uliga.app.base
+package com.uliga.app.deprecated
 
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlinx.coroutines.InternalCoroutinesApi
