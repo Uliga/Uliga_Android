@@ -112,16 +112,21 @@ fun FinanceScreen(
         onResult = {
             when (it.resultCode) {
                 Activity.RESULT_OK -> {
-                    viewModel.getAccountBookMonthTransaction(
-                        calendarState.firstVisibleMonth.yearMonth.year,
-                        calendarState.firstVisibleMonth.yearMonth.monthValue
-                    )
-                    viewModel.getAccountBookDayTransaction(
+//                    viewModel.getAccountBookMonthTransaction(
+//                        calendarState.firstVisibleMonth.yearMonth.year,
+//                        calendarState.firstVisibleMonth.yearMonth.monthValue
+//                    )
+//                    viewModel.getAccountBookDayTransaction(
+//                        calendarState.firstVisibleMonth.yearMonth.year,
+//                        calendarState.firstVisibleMonth.yearMonth.monthValue,
+//                        selectedDateState.split("월 ")[1].replace("일", "").toInt()
+//                    )
+
+                    viewModel.getAccountBookTransaction(
                         calendarState.firstVisibleMonth.yearMonth.year,
                         calendarState.firstVisibleMonth.yearMonth.monthValue,
                         selectedDateState.split("월 ")[1].replace("일", "").toInt()
                     )
-
                 }
             }
         })
@@ -165,11 +170,13 @@ fun FinanceScreen(
         handleSideEffect(
             sideEffect = it,
             onDismissDeleteAlert = {
-                viewModel.getAccountBookDayTransaction(
+                viewModel.getAccountBookTransaction(
                     calendarState.firstVisibleMonth.yearMonth.year,
                     calendarState.firstVisibleMonth.yearMonth.monthValue,
                     selectedDateState.split("월 ")[1].replace("일", "").toInt()
                 )
+
+                deleteAlertDialogVisibleState = false
             },
             onShowToast = {
                 isToastAnimating = true
@@ -332,7 +339,7 @@ fun FinanceScreen(
             onDeleteRequest = {
                 runBlocking {
                     viewModel.deleteAccountBookDayTransaction(selectedDeleteItemId)
-                    deleteAlertDialogVisibleState = false
+
                 }
 
                 viewModel.getAccountBookMonthTransaction(
