@@ -48,7 +48,6 @@ fun Day(
     onClick: (CalendarDay) -> Unit
 ) {
 
-    Log.d("accountBookAssetMonth", accountBookAssetMonth.toString())
     val income = accountBookAssetMonth?.incomes?.filter { it.day.toInt() == day.date.dayOfMonth }
     val record = accountBookAssetMonth?.records?.filter { it.day.toInt() == day.date.dayOfMonth }
 
