@@ -7,6 +7,8 @@ import com.uliga.domain.usecase.accountbook.GetAccountBookMonthTransactionUseCas
 import com.uliga.domain.usecase.accountbook.remote.DeleteAccountBookDayTransactionUseCase
 import com.uliga.domain.usecase.accountbook.remote.GetAccountBookDayTransactionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -73,8 +75,29 @@ class FinanceViewModel @Inject constructor(
                     }
                 }
         }
+    }
 
+    fun getAccountBookTransaction(year: Int, month: Int, day: Int) = intent {
+        launch {
+            val currentAccountBookInfo = state.currentAccountInfo
+            if (currentAccountBookInfo == null) {
+                updateIsLoading(false)
+                return@launch
+            }
 
+            val accountBookDayTransaction = async(Dispatchers.IO) {getAccountBookDayTransactionUseCase(currentAccountBookInfo.second, year, month, day) }
+            val accountBookMonthTransaction = async(Dispatchers.IO) { getAccountBookMonthTransactionUseCase(currentAccountBookInfo.second, year, month) }
+
+            val currentAccountBookAssetDay = accountBookDayTransaction.await()
+            val currentAccountBookAsset = accountBookMonthTransaction.await()
+
+            reduce {
+                state.copy(
+                    currentAccountBookAssetDay = currentAccountBookAssetDay.getOrThrow(),
+                    currentAccountBookAsset =  currentAccountBookAsset.getOrThrow()
+                )
+            }
+        }
     }
 
     fun deleteAccountBookDayTransaction(accountBookAssetItemId: Long) = intent {
