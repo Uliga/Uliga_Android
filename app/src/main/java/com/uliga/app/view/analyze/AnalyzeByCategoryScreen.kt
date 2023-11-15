@@ -143,10 +143,7 @@ private fun PieChartScreenContent(accountBookAnalyzeRecordByMonthForCategoryList
 
     if (accountBookAnalyzeRecordByMonthForCategoryList == null) return
 
-    val pieChartDataModel =
-        remember { PieChartDataModel(accountBookAnalyzeRecordByMonthForCategoryList) }
-
-    Log.d("launchedEffect", pieChartDataModel.hashCode().toString())
+    val pieChartDataModel = PieChartDataModel(accountBookAnalyzeRecordByMonthForCategoryList)
 
     Column(
         modifier = Modifier.padding(

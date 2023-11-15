@@ -12,14 +12,8 @@ import androidx.compose.ui.unit.dp
 
 class VerticalXAxisDrawer(
     private val axisLineThickness: Dp = 1.dp,
-    private val axisLineColor: Color = Color.Black
+    private val axisLineColor: Color = Color.Gray
 ) : XAxisDrawer {
-    private val axisLinePaint = Paint().apply {
-        isAntiAlias = true
-        color = axisLineColor
-        style = PaintingStyle.Stroke
-    }
-
     override fun requiredHeight(drawScope: DrawScope): Float = with(drawScope) {
         (3f / 2f) * axisLineThickness.toPx()
     }
