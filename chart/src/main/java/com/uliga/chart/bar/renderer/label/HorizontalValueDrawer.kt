@@ -1,6 +1,5 @@
 package com.uliga.chart.bar.renderer.label
 
-import android.util.Log
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
@@ -16,7 +15,7 @@ import com.uliga.chart.common.utils.toLegacyInt
 class HorizontalValueDrawer(
     private val drawLocation: DrawLocation = Inside,
     private val labelTextSize: TextUnit = 12.sp,
-    private val labelTextColor: Color = Color.Black
+    private val labelTextColor: Color = Color.Gray
 ) : LabelDrawer {
     private val _labelTextArea: Float? = null
     private val paint = android.graphics.Paint().apply {
@@ -52,7 +51,12 @@ class HorizontalValueDrawer(
         }
 
         canvas.nativeCanvas.drawText(label, xCenter, yCenter, paint(drawScope))
-        canvas.nativeCanvas.drawText(label, xCenter, yCenter + labelTextHeight(drawScope), paint(drawScope))
+        canvas.nativeCanvas.drawText(
+            label,
+            xCenter,
+            yCenter + labelTextHeight(drawScope),
+            paint(drawScope)
+        )
     }
 
     override fun drawLabelWithValue(
@@ -62,7 +66,7 @@ class HorizontalValueDrawer(
         value: Float,
         barArea: Rect,
         xAxisArea: Rect
-    )  = with(drawScope) {
+    ) = with(drawScope) {
         val xCenter = barArea.left + (barArea.width / 2)
 
         val yCenter = when (drawLocation) {
@@ -72,7 +76,12 @@ class HorizontalValueDrawer(
         }
 
         canvas.nativeCanvas.drawText("${value.toInt()}원", xCenter, yCenter, paint(drawScope))
-        canvas.nativeCanvas.drawText(label, xCenter, yCenter + labelTextHeight(drawScope), paint(drawScope))
+        canvas.nativeCanvas.drawText(
+            label,
+            xCenter,
+            yCenter + labelTextHeight(drawScope),
+            paint(drawScope)
+        )
     }
 
     private fun labelTextHeight(drawScope: DrawScope) = with(drawScope) {

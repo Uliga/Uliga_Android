@@ -13,7 +13,7 @@ import com.uliga.chart.common.utils.toLegacyInt
 class VerticalValueDrawer(
     private val drawLocation: DrawLocation = DrawLocation.Inside,
     private val labelTextSize: TextUnit = 12.sp,
-    private val labelTextColor: Color = Color.Black
+    private val labelTextColor: Color = Color.Gray
 ) : LabelDrawer {
     private val _labelTextArea: Float? = null
     private val paint = android.graphics.Paint().apply {
