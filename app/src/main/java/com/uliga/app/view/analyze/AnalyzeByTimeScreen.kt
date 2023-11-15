@@ -1,8 +1,11 @@
 package com.uliga.app.view.analyze
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +24,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.uliga.app.ui.theme.Grey500
@@ -166,14 +170,8 @@ private fun HorizontalBarChartScreenContent(
         recordBeforeTwoMonthValue = compareList[2].value
     )
 
-    Column(
-        modifier = Modifier.padding(
-            horizontal = 12.dp,
-            vertical = 12.dp
-        )
-    ) {
-        HorizonBarChartRow(barChartDataModel)
-    }
+    HorizonBarChartRow(barChartDataModel)
+
 }
 
 @Composable
@@ -189,14 +187,7 @@ private fun VerticalBarChartScreenContent(
         accountBookAnalyzeRecordByWeek.weeklySums
     )
 
-    Column(
-        modifier = Modifier.padding(
-            horizontal = 12.dp,
-            vertical = 12.dp
-        )
-    ) {
-        VerticalBarChartRow(barChartDataModel)
-    }
+    VerticalBarChartRow(barChartDataModel)
 }
 
 
@@ -204,8 +195,11 @@ private fun VerticalBarChartScreenContent(
 private fun HorizonBarChartRow(barChartDataModel: HorizontalBarChartDataModel) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
             .height(250.dp)
+            .padding(
+                horizontal = 20.dp,
+                vertical = 16.dp
+            )
     ) {
         HorizontalBarChart(
             barChartData = barChartDataModel.barChartData,
@@ -219,9 +213,11 @@ private fun VerticalBarChartRow(
     barChartDataModel: VerticalBarChartDataModel) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
             .height(250.dp)
-            .padding(vertical = 16.dp)
+            .padding(
+                horizontal = 20.dp,
+                vertical = 16.dp
+            )
     ) {
         VerticalBarChart(
             barChartData = barChartDataModel.barChartData,

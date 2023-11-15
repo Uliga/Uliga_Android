@@ -40,12 +40,17 @@ class VerticalValueDrawer(
         barArea: Rect,
         xAxisArea: Rect
     ) = with(drawScope) {
-        val yCenter = barArea.bottom - (barArea.height / 2)
+        val yCenter = barArea.bottom - (barArea.height / 1.5f)
+
 
         val xCenter = when (drawLocation) {
             DrawLocation.Inside -> (barArea.top + barArea.bottom) / 2
+
             DrawLocation.Outside -> (barArea.top) - labelTextSize.toPx() / 2
-            DrawLocation.XAxis -> barArea.left - labelTextHeight(drawScope)
+            DrawLocation.XAxis -> {
+                barArea.left - labelTextHeight(drawScope) - 10f
+            }
+
         }
 
         canvas.nativeCanvas.drawText(label, xCenter, yCenter, paint(drawScope))
