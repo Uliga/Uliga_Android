@@ -3,6 +3,7 @@ package com.uliga.app.view.home
 import androidx.core.text.isDigitsOnly
 import com.uliga.app.base.BaseViewModel
 import com.uliga.app.view.accountBook.input.AccountBookInputSideEffect
+import com.uliga.domain.model.accountBook.analyze.byMonth.schedule.AccountBookAnalyzeFixedRecordByMonth
 import com.uliga.domain.model.accountBook.budget.AccountBookBudgetRequest
 import com.uliga.domain.model.accountBook.invitation.AccountBookInvitationReply
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
@@ -11,6 +12,7 @@ import com.uliga.domain.usecase.accountbook.GetAccountBookMonthAssetUseCase
 import com.uliga.domain.usecase.accountbook.PatchAccountBookBudgetUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookBudgetUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookInvitationReplyUseCase
+import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookFixedRecordByMonthUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookRecordByDayUseCase
 import com.uliga.domain.usecase.financeSchedule.DeleteFinanceScheduleDetailUseCase
 import com.uliga.domain.usecase.financeSchedule.GetFinanceScheduleUseCase
@@ -35,7 +37,8 @@ class HomeViewModel @Inject constructor(
     private val getAccountBookMonthAssetUseCase: GetAccountBookMonthAssetUseCase,
     private val getMemberUseCase: GetMemberUseCase,
     private val postAccountBookInvitationReplyUseCase: PostAccountBookInvitationReplyUseCase,
-    private val getAccountBookAnalyzeRecordByDayUseCase: GetAccountBookRecordByDayUseCase
+    private val getAccountBookAnalyzeRecordByDayUseCase: GetAccountBookRecordByDayUseCase,
+    private val getAccountBookFixedRecordByMonthUseCase: GetAccountBookFixedRecordByMonthUseCase
 ) : ContainerHost<HomeUiState, HomeSideEffect>, BaseViewModel() {
 
     override val container = container<HomeUiState, HomeSideEffect>(HomeUiState.empty())
@@ -286,6 +289,22 @@ class HomeViewModel @Inject constructor(
                         HomeSideEffect.FinishBudgetSettingBottomSheet
                     )
                 }
+        }
+    }
+
+    private fun getAccountBookFixedRecordByMonth() = intent {
+        launch {
+            val currentAccountBookInfo = state.currentAccountInfo ?: return@launch
+
+            getAccountBookFixedRecordByMonthUseCase(currentAccountBookInfo.second)
+                .onSuccess {
+                    reduce {
+                        state.copy(
+                            accountBookAnalyzeFixedRecordByMonth = it
+                        )
+                    }
+                }
+
         }
     }
 

@@ -34,6 +34,15 @@ internal object BarChartUtils {
 
   fun barDrawableArea(xAxisArea: Rect): Rect {
     return Rect(
+      left = 0f,
+      top = 0f,
+      right = xAxisArea.right,
+      bottom = xAxisArea.top
+    )
+  }
+
+  fun verticalBarDrawableArea(xAxisArea: Rect): Rect {
+    return Rect(
       left = xAxisArea.left,
       top = 0f,
       right = xAxisArea.right,
@@ -81,7 +90,7 @@ internal object BarChartUtils {
     val offsetOfBar = heightOfBarArea * 0.2f
 
     bars.forEachIndexed { index, bar ->
-      val left = barDrawableArea.left + (index * heightOfBarArea)
+      val left = (index * heightOfBarArea)
       val width = barDrawableArea.width
 
       val barWidth = (width - labelDrawer.requiredAboveBarHeight(drawScope)) * progress

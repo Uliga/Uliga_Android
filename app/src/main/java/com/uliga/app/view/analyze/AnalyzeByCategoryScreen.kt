@@ -124,52 +124,6 @@ fun AnalyzeByCategoryScreen(viewModel: AnalyzeViewModel) {
                     )
                 }
             }
-
-            item {
-
-                VerticalSpacer(height = 24.dp)
-
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    text = "나의 고정 지출",
-                    color = Grey700,
-                    style = UligaTheme.typography.title3
-                )
-            }
-
-            items(state.accountBookAnalyzeFixedRecordByMonth?.schedules?.size ?: 0) { idx ->
-
-                val fixedRecordList =
-                    state.accountBookAnalyzeFixedRecordByMonth?.schedules ?: return@items
-
-                Row(
-                    modifier = Modifier.padding(horizontal = 20.dp)
-                ) {
-                    Text(
-                        text = "${fixedRecordList[idx].day}일",
-                        color = Grey500,
-                        style = UligaTheme.typography.body12
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Text(
-                        text = fixedRecordList[idx].name,
-                        color = Grey500,
-                        style = UligaTheme.typography.body12
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Text(
-                        text = "${fixedRecordList[idx].value}원",
-                        color = Grey500,
-                        style = UligaTheme.typography.body12
-                    )
-                }
-            }
         }
 
         PullRefreshIndicator(

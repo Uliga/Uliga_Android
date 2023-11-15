@@ -1,5 +1,6 @@
 package com.uliga.chart.bar
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
@@ -13,6 +14,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import com.uliga.chart.bar.BarChartUtils.axisAreas
 import com.uliga.chart.bar.BarChartUtils.barDrawableArea
 import com.uliga.chart.bar.BarChartUtils.forEachWithVerticalArea
+import com.uliga.chart.bar.BarChartUtils.verticalBarDrawableArea
 import com.uliga.chart.bar.renderer.bar.BarDrawer
 import com.uliga.chart.bar.renderer.bar.SimpleBarDrawer
 import com.uliga.chart.bar.renderer.label.LabelDrawer
@@ -51,7 +53,7 @@ fun VerticalBarChart(
                     xAxisDrawer = xAxisDrawer,
                     labelDrawer = labelDrawer
                 )
-                val barDrawableArea = barDrawableArea(xAxisArea)
+                val barDrawableArea = verticalBarDrawableArea(xAxisArea)
 
                 // Draw yAxis line.
                 yAxisDrawer.drawAxisLine(
@@ -66,6 +68,7 @@ fun VerticalBarChart(
                     canvas = canvas,
                     drawableArea = xAxisArea
                 )
+
                 // Draw each bar.
                 barChartData.forEachWithVerticalArea(
                     this,
@@ -95,7 +98,7 @@ fun VerticalBarChart(
                 xAxisDrawer = xAxisDrawer,
                 labelDrawer = labelDrawer
             )
-            val barDrawableArea = barDrawableArea(xAxisArea)
+            val barDrawableArea = verticalBarDrawableArea(xAxisArea)
 
             barChartData.forEachWithVerticalArea(
                 this,

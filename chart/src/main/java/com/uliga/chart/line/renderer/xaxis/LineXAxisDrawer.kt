@@ -1,5 +1,6 @@
 package com.uliga.chart.line.renderer.xaxis
 
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
@@ -16,11 +17,11 @@ import com.uliga.chart.common.utils.toLegacyInt
 
 class LineXAxisDrawer(
     private val labelTextSize: TextUnit = 12.sp,
-    private val labelTextColor: Color = Color.Black,
+    private val labelTextColor: Color = Color.Gray,
     /** 1 means we draw everything. 2 means we draw every other, and so on. */
     private val labelRatio: Int = 1,
-    private val axisLineThickness: Dp = 1.dp,
-    private val axisLineColor: Color = Color.Black
+    private val axisLineThickness: Dp = 2.dp,
+    private val axisLineColor: Color = Color.Gray
 ) : XAxisDrawer {
     private val axisLinePaint = Paint().apply {
         isAntiAlias = true
@@ -50,11 +51,11 @@ class LineXAxisDrawer(
 
             canvas.drawLine(
                 p1 = Offset(
-                    x = drawableArea.left,
+                    x = 16f,
                     y = y
                 ),
                 p2 = Offset(
-                    x = drawableArea.right,
+                    x = drawableArea.right - 16f,
                     y = y
                 ),
                 paint = axisLinePaint.apply {

@@ -49,34 +49,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.uliga.app.R
-import com.uliga.app.view.component.toast.TOAST_DURATION_MILLIS
-import com.uliga.app.view.component.toast.TOAST_END_POSITION
-import com.uliga.app.view.component.toast.TOAST_START_POSITION
-import com.uliga.app.view.component.toast.TopDownToast
+import com.uliga.app.ext.CircularProgress
 import com.uliga.app.ui.theme.CustomGrey100
 import com.uliga.app.ui.theme.Grey100
+import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.utils.Constant
-import com.uliga.app.ext.CircularProgress
-import com.uliga.app.view.component.dialog.DeleteAlertDialog
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionActivity
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.component.AddingButton
-import com.uliga.app.view.component.ContinuousLineChart
 import com.uliga.app.view.component.HorizontalLineIndicator
 import com.uliga.app.view.component.HorizontalSpacer
 import com.uliga.app.view.component.OneThicknessDivider
 import com.uliga.app.view.component.TextWithDotImage
 import com.uliga.app.view.component.VerticalSpacer
+import com.uliga.app.view.component.dialog.DeleteAlertDialog
 import com.uliga.app.view.component.item.FinanceScheduleItem
+import com.uliga.app.view.component.toast.TOAST_DURATION_MILLIS
+import com.uliga.app.view.component.toast.TOAST_END_POSITION
+import com.uliga.app.view.component.toast.TOAST_START_POSITION
+import com.uliga.app.view.component.toast.TopDownToast
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
 import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleGenerationActivity
@@ -141,7 +140,7 @@ fun HomeScreen(
     if (budgetValue == null || budgetValue == 0f) budgetValue = 1f
 
     val animateNumber = animateFloatAsState(
-        targetValue = if(recordValue >= budgetValue) 1f else recordValue / budgetValue ,
+        targetValue = if (recordValue >= budgetValue) 1f else recordValue / budgetValue,
         animationSpec = tween(
             durationMillis = 1000,
             delayMillis = 0
@@ -216,8 +215,9 @@ fun HomeScreen(
                     containerColor = White
                 ),
                 title = {
-                    Row(modifier = Modifier
-                        .padding(vertical = 16.dp),
+                    Row(
+                        modifier = Modifier
+                            .padding(vertical = 16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
@@ -515,8 +515,12 @@ fun HomeScreen(
                                 idx = idx,
                                 currentDay = currentDay,
                                 onFinanceScheduleUpdateRequest = { financeSchedule ->
-                                    val intent = Intent(context, ScheduleGenerationActivity::class.java)
-                                    intent.putExtra("notificationDay", financeSchedule.notificationDay)
+                                    val intent =
+                                        Intent(context, ScheduleGenerationActivity::class.java)
+                                    intent.putExtra(
+                                        "notificationDay",
+                                        financeSchedule.notificationDay
+                                    )
                                     intent.putExtra("isIncome", financeSchedule.isIncome)
                                     intent.putExtra("name", financeSchedule.name)
                                     intent.putExtra("value", financeSchedule.value)
@@ -602,31 +606,74 @@ fun HomeScreen(
 
                     Text(
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth(),
-                        textAlign = TextAlign.Start,
-                        text = "이번 달 총 지출",
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        text = "나의 고정 지출",
                         color = Grey700,
                         style = UligaTheme.typography.title3
                     )
-
-                    VerticalSpacer(height = 8.dp)
-
-                    Text(
-                        modifier = Modifier
-                            .padding(horizontal = 20.dp)
-                            .fillMaxWidth(),
-                        textAlign = TextAlign.Start,
-                        text = "${currentMonthRecord}원",
-                        color = Grey600,
-                        style = UligaTheme.typography.body3
-                    )
-
-                    ContinuousLineChart(
-                        accountBookAnalyzeRecordByDay = state.accountBookAnalyzeRecordByDay
-                    )
                 }
 
+                val fixedRecordList =
+                    state.accountBookAnalyzeFixedRecordByMonth?.schedules
+
+                if (fixedRecordList.isNullOrEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .fillMaxWidth()
+                                .height(120.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = Grey100,
+                                    shape = UligaTheme.shapes.medium
+                                )
+                                .padding(horizontal = 4.dp)
+                        ) {
+                            Text(
+                                modifier = Modifier.align(Alignment.Center),
+                                text = "고정 지출 정보가 존재하지 않습니다.",
+                                color = Grey600,
+                                style = UligaTheme.typography.body5,
+                            )
+                        }
+                    }
+                } else {
+                    items(fixedRecordList.size) { idx ->
+
+                        Row(
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                        ) {
+                            Text(
+                                text = "${fixedRecordList[idx].day}일",
+                                color = Grey500,
+                                style = UligaTheme.typography.body12
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Text(
+                                text = fixedRecordList[idx].name,
+                                color = Grey500,
+                                style = UligaTheme.typography.body12
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Text(
+                                text = "${fixedRecordList[idx].value}원",
+                                color = Grey500,
+                                style = UligaTheme.typography.body12
+                            )
+                        }
+
+                    }
+                }
+
+                item {
+                    VerticalSpacer(height = 16.dp)
+                }
             }
 
             PullRefreshIndicator(

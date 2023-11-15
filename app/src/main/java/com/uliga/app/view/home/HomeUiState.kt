@@ -1,6 +1,7 @@
 package com.uliga.app.view.home
 
 import com.uliga.domain.model.accountBook.analyze.byDay.AccountBookAnalyzeRecordByDay
+import com.uliga.domain.model.accountBook.analyze.byMonth.schedule.AccountBookAnalyzeFixedRecordByMonth
 import com.uliga.domain.model.accountBook.asset.AccountBookAsset
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedules
@@ -18,7 +19,8 @@ data class HomeUiState(
     val selectedSchedule: FinanceSchedule? = null,
     val currentMonthAccountBookAsset: AccountBookAsset? = null,
     val beforeMonthAccountBookAsset: AccountBookAsset? = null,
-    val accountBookAnalyzeRecordByDay: AccountBookAnalyzeRecordByDay? = null
+    val accountBookAnalyzeRecordByDay: AccountBookAnalyzeRecordByDay? = null,
+    val accountBookAnalyzeFixedRecordByMonth: AccountBookAnalyzeFixedRecordByMonth? = null
 ) {
 
     companion object {
@@ -30,7 +32,8 @@ data class HomeUiState(
             currentAccountInfo = null,
             financeSchedules = null,
             currentMonthAccountBookAsset = null,
-            accountBookAnalyzeRecordByDay = null
+            accountBookAnalyzeRecordByDay = null,
+            accountBookAnalyzeFixedRecordByMonth = null
         )
     }
 }
