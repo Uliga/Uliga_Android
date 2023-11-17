@@ -1,5 +1,6 @@
 package com.uliga.app.view.home
 
+import android.util.Log
 import androidx.core.text.isDigitsOnly
 import com.uliga.app.base.BaseViewModel
 import com.uliga.app.view.accountBook.input.AccountBookInputSideEffect
@@ -70,6 +71,8 @@ class HomeViewModel @Inject constructor(
                         member = member
                     )
                 }
+
+                Log.d("initialize", "${id}, ${currentAccountInfo}, ${member}")
             }
         }
 

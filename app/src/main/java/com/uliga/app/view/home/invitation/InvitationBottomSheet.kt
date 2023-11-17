@@ -18,11 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
+import com.uliga.app.utils.TestTags
 import com.uliga.app.view.component.VerticalSpacer
 import com.uliga.app.view.component.item.InvitationItem
 import com.uliga.app.view.home.HomeViewModel
@@ -58,7 +60,7 @@ fun InvitationBottomSheet(
                 Text(
                     modifier = Modifier.padding(
                         horizontal = 16.dp,
-                    ),
+                    ).testTag(TestTags.NEW_INVITATION),
                     text = "새로운 가계부 초대",
                     color = Grey700,
                     style = UligaTheme.typography.title3,

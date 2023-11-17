@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -48,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -62,6 +64,7 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.utils.Constant
+import com.uliga.app.utils.TestTags
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionActivity
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.component.AddingButton
@@ -77,6 +80,7 @@ import com.uliga.app.view.component.toast.TOAST_END_POSITION
 import com.uliga.app.view.component.toast.TOAST_START_POSITION
 import com.uliga.app.view.component.toast.TopDownToast
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
+import com.uliga.app.view.main.MainActivity
 import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleGenerationActivity
 import org.orbitmvi.orbit.compose.collectAsState
@@ -93,11 +97,11 @@ fun HomeScreen(
     val context = LocalContext.current
     val state = viewModel.collectAsState().value
 
-    viewModel.initializeBaseInfo(
-        id = mainUiState.id,
-        currentAccountInfo = mainUiState.currentAccountInfo,
-        member = mainUiState.member
-    )
+//    viewModel.initializeBaseInfo(
+//        id = mainUiState.id,
+//        currentAccountInfo = mainUiState.currentAccountInfo,
+//        member = mainUiState.member
+//    )
 
     val currentDate = LocalDate.now()
     val currentDay = currentDate.dayOfMonth
@@ -207,6 +211,17 @@ fun HomeScreen(
         }
     )
 
+    BackHandler {
+        if(isInvitationListBottomSheetSheetOpen) {
+            isInvitationListBottomSheetSheetOpen = false
+        } else if(isBudgetSettingBottomSheetOpen) {
+            isBudgetSettingBottomSheetOpen = false
+        } else {
+            (context as MainActivity).finish()
+        }
+    }
+
+
     Scaffold(
         topBar = {
 
@@ -253,7 +268,8 @@ fun HomeScreen(
                                     onClick = {
                                         isInvitationListBottomSheetSheetOpen = true
                                     }
-                                ),
+                                )
+                                .testTag(TestTags.INVITATION),
                             painter = painterResource(
                                 id = R.drawable.ic_notification
                             ),
@@ -367,7 +383,8 @@ fun HomeScreen(
                             text = "예산 설정하러 가기",
                             onClick = {
                                 isBudgetSettingBottomSheetOpen = true
-                            }
+                            },
+                            testTag = TestTags.BUDGET_SETTING
                         )
                     }
 
@@ -477,7 +494,8 @@ fun HomeScreen(
                             onClick = {
                                 val intent = Intent(context, ScheduleGenerationActivity::class.java)
                                 launcher.launch(intent)
-                            }
+                            },
+                            testTag = TestTags.ADDING_FINANCE_SCHEDULE
                         )
                     }
 

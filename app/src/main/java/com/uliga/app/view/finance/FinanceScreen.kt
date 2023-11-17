@@ -48,6 +48,7 @@ import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ext.CircularProgress
+import com.uliga.app.utils.TestTags
 import com.uliga.app.view.component.dialog.DeleteAlertDialog
 import com.uliga.app.view.accountBook.input.AccountBookInputActivity
 import com.uliga.app.view.component.AddingButton
@@ -302,7 +303,8 @@ fun FinanceScreen(
                                     Intent(context, AccountBookInputActivity::class.java)
                                 intent.putExtra("selectedDate", selectedDateState)
                                 launcher.launch(intent)
-                            }
+                            },
+                            testTag = TestTags.ADDING_ACCOUNT_BOOK
                         )
                     }
                 }

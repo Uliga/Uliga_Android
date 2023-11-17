@@ -1,0 +1,26 @@
+package com.uliga.app.utils
+
+object TestTags {
+
+    const val INVITATION = "INVITATION"
+
+    const val KAKAO_LOGIN_BUTTON = "KAKAO_LOGIN_BUTTON"
+
+    const val GOOGLE_LOGIN_BUTTON = "GOOGLE_LOGIN_BUTTON"
+
+    const val NEW_INVITATION = "NEW_INVITATION"
+
+    const val BUDGET_SETTING = "BUDGET_SETTING"
+
+    const val BUDGET_CURRENT_DATE = "BUDGET_CURRENT_DATE"
+
+    const val ADDING_FINANCE_SCHEDULE = "ADDING_FINANCE_SCHEDULE"
+
+    const val ADDING_ACCOUNT_BOOK = "ADDING_ACCOUNT_BOOK"
+
+    const val BASIC_TEXT_FIELD_BUDGET = "BASIC_TEXT_FIELD_BUDGET"
+
+    // Button
+
+    const val BUTTON_BUDGET_SETTING = "BUTTON_BUDGET_SETTING"
+}

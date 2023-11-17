@@ -19,7 +19,7 @@ android {
         versionCode = App.versionCode
         versionName = App.versionName
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.uliga.app.HiltTestRunner"
     }
 
     buildTypes {
@@ -47,6 +47,10 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.5"
+    }
+
+    testOptions {
+        animationsDisabled = true
     }
 }
 
@@ -106,4 +110,11 @@ dependencies {
 
     // google
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+    // Instrumentation tests
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.37")
+    androidTestImplementation("androidx.test:runner:1.5.0")
+    implementation("androidx.compose.ui:ui-test-junit4-android:1.5.4")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.37")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.37")
 }
