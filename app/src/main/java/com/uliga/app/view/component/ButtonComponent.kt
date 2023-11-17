@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
@@ -34,10 +35,12 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
+import com.uliga.app.utils.TestTags
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun LoginButton(
+    modifier: Modifier,
     text: String,
     icon: Painter,
     imageSize: Dp,
@@ -45,12 +48,7 @@ fun LoginButton(
     onClick: () -> Unit
 ) {
     Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(
-                horizontal = 16.dp
-            ),
+        modifier = modifier,
         contentPadding = PaddingValues(
             vertical = 16.dp,
         ),
@@ -84,7 +82,8 @@ fun LoginButton(
 @Composable
 fun AddingButton(
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    testTag: String
 ) {
 
     Row(
@@ -99,6 +98,7 @@ fun AddingButton(
                     onClick()
                 }
             )
+            .testTag(testTag)
             .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

@@ -33,9 +33,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -54,6 +56,7 @@ import com.uliga.app.ui.theme.KakaoYellow
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.ext.CircularProgress
+import com.uliga.app.utils.TestTags
 import com.uliga.app.view.auth.AuthActivity
 import com.uliga.app.view.auth.AuthSideEffect
 import com.uliga.app.view.auth.AuthViewModel
@@ -70,7 +73,7 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @Composable
 fun LoginScreen(
     navController: NavController,
-    viewModel: AuthViewModel
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val state = viewModel.collectAsState().value
@@ -232,6 +235,13 @@ fun LoginScreen(
             ) {
 
                 LoginButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(
+                            horizontal = 16.dp
+                        )
+                        .testTag(TestTags.KAKAO_LOGIN_BUTTON),
                     text = "카카오로 로그인",
                     icon = painterResource(
                         id = R.drawable.ic_kakao
@@ -246,6 +256,13 @@ fun LoginScreen(
                 VerticalSpacer(height = 12.dp)
 
                 LoginButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(
+                            horizontal = 16.dp
+                        )
+                        .testTag(TestTags.GOOGLE_LOGIN_BUTTON),
                     text = "구글로 로그인    ",
                     icon = painterResource(
                         id = R.drawable.ic_google

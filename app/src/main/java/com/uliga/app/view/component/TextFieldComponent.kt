@@ -16,6 +16,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -113,6 +114,7 @@ fun BasicTextField(
     onValueChange: (String) -> Unit,
     keyboardType: KeyboardType,
     hint: String = "",
+    testTag: String = "",
 ) {
     androidx.compose.material.TextField(
         modifier = Modifier
@@ -121,7 +123,8 @@ fun BasicTextField(
                 color = Grey400,
                 shape = UligaTheme.shapes.large
             )
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .testTag(testTag),
         value = value,
         onValueChange = onValueChange,
         textStyle = UligaTheme.typography.body12,

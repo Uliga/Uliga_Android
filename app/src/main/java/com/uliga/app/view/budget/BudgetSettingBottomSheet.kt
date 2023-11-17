@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +46,7 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
+import com.uliga.app.utils.TestTags
 import com.uliga.app.view.component.BasicTextField
 import com.uliga.app.view.component.HorizontalSpacer
 import com.uliga.app.view.component.PositiveButton
@@ -106,6 +108,7 @@ fun BudgetSettingBottomSheet(
 
 
                 Text(
+                    modifier = Modifier.testTag(TestTags.BUDGET_CURRENT_DATE),
                     text = "${currentDate.monthValue}월 예산 설정",
                     color = Grey700,
                     style = UligaTheme.typography.title3,
@@ -145,7 +148,8 @@ fun BudgetSettingBottomSheet(
                     budgetTextState.value = it
                 },
                 keyboardType = KeyboardType.Number,
-                hint = "이번 달 예산 금액을 입력해주세요."
+                hint = "이번 달 예산 금액을 입력해주세요.",
+                testTag = TestTags.BASIC_TEXT_FIELD_BUDGET
             )
 
             VerticalSpacer(height = 16.dp)
@@ -241,7 +245,8 @@ fun BudgetSettingBottomSheet(
             PositiveButton(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight(),
+                    .wrapContentHeight()
+                    .testTag(TestTags.BUTTON_BUDGET_SETTING),
                 text = "예산 등록",
                 contentPadding = PaddingValues(
                     vertical = 16.dp
