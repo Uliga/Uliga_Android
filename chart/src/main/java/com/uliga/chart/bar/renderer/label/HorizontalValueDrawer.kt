@@ -7,13 +7,10 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import com.uliga.chart.bar.renderer.label.HorizontalValueDrawer.DrawLocation.Inside
-import com.uliga.chart.bar.renderer.label.HorizontalValueDrawer.DrawLocation.Outside
-import com.uliga.chart.bar.renderer.label.HorizontalValueDrawer.DrawLocation.XAxis
 import com.uliga.chart.common.utils.toLegacyInt
 
 class HorizontalValueDrawer(
-    private val drawLocation: DrawLocation = Inside,
+    private val drawLocation: DrawLocation = DrawLocation.Inside,
     private val labelTextSize: TextUnit = 12.sp,
     private val labelTextColor: Color = Color.Gray
 ) : LabelDrawer {
@@ -24,15 +21,15 @@ class HorizontalValueDrawer(
     }
 
     override fun requiredAboveBarHeight(drawScope: DrawScope): Float = when (drawLocation) {
-        Outside -> (3f / 2f) * labelTextHeight(drawScope)
-        Inside,
-        XAxis -> 0f
+        DrawLocation.Outside -> (3f / 2f) * labelTextHeight(drawScope)
+        DrawLocation.Inside,
+        DrawLocation.XAxis -> 0f
     }
 
     override fun requiredXAxisHeight(drawScope: DrawScope): Float = when (drawLocation) {
-        XAxis -> labelTextHeight(drawScope)
-        Inside,
-        Outside -> 0f
+        DrawLocation.XAxis -> labelTextHeight(drawScope)
+        DrawLocation.Inside,
+        DrawLocation.Outside -> 0f
     }
 
     override fun drawLabel(
@@ -42,21 +39,20 @@ class HorizontalValueDrawer(
         barArea: Rect,
         xAxisArea: Rect
     ) = with(drawScope) {
-        val xCenter = barArea.left + (barArea.width / 2)
+        val yCenter = barArea.bottom - (barArea.height / 1.5f)
 
-        val yCenter = when (drawLocation) {
-            Inside -> (barArea.top + barArea.bottom) / 2
-            Outside -> (barArea.top) - labelTextSize.toPx() / 2
-            XAxis -> barArea.bottom + labelTextHeight(drawScope)
+
+        val xCenter = when (drawLocation) {
+            DrawLocation.Inside -> (barArea.top + barArea.bottom) / 2
+
+            DrawLocation.Outside -> (barArea.top) - labelTextSize.toPx() / 2
+            DrawLocation.XAxis -> {
+                barArea.left - labelTextHeight(drawScope) - 10f
+            }
+
         }
 
         canvas.nativeCanvas.drawText(label, xCenter, yCenter, paint(drawScope))
-        canvas.nativeCanvas.drawText(
-            label,
-            xCenter,
-            yCenter + labelTextHeight(drawScope),
-            paint(drawScope)
-        )
     }
 
     override fun drawLabelWithValue(
@@ -66,23 +62,7 @@ class HorizontalValueDrawer(
         value: Float,
         barArea: Rect,
         xAxisArea: Rect
-    ) = with(drawScope) {
-        val xCenter = barArea.left + (barArea.width / 2)
-
-        val yCenter = when (drawLocation) {
-            Inside -> (barArea.top + barArea.bottom) / 2
-            Outside -> (barArea.top) - labelTextSize.toPx() / 2
-            XAxis -> barArea.bottom + labelTextHeight(drawScope)
-        }
-
-        canvas.nativeCanvas.drawText("${value.toInt()}원", xCenter, yCenter, paint(drawScope))
-        canvas.nativeCanvas.drawText(
-            label,
-            xCenter,
-            yCenter + labelTextHeight(drawScope),
-            paint(drawScope)
-        )
-    }
+    ) {}
 
     private fun labelTextHeight(drawScope: DrawScope) = with(drawScope) {
         _labelTextArea ?: ((3f / 2f) * labelTextSize.toPx())

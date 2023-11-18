@@ -97,11 +97,11 @@ fun HomeScreen(
     val context = LocalContext.current
     val state = viewModel.collectAsState().value
 
-//    viewModel.initializeBaseInfo(
-//        id = mainUiState.id,
-//        currentAccountInfo = mainUiState.currentAccountInfo,
-//        member = mainUiState.member
-//    )
+    viewModel.initializeBaseInfo(
+        id = mainUiState.id,
+        currentAccountInfo = mainUiState.currentAccountInfo,
+        member = mainUiState.member
+    )
 
     val currentDate = LocalDate.now()
     val currentDay = currentDate.dayOfMonth

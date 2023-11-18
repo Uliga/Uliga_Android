@@ -8,7 +8,7 @@ import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.Success200
 import com.uliga.chart.bar.BarChartData
 import com.uliga.chart.bar.BarChartData.Bar
-import com.uliga.chart.bar.renderer.label.HorizontalValueDrawer
+import com.uliga.chart.bar.renderer.label.VerticalValueDrawer
 
 class HorizontalBarChartDataModel(
     recordCurrentMonthLabel: String,
@@ -18,7 +18,7 @@ class HorizontalBarChartDataModel(
     recordBeforeTwoMonthLabel: String,
     recordBeforeTwoMonthValue: Long
 ) {
-    var labelDrawer: HorizontalValueDrawer by mutableStateOf(HorizontalValueDrawer(drawLocation = HorizontalValueDrawer.DrawLocation.XAxis))
+    var labelDrawer: VerticalValueDrawer by mutableStateOf(VerticalValueDrawer(drawLocation = VerticalValueDrawer.DrawLocation.XAxis))
         private set
     var barChartData by mutableStateOf(
         BarChartData(

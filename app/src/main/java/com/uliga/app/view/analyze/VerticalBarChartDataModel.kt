@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color.Companion.White
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.chart.bar.BarChartData
 import com.uliga.chart.bar.BarChartData.Bar
-import com.uliga.chart.bar.renderer.label.VerticalValueDrawer
+import com.uliga.chart.bar.renderer.label.HorizontalValueDrawer
 import com.uliga.domain.model.accountBook.analyze.byWeek.AccountBookAnalyzeRecordByWeek
 import com.uliga.domain.model.accountBook.analyze.byWeek.AccountBookAnalyzeWeeklySum
 
@@ -18,7 +18,7 @@ class VerticalBarChartDataModel(
     accountBookAnalyzeRecordByWeekList: List<AccountBookAnalyzeWeeklySum>
 ) {
 
-    var labelDrawer: VerticalValueDrawer by mutableStateOf(VerticalValueDrawer(drawLocation = VerticalValueDrawer.DrawLocation.XAxis))
+    var labelDrawer: HorizontalValueDrawer by mutableStateOf(HorizontalValueDrawer(drawLocation = HorizontalValueDrawer.DrawLocation.XAxis))
         private set
     var barChartData by mutableStateOf(
         BarChartData(
