@@ -68,7 +68,6 @@ fun AnalyzeScreen(
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f,
-        pageCount = { 2 }
     )
 
     val pullRefreshState = rememberPullRefreshState(
@@ -196,7 +195,7 @@ fun AnalyzeTabsContent(
     mainUiState: MainUiState,
     viewModel: AnalyzeViewModel
 ) {
-    HorizontalPager(state = pagerState,) { page ->
+    HorizontalPager(state = pagerState, pageCount = 2) { page ->
         when (page) {
             0 -> AnalyzeByTimeScreen(viewModel)
             1 -> AnalyzeByCategoryScreen(viewModel)

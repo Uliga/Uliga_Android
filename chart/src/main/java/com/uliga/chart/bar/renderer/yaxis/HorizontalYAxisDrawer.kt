@@ -4,8 +4,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.drawscope.DrawScope
 
-typealias LabelFormatter = (value: Float) -> String
-
 class HorizontalYAxisDrawer : YAxisDrawer {
 
     override fun drawAxisLine(

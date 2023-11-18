@@ -263,7 +263,7 @@ fun FinanceScreen(
                                 accountBookAssetMonth = state.currentAccountBookAsset,
                                 onClick = {
                                     selectedDateState =
-                                        "${it.date.monthValue}월 ${it.date.dayOfMonth}일"
+                                        "${it.date.year}년 ${it.date.monthValue}월 ${it.date.dayOfMonth}일"
                                     viewModel.getAccountBookDayTransaction(
                                         it.date.year,
                                         it.date.monthValue,

@@ -1,6 +1,5 @@
 package com.uliga.chart.bar
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
@@ -12,13 +11,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import com.uliga.chart.bar.BarChartUtils.axisAreas
-import com.uliga.chart.bar.BarChartUtils.barDrawableArea
 import com.uliga.chart.bar.BarChartUtils.forEachWithVerticalArea
 import com.uliga.chart.bar.BarChartUtils.verticalBarDrawableArea
 import com.uliga.chart.bar.renderer.bar.BarDrawer
 import com.uliga.chart.bar.renderer.bar.SimpleBarDrawer
+import com.uliga.chart.bar.renderer.label.HorizontalValueDrawer
 import com.uliga.chart.bar.renderer.label.LabelDrawer
-import com.uliga.chart.bar.renderer.label.VerticalValueDrawer
 import com.uliga.chart.bar.renderer.xaxis.VerticalXAxisDrawer
 import com.uliga.chart.bar.renderer.xaxis.XAxisDrawer
 import com.uliga.chart.bar.renderer.yaxis.VerticalYAxisDrawer
@@ -33,7 +31,7 @@ fun VerticalBarChart(
     barDrawer: BarDrawer = SimpleBarDrawer(),
     xAxisDrawer: XAxisDrawer = VerticalXAxisDrawer(),
     yAxisDrawer: YAxisDrawer = VerticalYAxisDrawer(),
-    labelDrawer: LabelDrawer = VerticalValueDrawer()
+    labelDrawer: LabelDrawer = HorizontalValueDrawer()
 ) {
     val transitionAnimation = remember(barChartData.bars) { Animatable(initialValue = 0f) }
 

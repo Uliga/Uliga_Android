@@ -15,7 +15,7 @@ import com.uliga.chart.bar.BarChartUtils.barDrawableArea
 import com.uliga.chart.bar.BarChartUtils.forEachWithArea
 import com.uliga.chart.bar.renderer.bar.BarDrawer
 import com.uliga.chart.bar.renderer.bar.SimpleBarDrawer
-import com.uliga.chart.bar.renderer.label.HorizontalValueDrawer
+import com.uliga.chart.bar.renderer.label.VerticalValueDrawer
 import com.uliga.chart.bar.renderer.label.LabelDrawer
 import com.uliga.chart.bar.renderer.xaxis.HorizontalXAxisDrawer
 import com.uliga.chart.bar.renderer.xaxis.XAxisDrawer
@@ -31,7 +31,7 @@ fun HorizontalBarChart(
   barDrawer: BarDrawer = SimpleBarDrawer(),
   xAxisDrawer: XAxisDrawer = HorizontalXAxisDrawer(),
   yAxisDrawer: YAxisDrawer = HorizontalYAxisDrawer(),
-  labelDrawer: LabelDrawer = HorizontalValueDrawer()
+  labelDrawer: LabelDrawer = VerticalValueDrawer()
 ) {
   val transitionAnimation = remember(barChartData.bars) { Animatable(initialValue = 0f) }
 
