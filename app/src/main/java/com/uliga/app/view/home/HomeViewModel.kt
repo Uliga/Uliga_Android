@@ -3,23 +3,32 @@ package com.uliga.app.view.home
 import android.util.Log
 import androidx.core.text.isDigitsOnly
 import com.uliga.app.base.BaseViewModel
-import com.uliga.app.view.accountBook.input.AccountBookInputSideEffect
-import com.uliga.domain.model.accountBook.analyze.byMonth.schedule.AccountBookAnalyzeFixedRecordByMonth
+import com.uliga.app.utils.ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE
+import com.uliga.app.utils.ToastMessages.ACCOUNT_BOOK_JOIN_SUCCESS
+import com.uliga.app.utils.ToastMessages.BUDGET_INPUT_CHECK_AGAIN
+import com.uliga.app.utils.ToastMessages.BUDGET_INPUT_MODIFY_SUCCESS
+import com.uliga.app.utils.ToastMessages.BUDGET_INPUT_RETRY
+import com.uliga.app.utils.ToastMessages.BUDGET_REGISTER_SUCCESS
+import com.uliga.app.utils.ToastMessages.FINANCE_SCHEDULE_DELETE_FAILURE
+import com.uliga.app.utils.ToastMessages.FINANCE_SCHEDULE_DELETE_SUCCESS
+import com.uliga.domain.model.accountBook.asset.AccountBookAsset
 import com.uliga.domain.model.accountBook.budget.AccountBookBudgetRequest
 import com.uliga.domain.model.accountBook.invitation.AccountBookInvitationReply
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
-import com.uliga.domain.model.member.Member
 import com.uliga.domain.usecase.accountbook.GetAccountBookMonthAssetUseCase
 import com.uliga.domain.usecase.accountbook.PatchAccountBookBudgetUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookBudgetUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookInvitationReplyUseCase
+import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookIdUseCase
+import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookNameUseCase
+import com.uliga.domain.usecase.accountbook.remote.GetCurrentAccountBookAssetUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookFixedRecordByMonthUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookRecordByDayUseCase
 import com.uliga.domain.usecase.financeSchedule.DeleteFinanceScheduleDetailUseCase
 import com.uliga.domain.usecase.financeSchedule.GetFinanceScheduleUseCase
 import com.uliga.domain.usecase.member.GetMemberUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -39,7 +48,10 @@ class HomeViewModel @Inject constructor(
     private val getMemberUseCase: GetMemberUseCase,
     private val postAccountBookInvitationReplyUseCase: PostAccountBookInvitationReplyUseCase,
     private val getAccountBookAnalyzeRecordByDayUseCase: GetAccountBookRecordByDayUseCase,
-    private val getAccountBookFixedRecordByMonthUseCase: GetAccountBookFixedRecordByMonthUseCase
+    private val getAccountBookFixedRecordByMonthUseCase: GetAccountBookFixedRecordByMonthUseCase,
+    private val fetchCurrentAccountBookIdUseCase: FetchCurrentAccountBookIdUseCase,
+    private val fetchCurrentAccountBookNameUseCase: FetchCurrentAccountBookNameUseCase,
+    private val getCurrentAccountBookAssetUseCase: GetCurrentAccountBookAssetUseCase
 ) : ContainerHost<HomeUiState, HomeSideEffect>, BaseViewModel() {
 
     override val container = container<HomeUiState, HomeSideEffect>(HomeUiState.empty())
@@ -48,35 +60,65 @@ class HomeViewModel @Inject constructor(
         initialize()
     }
 
-    fun initialize() = intent {
+    fun initialize() {
+        getFinanceSchedule()
+
+        observeCurrentAccountBookId()
+
+        observeCurrentAccountBookName()
+    }
+
+    fun observeCurrentAccountBookId() = intent {
         launch {
-            val currentDate = LocalDate.now()
-            getAccountBookMonthAsset(true, currentDate.year, currentDate.monthValue)
-            val beforeDate = currentDate.minusMonths(1)
-            getAccountBookMonthAsset(false, beforeDate.year, beforeDate.monthValue)
+            fetchCurrentAccountBookIdUseCase().collectLatest { accountBookId ->
+                updateAccountBookId(accountBookId)
 
-            getAccountBookAnalyzeRecordByDay(currentDate.year, currentDate.monthValue)
+                getMember()
 
-            getFinanceSchedule()
+                if (accountBookId == null) {
+                    postSideEffect(HomeSideEffect.ToastMessage(ACCOUNT_BOOK_INFO_GET_FAILURE))
+                    updateIsLoading(false)
+                    return@collectLatest
+                }
+
+                val currentDate = LocalDate.now()
+//                val beforeDate = currentDate.minusMonths(1)
+//                getAccountBookMonthAsset(
+//                    false,
+//                    beforeDate.year,
+//                    beforeDate.monthValue,
+//                    accountBookId
+//                )
+
+                getAccountBookAnalyzeRecordByDay(
+                    currentDate.year,
+                    currentDate.monthValue,
+                    accountBookId
+                )
+
+                getAccountBookFixedRecordByMonth()
+
+                observeCurrentAccountBookAsset()
+            }
         }
     }
 
-    fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
-        intent {
-            launch {
-                reduce {
-                    state.copy(
-                        id = id,
-                        currentAccountInfo = currentAccountInfo,
-                        member = member
-                    )
-                }
-
-                Log.d("initialize", "${id}, ${currentAccountInfo}, ${member}")
+    fun observeCurrentAccountBookAsset() = intent {
+        launch {
+            getCurrentAccountBookAssetUseCase().collectLatest {
+                updateCurrentAccountBookAsset(it)
             }
         }
+    }
+    fun observeCurrentAccountBookName() = intent {
+        launch {
+            fetchCurrentAccountBookNameUseCase().collectLatest { accountBookName ->
+                updateAccountBookName(accountBookName)
+            }
+        }
+    }
 
-    private fun getMember() = intent {
+    private suspend fun getMember() = intent {
         launch {
             getMemberUseCase()
                 .onSuccess {
@@ -89,25 +131,50 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getAccountBookAnalyzeRecordByDay(year: Int, month: Int) = intent {
-
+    private suspend fun getAccountBookMonthAsset(
+        isCurrent: Boolean,
+        year: Int,
+        month: Int,
+        accountBookId: Long
+    ) = intent {
         launch {
-            val currentAccountBookInfo = state.currentAccountInfo
-            if(currentAccountBookInfo == null) {
-                postSideEffect(HomeSideEffect.ToastMessage("사용자 정보를 가져오는데 실패했습니다."))
-                updateIsLoading(false)
-                return@launch
-            }
-            getAccountBookAnalyzeRecordByDayUseCase(currentAccountBookInfo.second, year, month)
-                .onSuccess {
-                    reduce {
+            getAccountBookMonthAssetUseCase(
+                accountBookId = accountBookId,
+                year = year,
+                month = month
+            ).onSuccess {
+                reduce {
+                    if (isCurrent) {
                         state.copy(
-                            accountBookAnalyzeRecordByDay = it
+                            currentMonthAccountBookAsset = it
+                        )
+                    } else {
+                        state.copy(
+                            beforeMonthAccountBookAsset = it
                         )
                     }
                 }
+            }
         }
     }
+
+    private suspend fun getAccountBookAnalyzeRecordByDay(
+        year: Int,
+        month: Int,
+        accountBookId: Long
+    ) =
+        intent {
+            launch {
+                getAccountBookAnalyzeRecordByDayUseCase(accountBookId, year, month)
+                    .onSuccess {
+                        reduce {
+                            state.copy(
+                                accountBookAnalyzeRecordByDay = it
+                            )
+                        }
+                    }
+            }
+        }
 
     fun postAccountBookInvitationReply(
         id: Long,
@@ -128,38 +195,9 @@ class HomeViewModel @Inject constructor(
                     getMember()
 
                     postSideEffect(
-                        HomeSideEffect.ToastMessage("가계부에 합류하였습니다!")
+                        HomeSideEffect.ToastMessage(ACCOUNT_BOOK_JOIN_SUCCESS)
                     )
                 }
-        }
-    }
-
-    private fun getAccountBookMonthAsset(isCurrent: Boolean, year: Int, month: Int) = intent {
-        launch {
-
-            val currentAccountBookInfo = state.currentAccountInfo
-            if(currentAccountBookInfo == null) {
-                postSideEffect(HomeSideEffect.ToastMessage("사용자 정보를 가져오는데 실패했습니다."))
-                updateIsLoading(false)
-                return@launch
-            }
-            getAccountBookMonthAssetUseCase(
-                accountBookId = currentAccountBookInfo.second,
-                year = year,
-                month = month
-            ).onSuccess {
-                reduce {
-                    if (isCurrent) {
-                        state.copy(
-                            currentMonthAccountBookAsset = it
-                        )
-                    } else {
-                        state.copy(
-                            beforeMonthAccountBookAsset = it
-                        )
-                    }
-                }
-            }
         }
     }
 
@@ -185,15 +223,23 @@ class HomeViewModel @Inject constructor(
                                     financeSchedules = it
                                 )
                             }
-                            postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 삭제하는데 성공했습니다."))
+                            postSideEffect(
+                                HomeSideEffect.ToastMessage(
+                                    FINANCE_SCHEDULE_DELETE_SUCCESS
+                                )
+                            )
 
                         }
                         .onFailure {
-                            postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
+                            postSideEffect(
+                                HomeSideEffect.ToastMessage(
+                                    FINANCE_SCHEDULE_DELETE_FAILURE
+                                )
+                            )
                         }
                 }
                 .onFailure {
-                    postSideEffect(HomeSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
+                    postSideEffect(HomeSideEffect.ToastMessage(FINANCE_SCHEDULE_DELETE_FAILURE))
                 }
         }
     }
@@ -213,27 +259,27 @@ class HomeViewModel @Inject constructor(
 
     fun postAccountBookBudget(year: Long, month: Long, value: String) = intent {
         launch {
-            val currentAccountBookInfo = state.currentAccountInfo
-            if(currentAccountBookInfo == null) {
-                postSideEffect(HomeSideEffect.ToastMessage("사용자 정보를 가져오는데 실패했습니다."))
+            val currentAccountBookId = state.accountBookId
+            if (currentAccountBookId == null) {
+                postSideEffect(HomeSideEffect.ToastMessage(ACCOUNT_BOOK_INFO_GET_FAILURE))
                 updateIsLoading(false)
                 return@launch
             }
 
-            if(value.isEmpty()) {
-                postSideEffect(HomeSideEffect.ToastMessage("예산을 입력해주세요."))
+            if (value.isEmpty()) {
+                postSideEffect(HomeSideEffect.ToastMessage(BUDGET_INPUT_RETRY))
                 updateIsLoading(false)
                 return@launch
             }
 
-            if(!value.isDigitsOnly() || value.toLong() <= 0L) {
-                postSideEffect(HomeSideEffect.ToastMessage("예산을 다시 확인해주세요."))
+            if (!value.isDigitsOnly() || value.toLong() <= 0L) {
+                postSideEffect(HomeSideEffect.ToastMessage(BUDGET_INPUT_CHECK_AGAIN))
                 updateIsLoading(false)
                 return@launch
             }
 
             val accountBookBudgetRequest = AccountBookBudgetRequest(
-                id = currentAccountBookInfo.second,
+                id = currentAccountBookId,
                 year = year,
                 month = month,
                 value = value.toLong(),
@@ -243,10 +289,14 @@ class HomeViewModel @Inject constructor(
             postAccountBookBudgetUseCase(accountBookBudgetRequest)
                 .onSuccess {
 
-                    runBlocking {
-                        getAccountBookMonthAsset(true, year.toInt(), month.toInt())
-                    }
-                    postSideEffect(HomeSideEffect.ToastMessage("예산을 등록하는데 성공했습니다."))
+                    getAccountBookMonthAsset(
+                        true,
+                        year.toInt(),
+                        month.toInt(),
+                        currentAccountBookId
+                    )
+
+                    postSideEffect(HomeSideEffect.ToastMessage(BUDGET_REGISTER_SUCCESS))
                     postSideEffect(HomeSideEffect.FinishBudgetSettingBottomSheet)
                 }
         }
@@ -254,27 +304,27 @@ class HomeViewModel @Inject constructor(
 
     fun patchAccountBookBudget(year: Long, month: Long, value: String) = intent {
         launch {
-            val currentAccountBookInfo = state.currentAccountInfo
-            if(currentAccountBookInfo == null) {
-                postSideEffect(HomeSideEffect.ToastMessage("사용자 정보를 가져오는데 실패했습니다."))
+            val currentAccountBookId = state.accountBookId
+            if (currentAccountBookId == null) {
+                postSideEffect(HomeSideEffect.ToastMessage(ACCOUNT_BOOK_INFO_GET_FAILURE))
                 updateIsLoading(false)
                 return@launch
             }
 
-            if(value.isEmpty()) {
-                postSideEffect(HomeSideEffect.ToastMessage("예산을 입력해주세요."))
+            if (value.isEmpty()) {
+                postSideEffect(HomeSideEffect.ToastMessage(BUDGET_INPUT_RETRY))
                 updateIsLoading(false)
                 return@launch
             }
 
-            if(!value.isDigitsOnly() || value.toLong() <= 0L) {
-                postSideEffect(HomeSideEffect.ToastMessage("예산을 다시 확인해주세요."))
+            if (!value.isDigitsOnly() || value.toLong() <= 0L) {
+                postSideEffect(HomeSideEffect.ToastMessage(BUDGET_INPUT_CHECK_AGAIN))
                 updateIsLoading(false)
                 return@launch
             }
 
             val accountBookBudgetRequest = AccountBookBudgetRequest(
-                id = currentAccountBookInfo.second,
+                id = currentAccountBookId,
                 year = year,
                 month = month,
                 value = value.toLong(),
@@ -284,10 +334,14 @@ class HomeViewModel @Inject constructor(
             patchAccountBookBudgetUseCase(accountBookBudgetRequest)
                 .onSuccess {
 
-                    runBlocking {
-                        getAccountBookMonthAsset(true, year.toInt(), month.toInt())
-                    }
-                    postSideEffect(HomeSideEffect.ToastMessage("예산을 수정하는데 성공했습니다."))
+                    getAccountBookMonthAsset(
+                        true,
+                        year.toInt(),
+                        month.toInt(),
+                        currentAccountBookId
+                    )
+
+                    postSideEffect(HomeSideEffect.ToastMessage(BUDGET_INPUT_MODIFY_SUCCESS))
                     postSideEffect(
                         HomeSideEffect.FinishBudgetSettingBottomSheet
                     )
@@ -295,11 +349,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getAccountBookFixedRecordByMonth() = intent {
+    fun getAccountBookFixedRecordByMonth() = intent {
         launch {
-            val currentAccountBookInfo = state.currentAccountInfo ?: return@launch
+            val currentAccountBookId = state.accountBookId
+            if (currentAccountBookId == null) {
+                postSideEffect(HomeSideEffect.ToastMessage(ACCOUNT_BOOK_INFO_GET_FAILURE))
+                updateIsLoading(false)
+                return@launch
+            }
 
-            getAccountBookFixedRecordByMonthUseCase(currentAccountBookInfo.second)
+            getAccountBookFixedRecordByMonthUseCase(currentAccountBookId)
                 .onSuccess {
                     reduce {
                         state.copy(
@@ -308,6 +367,36 @@ class HomeViewModel @Inject constructor(
                     }
                 }
 
+        }
+    }
+
+    suspend fun updateAccountBookId(accountBookId: Long?) = intent {
+        launch {
+            reduce {
+                state.copy(
+                    accountBookId = accountBookId
+                )
+            }
+        }
+    }
+
+    suspend fun updateAccountBookName(accountBookName: String?) = intent {
+        launch {
+            reduce {
+                state.copy(
+                    accountBookName = accountBookName
+                )
+            }
+        }
+    }
+
+    suspend fun updateCurrentAccountBookAsset(accountBookAsset: AccountBookAsset?) = intent {
+        launch {
+            reduce {
+                state.copy(
+                    currentMonthAccountBookAsset = accountBookAsset
+                )
+            }
         }
     }
 

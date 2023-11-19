@@ -11,9 +11,9 @@ import javax.annotation.concurrent.Immutable
 @Immutable
 data class HomeUiState(
     val isLoading: Boolean = false,
-    val exception: Exception? = null,
     val id: Long? = null,
-    val currentAccountInfo: Pair<String, Long>? = null,
+    val accountBookId: Long? = null,
+    val accountBookName: String? = null,
     val member: Member? = null,
     val financeSchedules: FinanceSchedules? = null,
     val selectedSchedule: FinanceSchedule? = null,
@@ -26,10 +26,10 @@ data class HomeUiState(
     companion object {
         fun empty() = HomeUiState(
             isLoading = false,
-            exception = null,
             id = null,
             member = null,
-            currentAccountInfo = null,
+            accountBookId = null,
+            accountBookName = null,
             financeSchedules = null,
             currentMonthAccountBookAsset = null,
             accountBookAnalyzeRecordByDay = null,
