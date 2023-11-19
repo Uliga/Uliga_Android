@@ -43,20 +43,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kizitonwose.calendar.compose.HorizontalCalendar
 import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.daysOfWeek
-import com.uliga.app.view.component.toast.TopDownToast
+import com.uliga.app.ext.CircularProgress
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
-import com.uliga.app.ext.CircularProgress
 import com.uliga.app.utils.TestTags
-import com.uliga.app.view.component.dialog.DeleteAlertDialog
 import com.uliga.app.view.accountBook.input.AccountBookInputActivity
 import com.uliga.app.view.component.AddingButton
 import com.uliga.app.view.component.Day
 import com.uliga.app.view.component.DaysOfWeekTitle
 import com.uliga.app.view.component.VerticalSpacer
+import com.uliga.app.view.component.dialog.DeleteAlertDialog
 import com.uliga.app.view.component.item.TransactionItem
-import com.uliga.app.view.main.MainUiState
+import com.uliga.app.view.component.toast.TOAST_DURATION_MILLIS
+import com.uliga.app.view.component.toast.TOAST_END_POSITION
+import com.uliga.app.view.component.toast.TOAST_START_POSITION
+import com.uliga.app.view.component.toast.TopDownToast
 import kotlinx.coroutines.runBlocking
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -67,21 +69,10 @@ import java.time.YearMonth
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FinanceScreen(
-    mainUiState: MainUiState,
     viewModel: FinanceViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val state = viewModel.collectAsState().value
-
-    viewModel.initializeBaseInfo(
-        id = mainUiState.id,
-        currentAccountInfo = mainUiState.currentAccountInfo,
-        member = mainUiState.member
-    )
-
-    /**
-     * Date (need refactoring)
-     */
 
     val currentDate = LocalDate.now()
 
@@ -100,12 +91,19 @@ fun FinanceScreen(
     var selectedDateState by
     remember { mutableStateOf("${currentDate.year}년 ${currentDate.monthValue}월 ${currentDate.dayOfMonth}일") }
 
-    LaunchedEffect(key1 = calendarState.firstVisibleMonth) {
-        viewModel.getAccountBookMonthTransaction(
-            calendarState.firstVisibleMonth.yearMonth.year,
-            calendarState.firstVisibleMonth.yearMonth.monthValue
-        )
+    if (state.accountBookId != null) {
+        LaunchedEffect(key1 = calendarState.firstVisibleMonth) {
+            viewModel.getAccountBookMonthTransaction(
+                calendarState.firstVisibleMonth.yearMonth.year,
+                calendarState.firstVisibleMonth.yearMonth.monthValue
+            )
 
+            viewModel.getAccountBookDayTransaction(
+                currentDate.year,
+                currentDate.monthValue,
+                currentDate.dayOfMonth
+            )
+        }
     }
 
     val launcher = rememberLauncherForActivityResult(
@@ -113,21 +111,13 @@ fun FinanceScreen(
         onResult = {
             when (it.resultCode) {
                 Activity.RESULT_OK -> {
-//                    viewModel.getAccountBookMonthTransaction(
-//                        calendarState.firstVisibleMonth.yearMonth.year,
-//                        calendarState.firstVisibleMonth.yearMonth.monthValue
-//                    )
-//                    viewModel.getAccountBookDayTransaction(
-//                        calendarState.firstVisibleMonth.yearMonth.year,
-//                        calendarState.firstVisibleMonth.yearMonth.monthValue,
-//                        selectedDateState.split("월 ")[1].replace("일", "").toInt()
-//                    )
-
                     viewModel.getAccountBookTransaction(
                         calendarState.firstVisibleMonth.yearMonth.year,
                         calendarState.firstVisibleMonth.yearMonth.monthValue,
                         selectedDateState.split("월 ")[1].replace("일", "").toInt()
                     )
+
+                    viewModel.getAccountBookAsset()
                 }
             }
         })
@@ -153,14 +143,14 @@ fun FinanceScreen(
     }
 
     val toastYOffset by animateFloatAsState(
-        targetValue = if (isToastAnimating) 25f else -100f,
-        animationSpec = tween(durationMillis = 1500),
+        targetValue = if (isToastAnimating) TOAST_END_POSITION else TOAST_START_POSITION,
+        animationSpec = tween(durationMillis = TOAST_DURATION_MILLIS),
         finishedListener = { endValue ->
-            if (endValue == 25f) {
+            if (endValue == TOAST_END_POSITION) {
                 isToastAnimating = false
             }
         },
-        label = ""
+        label = "",
     )
 
     /**
@@ -194,39 +184,37 @@ fun FinanceScreen(
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading,
         onRefresh = {
-            viewModel.initializeBaseInfo(
-                id = mainUiState.id,
-                currentAccountInfo = mainUiState.currentAccountInfo,
-                member = mainUiState.member
-            )
+
+
         }
     )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .pullRefresh(pullRefreshState),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Scaffold(
-            topBar = {
-                CenterAlignedTopAppBar(
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = White
-                    ),
-                    title = {
-                        Text(
-                            text = "가계부",
-                            color = Grey700,
-                            style = UligaTheme.typography.title2,
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1,
-                        )
-                    },
-                    modifier = Modifier.shadow(5.dp)
-                )
-            }
-        ) { paddingValue ->
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = White
+                ),
+                title = {
+                    Text(
+                        text = "가계부",
+                        color = Grey700,
+                        style = UligaTheme.typography.title2,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                    )
+                },
+                modifier = Modifier.shadow(5.dp)
+            )
+        }
+    ) { paddingValue ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pullRefresh(pullRefreshState),
+            contentAlignment = Alignment.TopCenter
+        ) {
             LazyColumn(
                 modifier = Modifier
                     .padding(paddingValue)
@@ -323,14 +311,12 @@ fun FinanceScreen(
                     )
                 }
             }
+
+            PullRefreshIndicator(
+                refreshing = state.isLoading,
+                state = pullRefreshState
+            )
         }
-
-
-        PullRefreshIndicator(
-            refreshing = state.isLoading,
-            state = pullRefreshState
-        )
-
     }
 
     if (deleteAlertDialogVisibleState) {

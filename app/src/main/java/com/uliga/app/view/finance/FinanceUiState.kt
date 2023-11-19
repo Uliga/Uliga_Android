@@ -10,7 +10,7 @@ import com.uliga.domain.model.member.Member
 data class FinanceUiState(
     val isLoading: Boolean = false,
     val id: Long? = null,
-    val currentAccountInfo: Pair<String, Long>? = null,
+    val accountBookId: Long? = null,
     val member: Member? = null,
     val currentAccountBookAsset: AccountBookAssetMonth? = null,
     val currentAccountBookAssetDay: AccountBookAssetDay? = null,
@@ -20,8 +20,8 @@ data class FinanceUiState(
         fun empty() = FinanceUiState(
             isLoading = false,
             id = null,
-            currentAccountInfo = null,
             member = null,
+            accountBookId = null,
             currentAccountBookAsset = null,
             currentAccountBookAssetDay = null,
             currentAccountBookTransaction = null
