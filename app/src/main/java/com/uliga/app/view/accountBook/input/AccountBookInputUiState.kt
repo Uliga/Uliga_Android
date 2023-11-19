@@ -6,13 +6,13 @@ import androidx.compose.runtime.Immutable
 data class AccountBookInputUiState(
     val isLoading: Boolean = false,
     val id: Long? = null,
-    val currentAccountInfo: Pair<String, Long>? = null
+    val accountBookId: Long? = null
 ) {
     companion object {
         fun empty() = AccountBookInputUiState(
             isLoading = false,
             id = null,
-            currentAccountInfo = null
+            accountBookId = null
         )
     }
 }
