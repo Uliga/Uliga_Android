@@ -10,9 +10,8 @@ import com.uliga.domain.model.member.Member
 @Immutable
 data class AnalyzeUiState(
     val isLoading: Boolean = false,
-    val exception: Exception? = null,
     val id: Long? = null,
-    val currentAccountInfo: Pair<String, Long>? = null,
+    val accountBookId: Long? = null,
     val member: Member? = null,
     val accountBookAnalyzeByMonthForCompare: AccountBookAnalyzeByMonthForCompare? = null,
     val accountBookAnalyzeRecordByWeek: AccountBookAnalyzeRecordByWeek? = null,
@@ -22,9 +21,8 @@ data class AnalyzeUiState(
     companion object {
         fun empty() = AnalyzeUiState(
             isLoading = false,
-            exception = null,
             id = null,
-            currentAccountInfo = null,
+            accountBookId = null,
             member = null,
             accountBookAnalyzeByMonthForCompare = null,
             accountBookAnalyzeRecordByWeek = null,

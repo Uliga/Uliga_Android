@@ -49,20 +49,8 @@ import org.orbitmvi.orbit.compose.collectAsState
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun AnalyzeScreen(
-    mainUiState: MainUiState,
     viewModel: AnalyzeViewModel = hiltViewModel()
 ) {
-
-    /**
-     * Initialize
-     */
-
-    viewModel.initializeBaseInfo(
-        id = mainUiState.id,
-        currentAccountInfo = mainUiState.currentAccountInfo,
-        member = mainUiState.member
-    )
-
     val state = viewModel.collectAsState().value
 
     val pagerState = rememberPagerState(
@@ -73,11 +61,7 @@ fun AnalyzeScreen(
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading,
         onRefresh = {
-            viewModel.initializeBaseInfo(
-                id = mainUiState.id,
-                currentAccountInfo = mainUiState.currentAccountInfo,
-                member = mainUiState.member
-            )
+            viewModel.initialize()
         }
     )
 
@@ -109,7 +93,6 @@ fun AnalyzeScreen(
             AnalyzeTabs(pagerState = pagerState)
             AnalyzeTabsContent(
                 pagerState = pagerState,
-                mainUiState = mainUiState,
                 viewModel = viewModel
             )
 
@@ -192,7 +175,6 @@ fun AnalyzeTabs(pagerState: PagerState) {
 @Composable
 fun AnalyzeTabsContent(
     pagerState: PagerState,
-    mainUiState: MainUiState,
     viewModel: AnalyzeViewModel
 ) {
     HorizontalPager(state = pagerState, pageCount = 2) { page ->
