@@ -110,16 +110,16 @@ fun MainNavigationComponent(
             Modifier.padding(innerPadding)
         ) {
             composable(MainRoute.HOME.route) {
-                HomeScreen(mainUiState = state)
+                HomeScreen()
             }
             composable(MainRoute.FINANCE.route) {
-                FinanceScreen(mainUiState = state)
+                FinanceScreen()
             }
             composable(MainRoute.ANALYZE.route) {
-                AnalyzeScreen(mainUiState = state)
+                AnalyzeScreen()
             }
             composable(MainRoute.PROFILE.route) {
-                ProfileScreen(mainUiState = state)
+                ProfileScreen()
             }
         }
     }

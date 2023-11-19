@@ -13,6 +13,14 @@ android {
     buildToolsVersion = App.buildTools
 
     defaultConfig {
+
+        configurations.all {
+            resolutionStrategy {
+                force("androidx.emoji2:emoji2-views-helper:1.3.0")
+                force("androidx.emoji2:emoji2:1.3.0")
+            }
+        }
+
         applicationId = "com.uliga.app"
         minSdk = App.minSdk
         targetSdk = App.targetSdk
@@ -112,9 +120,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     // Instrumentation tests
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.37")
-    androidTestImplementation("androidx.test:runner:1.5.0")
-//    implementation("androidx.compose.ui:ui-test-junit4-android:1.5.4")
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4-android:1.5.4")
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.37")
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.37")
 }

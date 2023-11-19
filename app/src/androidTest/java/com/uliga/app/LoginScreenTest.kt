@@ -69,14 +69,7 @@ class LoginScreenTest {
                     startDestination = MainRoute.HOME.route,
                 ) {
                     composable(MainRoute.HOME.route) {
-                        HomeScreen(
-                            mainUiState = MainUiState(
-                                isLoading = false,
-                                id = 1,
-                                currentAccountInfo = Pair("ss", 1),
-                                member = null
-                            )
-                        )
+                        HomeScreen()
                     }
                 }
             }

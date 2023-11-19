@@ -19,12 +19,16 @@ import com.uliga.domain.model.accountBook.invitation.AccountBookInvitationReply
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionIds
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionResponse
+import kotlinx.coroutines.flow.Flow
 
 interface AccountBookRepository {
+
 
     /**
      * Remote
      */
+
+    val accountBookAsset: Flow<AccountBookAsset?>
 
     suspend fun getAccountBooks(): Result<AccountBooks>
 
@@ -98,6 +102,10 @@ interface AccountBookRepository {
     /**
      * Local
      */
+
+    val accountBookId: Flow<Long?>
+
+    val accountBookName: Flow<String?>
 
     suspend fun updateCurrentAccountBookName(accountBookName: String): Result<Unit>
 

@@ -1,8 +1,8 @@
 package com.uliga.app.view.main
 
 import com.uliga.app.base.BaseViewModel
+import com.uliga.domain.usecase.accountbook.GetAccountBookMonthAssetUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
-import com.uliga.domain.usecase.member.GetMemberUseCase
 import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -11,13 +11,14 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val fetchIdUseCase: FetchIdUseCase,
     private val fetchCurrentAccountBookInfoUseCase: FetchCurrentAccountBookInfoUseCase,
-    private val getMemberUseCase: GetMemberUseCase
+    private val getAccountBookMonthAssetUseCase: GetAccountBookMonthAssetUseCase
 ) : ContainerHost<MainUiState, MainSideEffect>, BaseViewModel() {
     override val container = container<MainUiState, MainSideEffect>(
         MainUiState.empty()
@@ -26,11 +27,13 @@ class MainViewModel @Inject constructor(
     init {
         fetchCurrentAccountBookInfo()
         fetchId()
-        getMember()
     }
 
     private fun fetchCurrentAccountBookInfo() = intent {
         launch {
+
+            val currentDate = LocalDate.now()
+
             fetchCurrentAccountBookInfoUseCase()
                 .onSuccess {
                     reduce {
@@ -38,6 +41,12 @@ class MainViewModel @Inject constructor(
                             currentAccountInfo = it
                         )
                     }
+
+                    getAccountBookMonthAssetUseCase(
+                        accountBookId = it.second,
+                        month = currentDate.monthValue,
+                        year = currentDate.year
+                    )
                 }
         }
     }
@@ -52,17 +61,6 @@ class MainViewModel @Inject constructor(
                 }
             }
 
-    }
-
-    private fun getMember() = intent {
-        getMemberUseCase()
-            .onSuccess {
-                reduce {
-                    state.copy(
-                        member = it
-                    )
-                }
-            }
     }
 
     override fun onShowErrorToast(message: String) = intent {

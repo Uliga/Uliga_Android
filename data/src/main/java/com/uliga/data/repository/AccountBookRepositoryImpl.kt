@@ -40,12 +40,28 @@ import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionIds
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionResponse
 import com.uliga.domain.repository.AccountBookRepository
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 
 class AccountBookRepositoryImpl @Inject constructor(
     private val remote: AccountBookRemoteDataSource,
     private val local: AccountBookLocalDataSource
 ) : AccountBookRepository {
+
+    /**
+     * Remote
+     */
+
+    private val _accountBookAsset = MutableSharedFlow<AccountBookAsset?>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    override val accountBookAsset: Flow<AccountBookAsset?>
+        get() = _accountBookAsset
+
     override suspend fun getAccountBooks(): Result<AccountBooks> {
         return runCatching {
             remote.getAccountBooks().toDomain()
@@ -84,6 +100,10 @@ class AccountBookRepositoryImpl @Inject constructor(
     ): Result<AccountBookAsset> {
         return runCatching {
             remote.getAccountBookMonthAsset(accountBookId, year, month).toDomain()
+        }.onSuccess {
+            _accountBookAsset.emit(it)
+        }.onFailure {
+            _accountBookAsset.emit(null)
         }
     }
 
@@ -183,6 +203,27 @@ class AccountBookRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Local
+     */
+
+    private val _accountBookId = MutableSharedFlow<Long?>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    override val accountBookId: Flow<Long?>
+        get() = _accountBookId
+
+
+    private val _accountBookName = MutableSharedFlow<String?>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+
+    override val accountBookName: Flow<String?>
+        get() = _accountBookName
+
     override suspend fun updateCurrentAccountBookName(accountBookName: String): Result<Unit> {
         return runCatching {
             local.updateCurrentAccountBookName(accountBookName)
@@ -192,6 +233,10 @@ class AccountBookRepositoryImpl @Inject constructor(
     override suspend fun getCurrentAccountBookName(): Result<String> {
         return runCatching {
             local.getCurrentAccountBookName()
+        }.onSuccess {
+            _accountBookName.emit(it)
+        }.onFailure {
+            _accountBookName.emit(null)
         }
     }
 
@@ -204,6 +249,10 @@ class AccountBookRepositoryImpl @Inject constructor(
     override suspend fun getCurrentAccountBookId(): Result<Long> {
         return runCatching {
             local.getCurrentAccountBookId()
+        }.onSuccess {
+            _accountBookId.emit(it)
+        }.onFailure {
+            _accountBookId.emit(null)
         }
     }
 }
