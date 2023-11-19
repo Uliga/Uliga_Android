@@ -50,21 +50,21 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.uliga.app.BuildConfig
 import com.uliga.app.R
-import com.uliga.app.view.component.toast.TOAST_DURATION_MILLIS
-import com.uliga.app.view.component.toast.TOAST_END_POSITION
-import com.uliga.app.view.component.toast.TOAST_START_POSITION
-import com.uliga.app.view.component.toast.TopDownToast
+import com.uliga.app.ext.CircularProgress
 import com.uliga.app.ui.theme.Grey100
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
-import com.uliga.app.ext.CircularProgress
-import com.uliga.app.view.component.dialog.DeleteAlertDialog
 import com.uliga.app.view.auth.AuthActivity
 import com.uliga.app.view.component.HorizontalSpacer
 import com.uliga.app.view.component.OneThicknessDivider
 import com.uliga.app.view.component.VerticalSpacer
+import com.uliga.app.view.component.dialog.DeleteAlertDialog
+import com.uliga.app.view.component.toast.TOAST_DURATION_MILLIS
+import com.uliga.app.view.component.toast.TOAST_END_POSITION
+import com.uliga.app.view.component.toast.TOAST_START_POSITION
+import com.uliga.app.view.component.toast.TopDownToast
 import com.uliga.app.view.main.MainActivity
 import com.uliga.app.view.main.MainUiState
 import org.orbitmvi.orbit.compose.collectAsState
@@ -74,22 +74,10 @@ import org.orbitmvi.orbit.compose.collectSideEffect
 @SuppressLint("NewApi")
 @Composable
 fun ProfileScreen(
-    mainUiState: MainUiState,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
-
-    /**
-     * Initialize
-     */
-
     val context = LocalContext.current
     val state = viewModel.collectAsState().value
-
-    viewModel.initializeBaseInfo(
-        id = mainUiState.id,
-        currentAccountInfo = mainUiState.currentAccountInfo,
-        member = mainUiState.member
-    )
 
     /**
      * Toast Message
@@ -154,11 +142,7 @@ fun ProfileScreen(
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading,
         onRefresh = {
-            viewModel.initializeBaseInfo(
-                id = mainUiState.id,
-                currentAccountInfo = mainUiState.currentAccountInfo,
-                member = mainUiState.member
-            )
+            viewModel.initialize()
         }
     )
 
