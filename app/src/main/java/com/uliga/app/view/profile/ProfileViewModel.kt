@@ -1,10 +1,12 @@
 package com.uliga.app.view.profile
 
 import com.uliga.app.base.BaseViewModel
-import com.uliga.domain.model.member.Member
+import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookIdUseCase
 import com.uliga.domain.usecase.member.DeleteMemberUseCase
+import com.uliga.domain.usecase.member.GetMemberUseCase
 import com.uliga.domain.usecase.userAuth.GetLogoutRedirectUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -16,21 +18,41 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val deleteMemberUseCase: DeleteMemberUseCase,
     private val getLogoutRedirectUseCase: GetLogoutRedirectUseCase,
+    private val fetchCurrentAccountBookIdUseCase: FetchCurrentAccountBookIdUseCase,
+    private val getMemberUseCase: GetMemberUseCase
 ) : ContainerHost<ProfileUiState, ProfileSideEffect>, BaseViewModel() {
     override val container = container<ProfileUiState, ProfileSideEffect>(ProfileUiState.empty())
 
-    fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
-        intent {
-            launch {
-                reduce {
-                    state.copy(
-                        id = id,
-                        currentAccountInfo = currentAccountInfo,
-                        member = member
-                    )
-                }
+    init {
+        initialize()
+    }
+
+    fun initialize() {
+        observeCurrentAccountBookId()
+    }
+
+    fun observeCurrentAccountBookId() = intent {
+        launch {
+            fetchCurrentAccountBookIdUseCase().collectLatest { accountBookId ->
+                updateAccountBookId(accountBookId)
+
+                getMember()
             }
         }
+    }
+
+    private suspend fun getMember() = intent {
+        launch {
+            getMemberUseCase()
+                .onSuccess {
+                    reduce {
+                        state.copy(
+                            member = it
+                        )
+                    }
+                }
+        }
+    }
 
     fun deleteMember() = intent {
         launch {
@@ -63,6 +85,16 @@ class ProfileViewModel @Inject constructor(
                         ProfileSideEffect.Finish
                     )
                 }
+        }
+    }
+
+    suspend fun updateAccountBookId(accountBookId: Long?) = intent {
+        launch {
+            reduce {
+                state.copy(
+                    accountBookId = accountBookId
+                )
+            }
         }
     }
 
