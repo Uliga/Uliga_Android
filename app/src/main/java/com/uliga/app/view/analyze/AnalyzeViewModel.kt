@@ -1,12 +1,16 @@
 package com.uliga.app.view.analyze
 
 import com.uliga.app.base.BaseViewModel
-import com.uliga.domain.model.member.Member
+import com.uliga.app.utils.ToastMessages
+import com.uliga.domain.model.accountBook.asset.AccountBookAsset
+import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookIdUseCase
+import com.uliga.domain.usecase.accountbook.remote.GetCurrentAccountBookAssetUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookFixedRecordByMonthUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookRecordByMonthForCategoryUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookRecordByMonthForCompareUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookRecordByWeekUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
@@ -20,7 +24,9 @@ class AnalyzeViewModel @Inject constructor(
     private val getAccountBookRecordByMonthForCategoryUseCase: GetAccountBookRecordByMonthForCategoryUseCase,
     private val getAccountBookRecordByMonthForCompareUseCase: GetAccountBookRecordByMonthForCompareUseCase,
     private val getAccountBookRecordByWeekUseCase: GetAccountBookRecordByWeekUseCase,
-    private val getAccountBookFixedRecordByMonthUseCase: GetAccountBookFixedRecordByMonthUseCase
+    private val getAccountBookFixedRecordByMonthUseCase: GetAccountBookFixedRecordByMonthUseCase,
+    private val fetchCurrentAccountBookIdUseCase: FetchCurrentAccountBookIdUseCase,
+    private val getCurrentAccountBookAssetUseCase: GetCurrentAccountBookAssetUseCase
 ) : ContainerHost<AnalyzeUiState, AnalyzeSideEffect>, BaseViewModel() {
 
     override val container = container<AnalyzeUiState, AnalyzeSideEffect>(AnalyzeUiState.empty())
@@ -29,38 +35,52 @@ class AnalyzeViewModel @Inject constructor(
         initialize()
     }
 
-    fun initialize() = intent {
-        launch {
-            val currentDate = LocalDate.now()
-            val currentYear = currentDate.year
-            val currentMonth = currentDate.monthValue
+    fun initialize() {
+        observeCurrentAccountBookId()
+    }
 
-            getAccountBookRecordByWeek(currentYear, currentMonth, 1)
-            getAccountBookRecordByMonthForCategory(currentYear, currentMonth)
-            getAccountBookRecordByMonthForCompare(currentYear, currentMonth)
-            getAccountBookFixedRecordByMonth()
+    fun observeCurrentAccountBookId() = intent {
+        launch {
+            fetchCurrentAccountBookIdUseCase().collectLatest { accountBookId ->
+                updateAccountBookId(accountBookId)
+
+                if (accountBookId == null) {
+                    postSideEffect(AnalyzeSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
+                    updateIsLoading(false)
+                    return@collectLatest
+                }
+
+                observeCurrentAccountBookAsset()
+            }
         }
     }
 
-    fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
-        intent {
-            launch {
-                reduce {
-                    state.copy(
-                        id = id,
-                        currentAccountInfo = currentAccountInfo,
-                        member = member
-                    )
-                }
+    fun observeCurrentAccountBookAsset() = intent {
+        launch {
+            getCurrentAccountBookAssetUseCase().collectLatest {
+
+                val currentDate = LocalDate.now()
+                val currentYear = currentDate.year
+                val currentMonth = currentDate.monthValue
+
+                getAccountBookRecordByWeek(currentYear, currentMonth, 1)
+                getAccountBookRecordByMonthForCategory(currentYear, currentMonth)
+                getAccountBookRecordByMonthForCompare(currentYear, currentMonth)
             }
         }
+    }
 
     private fun getAccountBookRecordByMonthForCompare(year: Int, month: Int) = intent {
         launch {
-            val currentAccountBookInfo = state.currentAccountInfo ?: return@launch
+            val currentAccountBookId = state.accountBookId
+            if (currentAccountBookId == null) {
+                postSideEffect(AnalyzeSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
+                updateIsLoading(false)
+                return@launch
+            }
 
             getAccountBookRecordByMonthForCompareUseCase(
-                currentAccountBookInfo.second,
+                currentAccountBookId,
                 year,
                 month
             ).onSuccess {
@@ -79,11 +99,15 @@ class AnalyzeViewModel @Inject constructor(
         startDay: Int
     ) = intent {
         launch {
-            val currentAccountBookInfo = state.currentAccountInfo ?: return@launch
-
+            val currentAccountBookId = state.accountBookId
+            if (currentAccountBookId == null) {
+                postSideEffect(AnalyzeSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
+                updateIsLoading(false)
+                return@launch
+            }
 
             getAccountBookRecordByWeekUseCase(
-                currentAccountBookInfo.second,
+                currentAccountBookId,
                 year,
                 month,
                 startDay
@@ -99,10 +123,15 @@ class AnalyzeViewModel @Inject constructor(
 
     private fun getAccountBookRecordByMonthForCategory(year: Int, month: Int) = intent {
         launch {
-            val currentAccountBookInfo = state.currentAccountInfo ?: return@launch
+            val currentAccountBookId = state.accountBookId
+            if (currentAccountBookId == null) {
+                postSideEffect(AnalyzeSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
+                updateIsLoading(false)
+                return@launch
+            }
 
             getAccountBookRecordByMonthForCategoryUseCase(
-                currentAccountBookInfo.second,
+                currentAccountBookId,
                 year,
                 month
             ).onSuccess {
@@ -117,9 +146,14 @@ class AnalyzeViewModel @Inject constructor(
 
     private fun getAccountBookFixedRecordByMonth() = intent {
         launch {
-            val currentAccountBookInfo = state.currentAccountInfo ?: return@launch
+            val currentAccountBookId = state.accountBookId
+            if (currentAccountBookId == null) {
+                postSideEffect(AnalyzeSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
+                updateIsLoading(false)
+                return@launch
+            }
 
-            getAccountBookFixedRecordByMonthUseCase(currentAccountBookInfo.second)
+            getAccountBookFixedRecordByMonthUseCase(currentAccountBookId)
                 .onSuccess {
                     reduce {
                         state.copy(
@@ -128,6 +162,16 @@ class AnalyzeViewModel @Inject constructor(
                     }
                 }
 
+        }
+    }
+
+    suspend fun updateAccountBookId(accountBookId: Long?) = intent {
+        launch {
+            reduce {
+                state.copy(
+                    accountBookId = accountBookId
+                )
+            }
         }
     }
 
