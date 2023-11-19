@@ -81,7 +81,6 @@ import com.uliga.app.view.component.toast.TOAST_START_POSITION
 import com.uliga.app.view.component.toast.TopDownToast
 import com.uliga.app.view.home.invitation.InvitationBottomSheet
 import com.uliga.app.view.main.MainActivity
-import com.uliga.app.view.main.MainUiState
 import com.uliga.app.view.schedule.ScheduleGenerationActivity
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -91,17 +90,10 @@ import java.time.LocalDate
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun HomeScreen(
-    mainUiState: MainUiState,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val state = viewModel.collectAsState().value
-
-    viewModel.initializeBaseInfo(
-        id = mainUiState.id,
-        currentAccountInfo = mainUiState.currentAccountInfo,
-        member = mainUiState.member
-    )
 
     val currentDate = LocalDate.now()
     val currentDay = currentDate.dayOfMonth
@@ -117,7 +109,10 @@ fun HomeScreen(
         onResult = {
             when (it.resultCode) {
                 ComponentActivity.RESULT_OK -> {
-                    viewModel.getFinanceSchedule()
+                    viewModel.apply {
+                        getFinanceSchedule()
+                        getAccountBookFixedRecordByMonth()
+                    }
                 }
             }
         }
@@ -200,21 +195,14 @@ fun HomeScreen(
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading,
         onRefresh = {
-            viewModel.apply {
-                initializeBaseInfo(
-                    id = mainUiState.id,
-                    currentAccountInfo = mainUiState.currentAccountInfo,
-                    member = mainUiState.member
-                )
-                initialize()
-            }
+            viewModel.initialize()
         }
     )
 
     BackHandler {
-        if(isInvitationListBottomSheetSheetOpen) {
+        if (isInvitationListBottomSheetSheetOpen) {
             isInvitationListBottomSheetSheetOpen = false
-        } else if(isBudgetSettingBottomSheetOpen) {
+        } else if (isBudgetSettingBottomSheetOpen) {
             isBudgetSettingBottomSheetOpen = false
         } else {
             (context as MainActivity).finish()
@@ -331,7 +319,7 @@ fun HomeScreen(
                         ) {
                             Text(
                                 modifier = Modifier.align(Alignment.CenterStart),
-                                text = state.currentAccountInfo?.first ?: "",
+                                text = state.accountBookName ?: "",
                                 color = Grey600,
                                 style = UligaTheme.typography.body3
                             )
