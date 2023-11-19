@@ -10,7 +10,7 @@ import com.uliga.domain.model.member.Member
 data class ScheduleGenerationUiState(
     val isLoading: Boolean = false,
     val id: Long? = null,
-    val currentAccountInfo: Pair<String, Long>? = null,
+    val accountBookId: Long? = null,
     val financeSchedules: FinanceSchedules? = null,
     val member: Member? = null
 ) {
@@ -18,7 +18,7 @@ data class ScheduleGenerationUiState(
         fun empty() = ScheduleGenerationUiState(
             isLoading = false,
             id = null,
-            currentAccountInfo = null,
+            accountBookId = null,
             financeSchedules = null
         )
     }
