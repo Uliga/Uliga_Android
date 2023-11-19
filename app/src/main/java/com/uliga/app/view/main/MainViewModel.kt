@@ -43,6 +43,7 @@ class MainViewModel @Inject constructor(
                     }
 
                     getAccountBookMonthAssetUseCase(
+                        isCurrent = true,
                         accountBookId = it.second,
                         month = currentDate.monthValue,
                         year = currentDate.year

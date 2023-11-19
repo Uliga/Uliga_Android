@@ -41,6 +41,7 @@ interface AccountBookRepository {
     suspend fun patchAccountBookBudget(accountBookBudgetRequest: AccountBookBudgetRequest): Result<AccountBookBudgetResponse>
 
     suspend fun getAccountBookMonthAsset(
+        isCurrent: Boolean,
         accountBookId: Long,
         year: Int,
         month: Int

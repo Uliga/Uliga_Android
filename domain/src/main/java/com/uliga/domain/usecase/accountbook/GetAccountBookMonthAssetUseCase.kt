@@ -10,10 +10,11 @@ class GetAccountBookMonthAssetUseCase @Inject constructor(
     private val accountBookRepository: AccountBookRepository
 ) {
     suspend operator fun invoke(
+        isCurrent: Boolean,
         accountBookId: Long,
         year: Int,
         month: Int
     ): Result<AccountBookAsset> {
-        return accountBookRepository.getAccountBookMonthAsset(accountBookId, year, month)
+        return accountBookRepository.getAccountBookMonthAsset(isCurrent, accountBookId, year, month)
     }
 }

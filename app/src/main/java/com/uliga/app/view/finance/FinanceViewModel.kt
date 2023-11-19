@@ -61,6 +61,7 @@ class FinanceViewModel @Inject constructor(
             val currentDate = LocalDate.now()
 
             getAccountBookMonthAssetUseCase(
+                isCurrent = true,
                 accountBookId = accountBookId,
                 month = currentDate.monthValue,
                 year = currentDate.year

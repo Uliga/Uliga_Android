@@ -82,13 +82,13 @@ class HomeViewModel @Inject constructor(
                 }
 
                 val currentDate = LocalDate.now()
-//                val beforeDate = currentDate.minusMonths(1)
-//                getAccountBookMonthAsset(
-//                    false,
-//                    beforeDate.year,
-//                    beforeDate.monthValue,
-//                    accountBookId
-//                )
+                val beforeDate = currentDate.minusMonths(1)
+                getAccountBookMonthAsset(
+                    false,
+                    beforeDate.year,
+                    beforeDate.monthValue,
+                    accountBookId
+                )
 
                 getAccountBookAnalyzeRecordByDay(
                     currentDate.year,
@@ -139,6 +139,7 @@ class HomeViewModel @Inject constructor(
     ) = intent {
         launch {
             getAccountBookMonthAssetUseCase(
+                isCurrent = isCurrent,
                 accountBookId = accountBookId,
                 year = year,
                 month = month

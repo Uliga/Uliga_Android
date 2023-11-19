@@ -94,6 +94,7 @@ class AccountBookRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAccountBookMonthAsset(
+        isCurrent: Boolean,
         accountBookId: Long,
         year: Int,
         month: Int
@@ -101,9 +102,13 @@ class AccountBookRepositoryImpl @Inject constructor(
         return runCatching {
             remote.getAccountBookMonthAsset(accountBookId, year, month).toDomain()
         }.onSuccess {
-            _accountBookAsset.emit(it)
+            if(isCurrent) {
+                _accountBookAsset.emit(it)
+            }
         }.onFailure {
-            _accountBookAsset.emit(null)
+            if(isCurrent) {
+                _accountBookAsset.emit(null)
+            }
         }
     }
 
