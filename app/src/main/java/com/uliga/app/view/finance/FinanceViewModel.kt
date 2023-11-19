@@ -1,52 +1,83 @@
 package com.uliga.app.view.finance
 
 import com.uliga.app.base.BaseViewModel
+import com.uliga.app.utils.ToastMessages
+import com.uliga.app.utils.ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE
+import com.uliga.app.utils.ToastMessages.TRANSACTION_DELETE_SUCCESS
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionIds
-import com.uliga.domain.model.member.Member
+import com.uliga.domain.usecase.accountbook.GetAccountBookMonthAssetUseCase
 import com.uliga.domain.usecase.accountbook.GetAccountBookMonthTransactionUseCase
+import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookIdUseCase
 import com.uliga.domain.usecase.accountbook.remote.DeleteAccountBookDayTransactionUseCase
 import com.uliga.domain.usecase.accountbook.remote.GetAccountBookDayTransactionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.viewmodel.container
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class FinanceViewModel @Inject constructor(
     private val getAccountBookMonthTransactionUseCase: GetAccountBookMonthTransactionUseCase,
     private val getAccountBookDayTransactionUseCase: GetAccountBookDayTransactionUseCase,
-    private val deleteAccountBookDayTransactionUseCase: DeleteAccountBookDayTransactionUseCase
+    private val getAccountBookMonthAssetUseCase: GetAccountBookMonthAssetUseCase,
+    private val deleteAccountBookDayTransactionUseCase: DeleteAccountBookDayTransactionUseCase,
+    private val fetchCurrentAccountBookIdUseCase: FetchCurrentAccountBookIdUseCase,
 ) : ContainerHost<FinanceUiState, FinanceSideEffect>, BaseViewModel() {
 
     override val container = container<FinanceUiState, FinanceSideEffect>(FinanceUiState.empty())
 
-    fun initializeBaseInfo(id: Long?, currentAccountInfo: Pair<String, Long>?, member: Member?) =
-        intent {
-            launch {
-                reduce {
-                    state.copy(
-                        id = id,
-                        currentAccountInfo = currentAccountInfo,
-                        member = member
-                    )
-                }
+    init {
+        initialize()
+    }
+
+    fun initialize() {
+        observeCurrentAccountBookId()
+    }
+
+    private fun observeCurrentAccountBookId() = intent {
+        launch {
+            fetchCurrentAccountBookIdUseCase().collectLatest { accountBookId ->
+                updateAccountBookId(accountBookId)
             }
         }
+    }
 
-    fun getAccountBookDayTransaction(year: Int, month: Int, day: Int) = intent {
+    fun getAccountBookAsset() = intent {
         launch {
-            val currentAccountBookInfo = state.currentAccountInfo
-            if (currentAccountBookInfo == null) {
+            val accountBookId = state.accountBookId
+            if (accountBookId == null) {
+                postSideEffect(FinanceSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
                 updateIsLoading(false)
                 return@launch
             }
 
-            getAccountBookDayTransactionUseCase(currentAccountBookInfo.second, year, month, day)
+            val currentDate = LocalDate.now()
+
+            getAccountBookMonthAssetUseCase(
+                accountBookId = accountBookId,
+                month = currentDate.monthValue,
+                year = currentDate.year
+            )
+        }
+    }
+
+    fun getAccountBookDayTransaction(year: Int, month: Int, day: Int) = intent {
+        launch {
+            val accountBookId = state.accountBookId
+            if (accountBookId == null) {
+                postSideEffect(FinanceSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
+                updateIsLoading(false)
+                return@launch
+            }
+
+            getAccountBookDayTransactionUseCase(accountBookId, year, month, day)
                 .onSuccess {
                     reduce {
                         state.copy(
@@ -60,13 +91,14 @@ class FinanceViewModel @Inject constructor(
 
     fun getAccountBookMonthTransaction(year: Int, month: Int) = intent {
         launch {
-            val currentAccountBookInfo = state.currentAccountInfo
-            if (currentAccountBookInfo == null) {
+            val accountBookId = state.accountBookId
+            if (accountBookId == null) {
+                postSideEffect(FinanceSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
                 updateIsLoading(false)
                 return@launch
             }
 
-            getAccountBookMonthTransactionUseCase(currentAccountBookInfo.second, year, month)
+            getAccountBookMonthTransactionUseCase(accountBookId, year, month)
                 .onSuccess {
                     reduce {
                         state.copy(
@@ -79,14 +111,28 @@ class FinanceViewModel @Inject constructor(
 
     fun getAccountBookTransaction(year: Int, month: Int, day: Int) = intent {
         launch {
-            val currentAccountBookInfo = state.currentAccountInfo
-            if (currentAccountBookInfo == null) {
+            val accountBookId = state.accountBookId
+            if (accountBookId == null) {
+                postSideEffect(FinanceSideEffect.ToastMessage(ACCOUNT_BOOK_INFO_GET_FAILURE))
                 updateIsLoading(false)
                 return@launch
             }
 
-            val accountBookDayTransaction = async(Dispatchers.IO) {getAccountBookDayTransactionUseCase(currentAccountBookInfo.second, year, month, day) }
-            val accountBookMonthTransaction = async(Dispatchers.IO) { getAccountBookMonthTransactionUseCase(currentAccountBookInfo.second, year, month) }
+            val accountBookDayTransaction = async(Dispatchers.IO) {
+                getAccountBookDayTransactionUseCase(
+                    accountBookId,
+                    year,
+                    month,
+                    day
+                )
+            }
+            val accountBookMonthTransaction = async(Dispatchers.IO) {
+                getAccountBookMonthTransactionUseCase(
+                    accountBookId,
+                    year,
+                    month
+                )
+            }
 
             val currentAccountBookAssetDay = accountBookDayTransaction.await()
             val currentAccountBookAsset = accountBookMonthTransaction.await()
@@ -94,7 +140,7 @@ class FinanceViewModel @Inject constructor(
             reduce {
                 state.copy(
                     currentAccountBookAssetDay = currentAccountBookAssetDay.getOrThrow(),
-                    currentAccountBookAsset =  currentAccountBookAsset.getOrThrow()
+                    currentAccountBookAsset = currentAccountBookAsset.getOrThrow()
                 )
             }
         }
@@ -113,7 +159,17 @@ class FinanceViewModel @Inject constructor(
                     FinanceSideEffect.DismissDeleteAlert
                 )
                 postSideEffect(
-                    FinanceSideEffect.ToastMessage("거래 내역을 삭제하는데 성공했습니다!")
+                    FinanceSideEffect.ToastMessage(TRANSACTION_DELETE_SUCCESS)
+                )
+            }
+        }
+    }
+
+    suspend fun updateAccountBookId(accountBookId: Long?) = intent {
+        launch {
+            reduce {
+                state.copy(
+                    accountBookId = accountBookId
                 )
             }
         }
