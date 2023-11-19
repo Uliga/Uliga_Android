@@ -24,7 +24,6 @@ class AnalyzeViewModel @Inject constructor(
     private val getAccountBookRecordByMonthForCategoryUseCase: GetAccountBookRecordByMonthForCategoryUseCase,
     private val getAccountBookRecordByMonthForCompareUseCase: GetAccountBookRecordByMonthForCompareUseCase,
     private val getAccountBookRecordByWeekUseCase: GetAccountBookRecordByWeekUseCase,
-    private val getAccountBookFixedRecordByMonthUseCase: GetAccountBookFixedRecordByMonthUseCase,
     private val fetchCurrentAccountBookIdUseCase: FetchCurrentAccountBookIdUseCase,
     private val getCurrentAccountBookAssetUseCase: GetCurrentAccountBookAssetUseCase
 ) : ContainerHost<AnalyzeUiState, AnalyzeSideEffect>, BaseViewModel() {
@@ -141,27 +140,6 @@ class AnalyzeViewModel @Inject constructor(
                     )
                 }
             }
-        }
-    }
-
-    private fun getAccountBookFixedRecordByMonth() = intent {
-        launch {
-            val currentAccountBookId = state.accountBookId
-            if (currentAccountBookId == null) {
-                postSideEffect(AnalyzeSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
-                updateIsLoading(false)
-                return@launch
-            }
-
-            getAccountBookFixedRecordByMonthUseCase(currentAccountBookId)
-                .onSuccess {
-                    reduce {
-                        state.copy(
-                            accountBookAnalyzeFixedRecordByMonth = it
-                        )
-                    }
-                }
-
         }
     }
 
