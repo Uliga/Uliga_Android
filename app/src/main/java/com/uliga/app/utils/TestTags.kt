@@ -20,6 +20,8 @@ object TestTags {
 
     const val BASIC_TEXT_FIELD_BUDGET = "BASIC_TEXT_FIELD_BUDGET"
 
+    const val MONTH_BUDGET_VALUE = "MONTH_BUDGET_VALUE"
+
     // Button
 
     const val BUTTON_BUDGET_SETTING = "BUTTON_BUDGET_SETTING"

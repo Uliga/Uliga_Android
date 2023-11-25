@@ -2,12 +2,17 @@ package com.uliga.app
 
 import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.assertValueEquals
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTextReplacement
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.uliga.app.utils.TestTags
 import com.uliga.app.view.home.HomeScreen
@@ -32,6 +37,7 @@ class HomeScreenTest {
     fun setUp() {
         hiltRule.inject()
 
+
         composeRule.activity.setContent {
 
             HomeScreen()
@@ -39,7 +45,8 @@ class HomeScreenTest {
     }
 
     @Test
-    fun clickInvitationButton() {
+    fun homeScreenTest() {
+
         with(composeRule) {
             onNodeWithTag(TestTags.INVITATION).performClick()
 
@@ -58,25 +65,39 @@ class HomeScreenTest {
             Thread.sleep(1000L)
 
             onNodeWithTag(TestTags.BUDGET_CURRENT_DATE).assertIsDisplayed()
-            onNodeWithTag(TestTags.BASIC_TEXT_FIELD_BUDGET).assertIsDisplayed()
+//            onNodeWithTag(TestTags.BASIC_TEXT_FIELD_BUDGET).assertIsDisplayed()
 
             Thread.sleep(1000L)
 
-            onNodeWithTag(TestTags.BASIC_TEXT_FIELD_BUDGET).apply {
-                performClick()
-                performTextInput("10000")
-                assertTextContains("10000")
-            }
+            onNodeWithTag(TestTags.BASIC_TEXT_FIELD_BUDGET)
+                .performClick()
+
+            val budget = "60000"
+
+            onNodeWithTag(TestTags.BASIC_TEXT_FIELD_BUDGET)
+                .performTextInput(budget)
 
             Thread.sleep(1000L)
+
+
+            onNodeWithTag(TestTags.BASIC_TEXT_FIELD_BUDGET)
+                .assertTextContains(budget)
+
 
             onNodeWithTag(TestTags.BUTTON_BUDGET_SETTING).performClick()
 
+            backButtonPressed()
+
+            waitUntil(10000) { true }
 
 
-            onNodeWithTag(TestTags.INVITATION).assertIsDisplayed()
+            onNodeWithTag(TestTags.MONTH_BUDGET_VALUE).assertTextEquals(budget + "원")
 
-            Thread.sleep(2000L)
+            onNodeWithTag(TestTags.ADDING_FINANCE_SCHEDULE)
+                .performClick()
+
+
+            Thread.sleep(1000L)
 
 
         }
@@ -86,8 +107,5 @@ class HomeScreenTest {
         activityRule.scenario.onActivity {
             it.onBackPressedDispatcher.onBackPressed()
         }
-
     }
-
-
 }
