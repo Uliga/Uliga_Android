@@ -81,6 +81,7 @@ dependencies {
 
     implementation(DI.daggerHiltAndroid)
     implementation(DI.daggerHiltComponse)
+
     kapt(DI.daggerHiltAndroidAnnotation)
 
     implementation(Coroutines.core)
@@ -107,7 +108,7 @@ dependencies {
 
     implementation(View.navigationCompose)
 
-    implementation("com.kizitonwose.calendar:compose:2.3.0")
+    implementation("com.kizitonwose.calendar:compose:2.4.0")
 
     implementation("org.orbit-mvi:orbit-viewmodel:6.1.0")
 // If using Jetpack Compose include
@@ -121,7 +122,11 @@ dependencies {
 
     // Instrumentation tests
     androidTestImplementation("androidx.test:runner:1.4.0")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4-android:1.5.4")
+//    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.4")
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.37")
+    androidTestImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
+//    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
+    implementation("androidx.compose.ui:ui-test-junit4-android:1.5.4")
+
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.37")
 }

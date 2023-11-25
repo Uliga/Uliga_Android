@@ -65,6 +65,7 @@ import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.utils.Constant
 import com.uliga.app.utils.TestTags
+import com.uliga.app.utils.TestTags.MONTH_BUDGET_VALUE
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionActivity
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.component.AddingButton
@@ -102,7 +103,6 @@ fun HomeScreen(
     val currentMonthBudget = currentMonthAsset?.budget?.value ?: 0L
     val currentMonthRecord = currentMonthAsset?.record?.value ?: 0L
     val currentMonthResult = currentMonthBudget - currentMonthRecord
-
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
@@ -425,6 +425,7 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.weight(1f))
 
                         Text(
+                            modifier = Modifier.testTag(MONTH_BUDGET_VALUE),
                             text = "${currentMonthBudget}원",
                             color = Grey700,
                             style = UligaTheme.typography.body4
