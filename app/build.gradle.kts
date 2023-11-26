@@ -100,6 +100,7 @@ dependencies {
     implementation(Compose.composeUiPreview)
     implementation(Compose.composeConstraintLayout)
 
+    implementation("com.holix.android:bottomsheetdialog-compose:1.3.1")
 
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
     implementation("androidx.lifecycle:lifecycle-process:2.6.1")
