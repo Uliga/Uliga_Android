@@ -1,13 +1,12 @@
 package com.uliga.app.view.accountBook.selection
 
 import com.uliga.app.base.BaseViewModel
-import com.uliga.domain.model.accountBook.AccountBookGenerationRequest
+import com.uliga.app.utils.ToastMessages.ACCOUNT_BOOK_FIND_FAILURE
+import com.uliga.app.utils.ToastMessages.ACCOUNT_BOOK_PLEASE_SELECT
 import com.uliga.domain.model.accountBook.AccountBooks
 import com.uliga.domain.usecase.accountbook.GetAccountBooksUseCase
-import com.uliga.domain.usecase.accountbook.PostAccountBookUseCase
 import com.uliga.domain.usecase.accountbook.local.UpdateAccountBookUseCase
 import com.uliga.domain.usecase.member.DeleteMemberUseCase
-import com.uliga.domain.usecase.userAuth.GetUserAuthDataExistedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent
@@ -42,7 +41,6 @@ class AccountBookSelectionViewModel @Inject constructor(
 
     fun getAccountBooks() = intent {
         launch {
-
             getAccountBooksUseCase()
                 .onSuccess {
                     reduce {
@@ -57,13 +55,17 @@ class AccountBookSelectionViewModel @Inject constructor(
     fun updateAccountBook(currentIndexState: Int, accountBooks: AccountBooks?) = intent {
         launch {
             if (currentIndexState == -1) {
-                postSideEffect(AccountBookSelectionSideEffect.ToastMessage("가계부를 선택해주세요."))
+                postSideEffect(
+                    AccountBookSelectionSideEffect.ToastMessage(
+                        ACCOUNT_BOOK_PLEASE_SELECT
+                    )
+                )
                 updateIsLoading(false)
                 return@launch
             }
 
             if (accountBooks == null) {
-                postSideEffect(AccountBookSelectionSideEffect.ToastMessage("가계부를 찾을 수 없습니다."))
+                postSideEffect(AccountBookSelectionSideEffect.ToastMessage(ACCOUNT_BOOK_FIND_FAILURE))
                 updateIsLoading(false)
                 return@launch
             }

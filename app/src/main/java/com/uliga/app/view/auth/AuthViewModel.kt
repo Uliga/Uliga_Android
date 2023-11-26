@@ -1,9 +1,18 @@
 package com.uliga.app.view.auth
 
-import android.util.Log
 import com.uliga.app.base.BaseViewModel
 import com.uliga.app.ext.isEmailValid
 import com.uliga.app.ext.isNickNameTypeValid
+import com.uliga.app.utils.ToastMessages.APPLICATION_PASSWORD
+import com.uliga.app.utils.ToastMessages.EMAIL
+import com.uliga.app.utils.ToastMessages.EMAIL_NO_INFO
+import com.uliga.app.utils.ToastMessages.EMAIL_PLEASE_CONFIRM
+import com.uliga.app.utils.ToastMessages.MAIL
+import com.uliga.app.utils.ToastMessages.NICKNAME
+import com.uliga.app.utils.ToastMessages.NICKNAME_DUPLICATE_PLEASE_CONFIRM
+import com.uliga.app.utils.ToastMessages.NICKNAME_PLEASE_CONFIRM
+import com.uliga.app.utils.ToastMessages.PRIVACY_PLEASE_CONFIRM
+import com.uliga.app.utils.ToastMessages.USER_NAME_PLEASE_CONFIRM
 import com.uliga.domain.AuthType
 import com.uliga.domain.model.userAuth.NormalLoginRequest
 import com.uliga.domain.model.userAuth.SocialLoginRequest
@@ -44,9 +53,9 @@ class AuthViewModel @Inject constructor(
             val socialLoginEmail = socialLoginResult.email ?: ""
             val socialLoginName = socialLoginResult.name ?: ""
 
-            getUserAuthDataExistedUseCase("mail", socialLoginEmail).onSuccess {
+            getUserAuthDataExistedUseCase(MAIL, socialLoginEmail).onSuccess {
                 if (it.exists == null) {
-                    postSideEffect(AuthSideEffect.ToastMessage("이메일에 대한 정보를 불러올 수 없습니다."))
+                    postSideEffect(AuthSideEffect.ToastMessage(EMAIL_NO_INFO))
                     return@onSuccess
                 }
 
@@ -54,7 +63,7 @@ class AuthViewModel @Inject constructor(
 
                     val normalLoginRequest = NormalLoginRequest(
                         email = socialLoginEmail,
-                        password = "12341234"
+                        password = APPLICATION_PASSWORD
                     )
 
                     postNormalLoginUseCase(normalLoginRequest).onSuccess {
@@ -78,12 +87,12 @@ class AuthViewModel @Inject constructor(
     fun getIsNickNameExisted(nickName: String) = intent {
         launch {
             if (nickName.isEmpty() || !isNickNameTypeValid(nickName)) {
-                postSideEffect(AuthSideEffect.ToastMessage("입력된 닉네임을 확인해주세요."))
+                postSideEffect(AuthSideEffect.ToastMessage(NICKNAME_PLEASE_CONFIRM))
                 updateIsLoading(false)
                 return@launch
             }
 
-            getUserAuthDataExistedUseCase("nickname", nickName)
+            getUserAuthDataExistedUseCase(NICKNAME, nickName)
                 .onSuccess {
 
                     reduce {
@@ -114,31 +123,31 @@ class AuthViewModel @Inject constructor(
     ) = intent {
         launch {
             if (email.isEmpty() || !isEmailValid(email)) {
-                postSideEffect(AuthSideEffect.ToastMessage("입력된 이메일을 확인해주세요."))
+                postSideEffect(AuthSideEffect.ToastMessage(EMAIL_PLEASE_CONFIRM))
                 updateIsLoading(false)
                 return@launch
             }
 
             if (userName.isEmpty()) {
-                postSideEffect(AuthSideEffect.ToastMessage("입력된 사용자 이름을 확인해주세요."))
+                postSideEffect(AuthSideEffect.ToastMessage(USER_NAME_PLEASE_CONFIRM))
                 updateIsLoading(false)
                 return@launch
             }
 
             if (nickName.isEmpty() || !isNickNameTypeValid(nickName)) {
-                postSideEffect(AuthSideEffect.ToastMessage("입력된 닉네임을 확인해주세요."))
+                postSideEffect(AuthSideEffect.ToastMessage(NICKNAME_PLEASE_CONFIRM))
                 updateIsLoading(false)
                 return@launch
             }
 
-            if(state.isNickNameExisted != false) {
-                postSideEffect(AuthSideEffect.ToastMessage("닉네임 중복 여부를 확인해주세요."))
+            if (state.isNickNameExisted != false) {
+                postSideEffect(AuthSideEffect.ToastMessage(NICKNAME_DUPLICATE_PLEASE_CONFIRM))
                 updateIsLoading(false)
                 return@launch
             }
 
             if (!privacyCheckBoxState) {
-                postSideEffect(AuthSideEffect.ToastMessage("권한 정보를 확인해주세요."))
+                postSideEffect(AuthSideEffect.ToastMessage(PRIVACY_PLEASE_CONFIRM))
                 updateIsLoading(false)
                 return@launch
             }
@@ -147,8 +156,8 @@ class AuthViewModel @Inject constructor(
                 email = email,
                 userName = userName,
                 nickName = nickName,
-                loginType = "EMAIL",
-                applicationPassword = "12341234"
+                loginType = EMAIL,
+                applicationPassword = APPLICATION_PASSWORD
             )
 
             postSocialLoginUseCase(socialLoginRequest)

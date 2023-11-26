@@ -1,9 +1,16 @@
 package com.uliga.app.view.schedule
 
-import android.util.Log
 import androidx.core.text.isDigitsOnly
 import com.uliga.app.base.BaseViewModel
+import com.uliga.app.utils.ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE
+import com.uliga.app.utils.ToastMessages.COST_PLEASE_CONFIRM
+import com.uliga.app.utils.ToastMessages.DATE_INFO_PLEASE_CONFIRM
+import com.uliga.app.utils.ToastMessages.FINANCE_SCHEDULE_MODIFY_FAILURE
+import com.uliga.app.utils.ToastMessages.FINANCE_SCHEDULE_MODIFY_SUCCESS
+import com.uliga.app.utils.ToastMessages.FINANCE_SCHEDULE_REGISTER_FAILURE
+import com.uliga.app.utils.ToastMessages.FINANCE_SCHEDULE_REGISTER_SUCCESS
 import com.uliga.app.utils.ToastMessages.MEMBER_INFO_GET_FAILURE
+import com.uliga.app.utils.ToastMessages.SCHEDULE_NAME_PLEASE_CONFIRM
 import com.uliga.domain.model.accountBook.financeSchedule.AccountBookFinanceScheduleRequest
 import com.uliga.domain.model.accountBook.financeSchedule.common.AccountBookFinanceScheduleAssignment
 import com.uliga.domain.model.accountBook.financeSchedule.common.AccountBookFinanceScheduleResult
@@ -48,14 +55,10 @@ class ScheduleGenerationViewModel @Inject constructor(
         launch {
 
             fetchCurrentAccountBookIdUseCase().collectLatest { accountBookId ->
-                Log.d("member", "${accountBookId} ${state.id}".toString())
-
                 updateAccountBookId(accountBookId)
 
                 fetchId()
                 getMember()
-
-
             }
         }
 
@@ -72,7 +75,7 @@ class ScheduleGenerationViewModel @Inject constructor(
                     }
                 }
                 .onFailure {
-                    postSideEffect(ScheduleGenerationSideEffect.ToastMessage("사용자 정보를 가져오는데 실패했습니다."))
+                    postSideEffect(ScheduleGenerationSideEffect.ToastMessage(MEMBER_INFO_GET_FAILURE))
                 }
         }
     }
@@ -106,25 +109,33 @@ class ScheduleGenerationViewModel @Inject constructor(
 
 
             if (currentAccountBookId == null || userId == null) {
-                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("사용자 정보 혹은 가계부 정보를 불러올 수 없습니다."))
+                postSideEffect(
+                    ScheduleGenerationSideEffect.ToastMessage(
+                        ACCOUNT_BOOK_INFO_GET_FAILURE
+                    )
+                )
                 updateIsLoading(false)
                 return@launch
             }
 
             if (notificationDate.isEmpty() || notificationDate.toLong() > 31 || !notificationDate.isDigitsOnly()) {
-                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("날짜 정보를 확인해주세요."))
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage(DATE_INFO_PLEASE_CONFIRM))
                 updateIsLoading(false)
                 return@launch
             }
 
             if (name.isEmpty()) {
-                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("일정 이름을 확인해주세요."))
+                postSideEffect(
+                    ScheduleGenerationSideEffect.ToastMessage(
+                        SCHEDULE_NAME_PLEASE_CONFIRM
+                    )
+                )
                 updateIsLoading(false)
                 return@launch
             }
 
             if (value.isEmpty() || !value.isDigitsOnly()) {
-                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("금액을 확인해주세요."))
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage(COST_PLEASE_CONFIRM))
                 updateIsLoading(false)
                 return@launch
             }
@@ -152,11 +163,11 @@ class ScheduleGenerationViewModel @Inject constructor(
             postFinanceScheduleToAccountBookUseCase(accountBookFinanceScheduleRequest)
                 .onSuccess {
 
-                    postSideEffect(ScheduleGenerationSideEffect.ToastMessage("금융 일정을 등록하는데 성공했습니다."))
+                    postSideEffect(ScheduleGenerationSideEffect.ToastMessage(FINANCE_SCHEDULE_REGISTER_SUCCESS))
                     postSideEffect(ScheduleGenerationSideEffect.Finish)
 
                 }.onFailure {
-                    postSideEffect(ScheduleGenerationSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
+                    postSideEffect(ScheduleGenerationSideEffect.ToastMessage(FINANCE_SCHEDULE_REGISTER_FAILURE))
                 }
 
         }
@@ -172,25 +183,25 @@ class ScheduleGenerationViewModel @Inject constructor(
         launch {
             val userId = state.id
             if (userId == null) {
-                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("사용자 정보를 불러올 수 없습니다."))
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage(ACCOUNT_BOOK_INFO_GET_FAILURE))
                 updateIsLoading(false)
                 return@launch
             }
 
             if (notificationDate.toLong() > 31 || notificationDate.isEmpty() || !notificationDate.isDigitsOnly()) {
-                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("날짜 정보를 확인해주세요."))
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage(DATE_INFO_PLEASE_CONFIRM))
                 updateIsLoading(false)
                 return@launch
             }
 
             if (name.isEmpty()) {
-                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("일정 이름을 확인해주세요."))
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage(SCHEDULE_NAME_PLEASE_CONFIRM))
                 updateIsLoading(false)
                 return@launch
             }
 
             if (value.isEmpty() || !value.isDigitsOnly()) {
-                postSideEffect(ScheduleGenerationSideEffect.ToastMessage("금액을 확인해주세요."))
+                postSideEffect(ScheduleGenerationSideEffect.ToastMessage(COST_PLEASE_CONFIRM))
                 updateIsLoading(false)
                 return@launch
             }
@@ -209,12 +220,12 @@ class ScheduleGenerationViewModel @Inject constructor(
             patchFinanceScheduleUseCase(financeScheduleUpdate)
                 .onSuccess {
 
-                    postSideEffect(ScheduleGenerationSideEffect.ToastMessage("금융 일정을 수정하는데 성공했습니다."))
+                    postSideEffect(ScheduleGenerationSideEffect.ToastMessage(FINANCE_SCHEDULE_MODIFY_SUCCESS))
                     postSideEffect(ScheduleGenerationSideEffect.Finish)
 
                 }
                 .onFailure {
-                    postSideEffect(ScheduleGenerationSideEffect.ToastMessage("금융 일정을 등록하는데 실패했습니다."))
+                    postSideEffect(ScheduleGenerationSideEffect.ToastMessage(FINANCE_SCHEDULE_MODIFY_FAILURE))
 
                 }
         }

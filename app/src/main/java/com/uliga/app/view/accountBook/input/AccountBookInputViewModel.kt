@@ -2,8 +2,13 @@ package com.uliga.app.view.accountBook.input
 
 import androidx.core.text.isDigitsOnly
 import com.uliga.app.base.BaseViewModel
-import com.uliga.app.utils.ToastMessages
+import com.uliga.app.utils.ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE
+import com.uliga.app.utils.ToastMessages.ACCOUNT_PLEASE_SELECT
+import com.uliga.app.utils.ToastMessages.DATE_INFO_BRING_FAIL
+import com.uliga.app.utils.ToastMessages.EMAIL_PLEASE_SELECT
 import com.uliga.app.utils.ToastMessages.MEMBER_INFO_GET_FAILURE
+import com.uliga.app.utils.ToastMessages.PAYMENT_METHOD_PLEASE_SELECT
+import com.uliga.app.utils.ToastMessages.VALUE_PLEASE_SELECT
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
 import com.uliga.domain.usecase.accountbook.PostAccountBookTransactionUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookIdUseCase
@@ -59,37 +64,37 @@ class AccountBookInputViewModel @Inject constructor(
 
             val accountBookId = state.accountBookId
             if (accountBookId == null) {
-                postSideEffect(AccountBookInputSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
+                postSideEffect(AccountBookInputSideEffect.ToastMessage(ACCOUNT_BOOK_INFO_GET_FAILURE))
                 updateIsLoading(false)
                 return@launch
             }
 
             if (date == null) {
-                postSideEffect(AccountBookInputSideEffect.ToastMessage("날짜 정보를 가져오는데 실패했습니다"))
+                postSideEffect(AccountBookInputSideEffect.ToastMessage(DATE_INFO_BRING_FAIL))
                 updateIsLoading(false)
                 return@launch
             }
 
             if (category.isEmpty()) {
-                postSideEffect(AccountBookInputSideEffect.ToastMessage("카테고리를 선택해주세요."))
+                postSideEffect(AccountBookInputSideEffect.ToastMessage(EMAIL_PLEASE_SELECT))
                 updateIsLoading(false)
                 return@launch
             }
 
             if (payment.isEmpty()) {
-                postSideEffect(AccountBookInputSideEffect.ToastMessage("결제수단을 선택해주세요."))
+                postSideEffect(AccountBookInputSideEffect.ToastMessage(PAYMENT_METHOD_PLEASE_SELECT))
                 updateIsLoading(false)
                 return@launch
             }
 
             if (account.isEmpty()) {
-                postSideEffect(AccountBookInputSideEffect.ToastMessage("입력된 거래처을 확해주세요."))
+                postSideEffect(AccountBookInputSideEffect.ToastMessage(ACCOUNT_PLEASE_SELECT))
                 updateIsLoading(false)
                 return@launch
             }
 
             if (value.isEmpty() || !value.isDigitsOnly()) {
-                postSideEffect(AccountBookInputSideEffect.ToastMessage("입력된 금액을 확인해주세요."))
+                postSideEffect(AccountBookInputSideEffect.ToastMessage(VALUE_PLEASE_SELECT))
                 updateIsLoading(false)
                 return@launch
             }
@@ -111,7 +116,6 @@ class AccountBookInputViewModel @Inject constructor(
                 }
                 .onFailure {
                     postSideEffect(AccountBookInputSideEffect.Finish)
-
                 }
         }
     }

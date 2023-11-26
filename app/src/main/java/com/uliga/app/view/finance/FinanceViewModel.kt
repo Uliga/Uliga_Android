@@ -53,7 +53,7 @@ class FinanceViewModel @Inject constructor(
         launch {
             val accountBookId = state.accountBookId
             if (accountBookId == null) {
-                postSideEffect(FinanceSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
+                postSideEffect(FinanceSideEffect.ToastMessage(ACCOUNT_BOOK_INFO_GET_FAILURE))
                 updateIsLoading(false)
                 return@launch
             }
@@ -73,7 +73,7 @@ class FinanceViewModel @Inject constructor(
         launch {
             val accountBookId = state.accountBookId
             if (accountBookId == null) {
-                postSideEffect(FinanceSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
+                postSideEffect(FinanceSideEffect.ToastMessage(ACCOUNT_BOOK_INFO_GET_FAILURE))
                 updateIsLoading(false)
                 return@launch
             }
@@ -94,7 +94,7 @@ class FinanceViewModel @Inject constructor(
         launch {
             val accountBookId = state.accountBookId
             if (accountBookId == null) {
-                postSideEffect(FinanceSideEffect.ToastMessage(ToastMessages.ACCOUNT_BOOK_INFO_GET_FAILURE))
+                postSideEffect(FinanceSideEffect.ToastMessage(ACCOUNT_BOOK_INFO_GET_FAILURE))
                 updateIsLoading(false)
                 return@launch
             }

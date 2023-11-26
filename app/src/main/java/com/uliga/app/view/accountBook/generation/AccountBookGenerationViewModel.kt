@@ -1,6 +1,10 @@
 package com.uliga.app.view.accountBook.generation
 
 import com.uliga.app.base.BaseViewModel
+import com.uliga.app.utils.ToastMessages.ACCOUNT_BOOK_NAME_PLEASE_WRITE
+import com.uliga.app.utils.ToastMessages.EMAIL_NO_EXISTED
+import com.uliga.app.utils.ToastMessages.EMAIL_PLEASE_WRITE
+import com.uliga.app.utils.ToastMessages.RELATIONSHIP_PLEASE_WRITE
 import com.uliga.domain.model.accountBook.AccountBookGenerationRequest
 import com.uliga.domain.usecase.accountbook.GetAccountBooksUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookUseCase
@@ -33,13 +37,21 @@ class AccountBookGenerationViewModel @Inject constructor(
     ) = intent {
         launch {
             if (name.isEmpty()) {
-                postSideEffect(AccountBookGenerationSideEffect.ToastMessage("가계부 이름을 입력해주세요."))
+                postSideEffect(
+                    AccountBookGenerationSideEffect.ToastMessage(
+                        ACCOUNT_BOOK_NAME_PLEASE_WRITE
+                    )
+                )
                 updateIsLoading(false)
                 return@launch
             }
 
             if (relationship.isEmpty()) {
-                postSideEffect(AccountBookGenerationSideEffect.ToastMessage("관계를 입력해주세요."))
+                postSideEffect(
+                    AccountBookGenerationSideEffect.ToastMessage(
+                        RELATIONSHIP_PLEASE_WRITE
+                    )
+                )
                 updateIsLoading(false)
                 return@launch
             }
@@ -72,7 +84,7 @@ class AccountBookGenerationViewModel @Inject constructor(
 
         launch {
             if (email.isEmpty()) {
-                postSideEffect(AccountBookGenerationSideEffect.ToastMessage("이메일을 적어주세요."))
+                postSideEffect(AccountBookGenerationSideEffect.ToastMessage(EMAIL_PLEASE_WRITE))
                 updateIsLoading(false)
                 return@launch
             }
@@ -88,7 +100,7 @@ class AccountBookGenerationViewModel @Inject constructor(
                     if (it.exists!!) {
                         postSideEffect(AccountBookGenerationSideEffect.AddEmailChip)
                     } else {
-                        postSideEffect(AccountBookGenerationSideEffect.ToastMessage("이메일이 존재하지 않습니다."))
+                        postSideEffect(AccountBookGenerationSideEffect.ToastMessage(EMAIL_NO_EXISTED))
                     }
                 }
         }
