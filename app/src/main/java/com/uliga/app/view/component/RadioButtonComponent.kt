@@ -9,6 +9,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.uliga.app.ui.theme.Grey400
@@ -20,7 +21,8 @@ import com.uliga.app.ui.theme.UligaTheme
 fun ClassifierRadioButton(
     selectedItem: String,
     scheduleType: String,
-    onSelectRequest: (String) -> Unit
+    onSelectRequest: (String) -> Unit,
+    testTag: String = ""
 ) {
     Box(
         modifier = Modifier
@@ -45,6 +47,7 @@ fun ClassifierRadioButton(
                 horizontal = 16.dp,
                 vertical = 8.dp
             )
+            .testTag(testTag)
     ) {
         Text(
             color = if (selectedItem == scheduleType) {

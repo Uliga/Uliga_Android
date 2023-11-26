@@ -44,7 +44,8 @@ fun DropDownTextField(
     textFieldValue: String,
     onDropDownMenuDismissRequest: () -> Unit,
     onDropDownMenuClick: (String) -> Unit,
-    dropDownMenuList: List<String>
+    dropDownMenuList: List<String>,
+    testTag: String = ""
 ) {
     ExposedDropdownMenuBox(
         modifier = modifier,
@@ -78,6 +79,7 @@ fun DropDownTextField(
                 )
                 .fillMaxWidth()
                 .menuAnchor()
+                .testTag(testTag)
         )
 
         DropdownMenu(

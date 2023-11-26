@@ -39,22 +39,28 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.uliga.app.view.component.toast.TOAST_DURATION_MILLIS
-import com.uliga.app.view.component.toast.TOAST_END_POSITION
-import com.uliga.app.view.component.toast.TOAST_START_POSITION
-import com.uliga.app.view.component.toast.TopDownToast
+import com.uliga.app.ext.CircularProgress
 import com.uliga.app.ui.theme.Grey500
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.UligaApplicationTheme
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
-import com.uliga.app.ext.CircularProgress
+import com.uliga.app.utils.TestTags.BASIC_TEXT_FIELD_COST
+import com.uliga.app.utils.TestTags.BASIC_TEXT_FIELD_NOTIFICATION_DATE
+import com.uliga.app.utils.TestTags.BASIC_TEXT_FIELD_SCHEDULE
+import com.uliga.app.utils.TestTags.BUTTON_ADDING_SCHEDULE
+import com.uliga.app.utils.TestTags.RADIO_BUTTON_CHARGE
+import com.uliga.app.utils.TestTags.RADIO_BUTTON_INCOME
 import com.uliga.app.view.component.BasicTextField
 import com.uliga.app.view.component.ClassifierRadioButton
 import com.uliga.app.view.component.HorizontalSpacer
 import com.uliga.app.view.component.PositiveButton
 import com.uliga.app.view.component.VerticalSpacer
+import com.uliga.app.view.component.toast.TOAST_DURATION_MILLIS
+import com.uliga.app.view.component.toast.TOAST_END_POSITION
+import com.uliga.app.view.component.toast.TOAST_START_POSITION
+import com.uliga.app.view.component.toast.TopDownToast
 import dagger.hilt.android.AndroidEntryPoint
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -180,7 +186,8 @@ class ScheduleGenerationActivity : ComponentActivity() {
                                         value = costTextState
                                     )
                                 }
-                            }
+                            },
+                            testTag = BUTTON_ADDING_SCHEDULE
                         )
                     }
                 ) { contentPadding ->
@@ -237,7 +244,8 @@ class ScheduleGenerationActivity : ComponentActivity() {
                                             onValueChange = {
                                                 notificationDateTextState = it
                                             },
-                                            keyboardType = KeyboardType.Number
+                                            keyboardType = KeyboardType.Number,
+                                            testTag = BASIC_TEXT_FIELD_NOTIFICATION_DATE
                                         )
                                     }
 
@@ -282,7 +290,8 @@ class ScheduleGenerationActivity : ComponentActivity() {
                                         scheduleType = scheduleType,
                                         onSelectRequest = {
                                             selectedItemState = it
-                                        }
+                                        },
+                                        testTag = if (scheduleType == "지출") RADIO_BUTTON_CHARGE else RADIO_BUTTON_INCOME
                                     )
                                 }
 
@@ -312,7 +321,8 @@ class ScheduleGenerationActivity : ComponentActivity() {
                                     onValueChange = {
                                         scheduleTextState = it
                                     },
-                                    keyboardType = KeyboardType.Text
+                                    keyboardType = KeyboardType.Text,
+                                    testTag = BASIC_TEXT_FIELD_SCHEDULE
                                 )
                             }
                         }
@@ -340,7 +350,8 @@ class ScheduleGenerationActivity : ComponentActivity() {
                                     onValueChange = {
                                         costTextState = it
                                     },
-                                    keyboardType = KeyboardType.Number
+                                    keyboardType = KeyboardType.Number,
+                                    testTag = BASIC_TEXT_FIELD_COST
                                 )
                             }
 

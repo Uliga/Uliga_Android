@@ -7,10 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
@@ -35,7 +33,6 @@ import com.uliga.app.ui.theme.Primary
 import com.uliga.app.ui.theme.Secondary
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
-import com.uliga.app.utils.TestTags
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
@@ -127,10 +124,12 @@ fun PositiveButton(
     text: String,
     contentPadding: PaddingValues,
     onClick: () -> Unit,
-    textStyle: TextStyle = UligaTheme.typography.body11
+    textStyle: TextStyle = UligaTheme.typography.body11,
+    testTag: String = ""
 ) {
     Button(
-        modifier = modifier,
+        modifier = modifier
+            .testTag(testTag),
         contentPadding = contentPadding,
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Primary,
