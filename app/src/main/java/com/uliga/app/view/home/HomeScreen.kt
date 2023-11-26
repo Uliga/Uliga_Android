@@ -221,7 +221,10 @@ fun HomeScreen(
                 title = {
                     Row(
                         modifier = Modifier
-                            .padding(vertical = 16.dp),
+                            .padding(
+                                vertical = 16.dp,
+                                horizontal = 8.dp
+                            ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
