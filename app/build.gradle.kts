@@ -71,25 +71,29 @@ dependencies {
     implementation(project(":data-local"))
 
     implementation(Core.coreKtx)
+    implementation(Flow.flowbinding)
 
+    // View
     implementation(View.appcompat)
     implementation(View.material)
     implementation(View.constraintLayout)
     implementation(View.navigationFragment)
     implementation(View.navigationUi)
     implementation(View.fragmentKtx)
+    implementation(View.glide)
+    implementation(View.navigationCompose)
 
+    // DI
     implementation(DI.daggerHiltAndroid)
     implementation(DI.daggerHiltComponse)
 
     kapt(DI.daggerHiltAndroidAnnotation)
 
+    // Coroutine
     implementation(Coroutines.core)
     implementation(Coroutines.android)
 
-    implementation(Flow.flowbinding)
-    implementation(View.glide)
-
+    // Compose
     implementation(Compose.composeActivity)
     implementation(Compose.composeUi)
     implementation(Compose.composeTooling)
@@ -100,34 +104,27 @@ dependencies {
     implementation(Compose.composeUiPreview)
     implementation(Compose.composeConstraintLayout)
 
-    implementation("com.holix.android:bottomsheetdialog-compose:1.3.1")
+    // Lifecycle
+    implementation(Lifecycles.composeRuntime)
+    implementation(Lifecycles.composeNaviagtion)
+    implementation(Lifecycles.LifecycleProcess)
+    implementation(Lifecycles.LIfecycleRuntime)
 
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-process:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation( "androidx.navigation:navigation-compose:2.5.3")
-
-    implementation(View.navigationCompose)
-
-    implementation("com.kizitonwose.calendar:compose:2.4.0")
-
-    implementation("org.orbit-mvi:orbit-viewmodel:6.1.0")
-// If using Jetpack Compose include
-    implementation("org.orbit-mvi:orbit-compose:6.1.0")
-
+    // ThirdParty
+    implementation(ThirdParty.composeCalendar)
+    implementation(ThirdParty.orbit)
+    implementation(ThirdParty.orbitViewModel)
     implementation(ThirdParty.permission)
     implementation(ThirdParty.kakaoSdkUser)
+    implementation(ThirdParty.composeBottomSheetDialog)
 
-    // google
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    // Google
+    implementation(Google.googleServicesAuth)
 
     // Instrumentation tests
-    androidTestImplementation("androidx.test:runner:1.4.0")
-//    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.5.4")
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.37")
-    androidTestImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
-//    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
-    implementation("androidx.compose.ui:ui-test-junit4-android:1.5.4")
-
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.37")
+    androidTestImplementation(Testing.composeTestRunner)
+    androidTestImplementation(Testing.composeTestUiManifest)
+    implementation(Testing.composeJunit4)
+    androidTestImplementation(Testing.hiltTest)
+    kaptAndroidTest(Testing.hiltTestCompiler)
 }

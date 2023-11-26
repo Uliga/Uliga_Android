@@ -1,3 +1,4 @@
+import Versions.hiltTest
 
 object App {
     const val compileSdk = 33
@@ -135,6 +136,11 @@ object ThirdParty {
     const val gson = "com.google.code.gson:gson:${Versions.gsonVersion}"
     const val keyBoardObserver =
         "io.github.ParkSangGwon:tedkeyboardobserver:${Versions.keyBoardObserverVersion}"
+
+    val orbit = "org.orbit-mvi:orbit-compose:${Versions.orbit}"
+    val orbitViewModel = "org.orbit-mvi:orbit-viewmodel:${Versions.orbit}"
+    val composeCalendar = "com.kizitonwose.calendar:compose:${Versions.composeCalendar}"
+    val composeBottomSheetDialog = "com.holix.android:bottomsheetdialog-compose:${Versions.composeBottomSheetDialog}"
 }
 
 object Spectrum {
@@ -189,6 +195,31 @@ object Billing {
     val guava = "com.google.guava:guava:24.1-jre"
 }
 
+object Testing {
+    val composeTestRunner = "androidx.test:runner:${Versions.composeTestRunner}"
+    val composeTestUiManifest = "androidx.compose.ui:ui-test-manifest:${Versions.composeTestUi}"
+    val composeJunit4 = "androidx.compose.ui:ui-test-junit4-android:${Versions.composeTestUi}"
+    val hiltTest = "com.google.dagger:hilt-android-testing:${Versions.hiltTest}"
+    val hiltTestCompiler = "com.google.dagger:hilt-android-compiler:${Versions.hiltTest}"
+}
+
+object Google {
+    val googleServicesAuth = "com.google.android.gms:play-services-auth:${Versions.googleServiceAuth}"
+}
+
+object Lifecycles {
+    val composeRuntime = "androidx.lifecycle:lifecycle-runtime-compose:${Versions.lifecycleCompose}"
+    val composeNaviagtion  = "androidx.navigation:navigation-compose:${Versions.lifecycleComposeNavigation}"
+    val LifecycleProcess = "androidx.lifecycle:lifecycle-process:${Versions.lifecycleCompose}"
+    val LIfecycleRuntime = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycleCompose}"
+}
+
+object Domain {
+    const val testCore = "androidx.test:core:1.4.0"
+    const val junit = "junit:junit:4.13.2"
+    const val googleTruth = "com.google.truth:truth:1.1.3"
+}
+
 object Versions {
     const val gradleVersion = "7.4.2"
     const val kotlinVersion = "1.8.10"
@@ -236,4 +267,18 @@ object Versions {
     const val composeMaterial3Version = "1.0.1"
 
     const val billingVersion = "5.0.0"
+
+    const val composeTestRunner = "1.4.0"
+    const val composeTestUi = "1.5.4"
+
+    const val hiltTest = "2.37.0"
+
+    const val orbit = "6.1.0"
+
+    const val composeCalendar = "2.4.0"
+    const val composeBottomSheetDialog = "1.3.1"
+
+    const val googleServiceAuth = "20.7.0"
+    const val lifecycleComposeNavigation = "2.5.3"
+    const val lifecycleCompose = "2.6.1"
 }
