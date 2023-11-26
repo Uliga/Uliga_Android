@@ -66,6 +66,7 @@ import com.uliga.app.ui.theme.White
 import com.uliga.app.utils.Constant
 import com.uliga.app.utils.TestTags
 import com.uliga.app.utils.TestTags.MONTH_BUDGET_VALUE
+import com.uliga.app.utils.TestTags.TEXT_NO_EXISTED_FINANCE_SCHEDULE
 import com.uliga.app.view.accountBook.selection.AccountBookSelectionActivity
 import com.uliga.app.view.budget.BudgetSettingBottomSheet
 import com.uliga.app.view.component.AddingButton
@@ -326,7 +327,7 @@ fun HomeScreen(
 
                             Icon(
                                 imageVector = Icons.Default.Edit,
-                                contentDescription = null,
+                                contentDescription = TestTags.TO_MOVE_ACCOUNT_BOOK_SELECTION_ACTIVITY,
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
                                     .clickable(
@@ -507,7 +508,9 @@ fun HomeScreen(
                                 .padding(horizontal = 4.dp)
                         ) {
                             Text(
-                                modifier = Modifier.align(Alignment.Center),
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .testTag(TEXT_NO_EXISTED_FINANCE_SCHEDULE),
                                 text = "금융 일정이 존재하지 않습니다.",
                                 color = Grey600,
                                 style = UligaTheme.typography.body5,
@@ -696,7 +699,11 @@ fun HomeScreen(
                 deleteAlertDialogVisibleState = false
             },
             onDeleteRequest = {
-                viewModel.deleteFinanceScheduleDetail(state.selectedSchedule.id)
+                viewModel.apply {
+                    deleteFinanceScheduleDetail(state.selectedSchedule.id)
+                    getAccountBookFixedRecordByMonth()
+                }
+
                 deleteAlertDialogVisibleState = false
                 viewModel.updateFinanceSchedule(null)
             },

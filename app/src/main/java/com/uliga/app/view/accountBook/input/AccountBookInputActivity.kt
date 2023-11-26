@@ -36,25 +36,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.uliga.app.view.component.toast.TOAST_DURATION_MILLIS
-import com.uliga.app.view.component.toast.TOAST_END_POSITION
-import com.uliga.app.view.component.toast.TOAST_START_POSITION
-import com.uliga.app.view.component.toast.TopDownToast
+import com.uliga.app.ext.CircularProgress
 import com.uliga.app.ui.theme.Grey600
 import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.UligaApplicationTheme
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
-import com.uliga.app.ext.CircularProgress
+import com.uliga.app.utils.TestTags
+import com.uliga.app.utils.TestTags.DROP_DOWN_TEXT_FIELD_CATEGORY
+import com.uliga.app.utils.TestTags.DROP_DOWN_TEXT_FIELD_PAYMENT_METHOD
 import com.uliga.app.view.component.BasicTextField
 import com.uliga.app.view.component.ClassifierRadioButton
 import com.uliga.app.view.component.DropDownTextField
 import com.uliga.app.view.component.PositiveButton
 import com.uliga.app.view.component.VerticalSpacer
+import com.uliga.app.view.component.toast.TOAST_DURATION_MILLIS
+import com.uliga.app.view.component.toast.TOAST_END_POSITION
+import com.uliga.app.view.component.toast.TOAST_START_POSITION
+import com.uliga.app.view.component.toast.TopDownToast
 import dagger.hilt.android.AndroidEntryPoint
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -234,9 +238,11 @@ class AccountBookInputActivity : ComponentActivity() {
                             VerticalSpacer(height = 32.dp)
 
                             Text(
-                                modifier = Modifier.padding(
-                                    horizontal = 16.dp
-                                ),
+                                modifier = Modifier
+                                    .padding(
+                                        horizontal = 16.dp
+                                    )
+                                    .testTag(TestTags.TRANSACTION_CURRENT_DATE),
                                 text = "${selectedDate ?: ""} 가계부",
                                 color = Grey700,
                                 style = UligaTheme.typography.title1,
@@ -270,7 +276,8 @@ class AccountBookInputActivity : ComponentActivity() {
                                         scheduleType = scheduleType,
                                         onSelectRequest = {
                                             accountBookTypeTextState = it
-                                        }
+                                        },
+                                        testTag = if (scheduleType == "지출") TestTags.RADIO_BUTTON_CHARGE else TestTags.RADIO_BUTTON_INCOME
                                     )
                                 }
 
@@ -310,7 +317,8 @@ class AccountBookInputActivity : ComponentActivity() {
                                         accountBookCategoryTextState = it
                                         isAccountBookCategoryExpanded = false
                                     },
-                                    dropDownMenuList = accountBookCategoryList
+                                    dropDownMenuList = accountBookCategoryList,
+                                    testTag = DROP_DOWN_TEXT_FIELD_CATEGORY
                                 )
                             }
                         }
@@ -348,7 +356,8 @@ class AccountBookInputActivity : ComponentActivity() {
                                         accountBookPaymentMethodTextState = it
                                         isAccountPaymentMethodExpanded = false
                                     },
-                                    dropDownMenuList = accountBookPaymentMethodList
+                                    dropDownMenuList = accountBookPaymentMethodList,
+                                    testTag = DROP_DOWN_TEXT_FIELD_PAYMENT_METHOD
                                 )
                             }
                         }

@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +49,8 @@ import com.uliga.app.ui.theme.Grey700
 import com.uliga.app.ui.theme.UligaTheme
 import com.uliga.app.ui.theme.White
 import com.uliga.app.utils.TestTags
+import com.uliga.app.utils.TestTags.FINANCE_CURRENT_DATE
+import com.uliga.app.utils.TestTags.FINANCE_CURRENT_MONTH
 import com.uliga.app.view.accountBook.input.AccountBookInputActivity
 import com.uliga.app.view.component.AddingButton
 import com.uliga.app.view.component.Day
@@ -232,7 +235,8 @@ fun FinanceScreen(
                             .fillMaxWidth()
                             .padding(
                                 horizontal = 16.dp
-                            ),
+                            )
+                            .testTag(FINANCE_CURRENT_MONTH),
                         text = "${calendarState.firstVisibleMonth.yearMonth.monthValue}월",
                         color = Grey700,
                         style = UligaTheme.typography.title1
@@ -274,9 +278,11 @@ fun FinanceScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            modifier = Modifier.padding(
-                                start = 16.dp
-                            ),
+                            modifier = Modifier
+                                .padding(
+                                    start = 16.dp
+                                )
+                                .testTag(FINANCE_CURRENT_DATE),
                             text = selectedDateState,
                             color = Grey700,
                             style = UligaTheme.typography.title1
