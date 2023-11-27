@@ -30,4 +30,8 @@ interface UserAuthRepository {
     suspend fun updateId(id: Long): Result<Unit>
 
     suspend fun getId(): Result<Long>
+
+    suspend fun updateIsLogin(isLogin: Boolean): Result<Unit>
+
+    suspend fun getIsLogin(): Result<Boolean>
 }

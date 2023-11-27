@@ -8,7 +8,7 @@ import com.uliga.app.utils.ToastMessages.RELATIONSHIP_PLEASE_WRITE
 import com.uliga.domain.model.accountBook.AccountBookGenerationRequest
 import com.uliga.domain.usecase.accountbook.GetAccountBooksUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookUseCase
-import com.uliga.domain.usecase.userAuth.GetUserAuthDataExistedUseCase
+import com.uliga.domain.usecase.userAuth.remote.GetUserAuthDataExistedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.syntax.simple.intent

@@ -6,7 +6,7 @@ import com.uliga.domain.fakeRepository.FakeUserAuthRepository
 import com.uliga.domain.model.userAuth.SocialLoginRequest
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
 import com.uliga.domain.usecase.accountbook.local.UpdateAccountBookUseCase
-import com.uliga.domain.usecase.userAuth.PostSocialLoginUseCase
+import com.uliga.domain.usecase.userAuth.remote.PostSocialLoginUseCase
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test

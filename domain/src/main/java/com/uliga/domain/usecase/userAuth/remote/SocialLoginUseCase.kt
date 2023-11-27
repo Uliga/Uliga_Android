@@ -1,4 +1,4 @@
-package com.uliga.domain.usecase.userAuth
+package com.uliga.domain.usecase.userAuth.remote
 
 import com.uliga.domain.AuthType
 import com.uliga.domain.SocialLoginProvider

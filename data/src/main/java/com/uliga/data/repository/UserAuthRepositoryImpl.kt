@@ -75,4 +75,16 @@ class UserAuthRepositoryImpl @Inject constructor(
             local.getId()
         }
     }
+
+    override suspend fun updateIsLogin(isLogin: Boolean): Result<Unit> {
+        return runCatching {
+            local.updateIsLogin(isLogin)
+        }
+    }
+
+    override suspend fun getIsLogin(): Result<Boolean> {
+        return runCatching {
+            local.getIsLogin()
+        }
+    }
 }

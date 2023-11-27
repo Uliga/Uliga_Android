@@ -4,6 +4,7 @@ import com.uliga.app.base.BaseViewModel
 import com.uliga.domain.usecase.accountbook.GetAccountBookMonthAssetUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookInfoUseCase
 import com.uliga.domain.usecase.userAuth.local.FetchIdUseCase
+import com.uliga.domain.usecase.userAuth.local.UpdateIsLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
@@ -18,15 +19,23 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val fetchIdUseCase: FetchIdUseCase,
     private val fetchCurrentAccountBookInfoUseCase: FetchCurrentAccountBookInfoUseCase,
-    private val getAccountBookMonthAssetUseCase: GetAccountBookMonthAssetUseCase
+    private val getAccountBookMonthAssetUseCase: GetAccountBookMonthAssetUseCase,
+    private val updateIsLoginUseCase: UpdateIsLoginUseCase
 ) : ContainerHost<MainUiState, MainSideEffect>, BaseViewModel() {
     override val container = container<MainUiState, MainSideEffect>(
         MainUiState.empty()
     )
 
     init {
+        updateIsLogin()
         fetchCurrentAccountBookInfo()
         fetchId()
+    }
+
+    private fun updateIsLogin() = intent {
+        launch {
+            updateIsLoginUseCase(true)
+        }
     }
 
     private fun fetchCurrentAccountBookInfo() = intent {

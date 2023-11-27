@@ -1,4 +1,4 @@
-package com.uliga.domain.usecase.userAuth
+package com.uliga.domain.usecase.userAuth.remote
 
 import com.uliga.domain.repository.AccountBookRepository
 import com.uliga.domain.repository.UserAuthRepository
@@ -16,6 +16,7 @@ class GetLogoutRedirectUseCase @Inject constructor(
 
         userAuthRepository.updateToken("")
         userAuthRepository.updateId(0L)
+        userAuthRepository.updateIsLogin(false)
         accountBookRepository.updateCurrentAccountBookId(0L)
         accountBookRepository.updateCurrentAccountBookName("")
 

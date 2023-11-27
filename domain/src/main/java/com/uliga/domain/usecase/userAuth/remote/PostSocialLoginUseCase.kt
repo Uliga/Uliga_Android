@@ -1,4 +1,4 @@
-package com.uliga.domain.usecase.userAuth
+package com.uliga.domain.usecase.userAuth.remote
 
 import com.uliga.domain.model.userAuth.LoginResponse
 import com.uliga.domain.model.userAuth.SocialLoginRequest
@@ -23,7 +23,7 @@ class PostSocialLoginUseCase @Inject constructor(
         withContext(Dispatchers.IO) {
             joinAll(
                 launch { userAuthRepository.updateToken(accessToken) },
-                launch { userAuthRepository.updateId(id) }
+                launch { userAuthRepository.updateId(id) },
             )
         }
 

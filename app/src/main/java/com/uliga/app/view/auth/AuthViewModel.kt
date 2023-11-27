@@ -16,10 +16,11 @@ import com.uliga.app.utils.ToastMessages.USER_NAME_PLEASE_CONFIRM
 import com.uliga.domain.AuthType
 import com.uliga.domain.model.userAuth.NormalLoginRequest
 import com.uliga.domain.model.userAuth.SocialLoginRequest
-import com.uliga.domain.usecase.userAuth.GetUserAuthDataExistedUseCase
-import com.uliga.domain.usecase.userAuth.PostNormalLoginUseCase
-import com.uliga.domain.usecase.userAuth.PostSocialLoginUseCase
-import com.uliga.domain.usecase.userAuth.SocialLoginUseCase
+import com.uliga.domain.usecase.userAuth.local.UpdateIsLoginUseCase
+import com.uliga.domain.usecase.userAuth.remote.GetUserAuthDataExistedUseCase
+import com.uliga.domain.usecase.userAuth.remote.PostNormalLoginUseCase
+import com.uliga.domain.usecase.userAuth.remote.PostSocialLoginUseCase
+import com.uliga.domain.usecase.userAuth.remote.SocialLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import org.orbitmvi.orbit.ContainerHost
@@ -35,7 +36,8 @@ class AuthViewModel @Inject constructor(
     private val socialLoginUseCase: SocialLoginUseCase,
     private val getUserAuthDataExistedUseCase: GetUserAuthDataExistedUseCase,
     private val postSocialLoginUseCase: PostSocialLoginUseCase,
-    private val postNormalLoginUseCase: PostNormalLoginUseCase
+    private val postNormalLoginUseCase: PostNormalLoginUseCase,
+    private val updateIsLoginUseCase: UpdateIsLoginUseCase
 ) : ContainerHost<AuthUiState, AuthSideEffect>, BaseViewModel() {
 
     override val container = container<AuthUiState, AuthSideEffect>(AuthUiState.empty())
