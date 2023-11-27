@@ -2,6 +2,7 @@ package com.uliga.data_local
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -31,9 +32,20 @@ class UserAuthLocalDataSourceImpl @Inject constructor(
         return dataStore.readValue(ID, 0L)
     }
 
+    override suspend fun updateIsLogin(isLogin: Boolean) {
+        dataStore.edit {
+            it[IS_LOGIN] = isLogin
+        }
+    }
+
+    override suspend fun getIsLogin(): Boolean {
+        return dataStore.readValue(IS_LOGIN, false)
+    }
+
 
     companion object {
         val ACCESS_TOKEN = stringPreferencesKey("accessToken")
         val ID = longPreferencesKey("id")
+        val IS_LOGIN = booleanPreferencesKey("isLogin")
     }
 }

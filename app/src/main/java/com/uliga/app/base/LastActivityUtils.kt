@@ -5,7 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.uliga.app.view.SchemeActivity
+import com.uliga.app.view.scheme.SchemeActivity
 import java.lang.ref.WeakReference
 
 val Activity.isActiveActivity: Boolean

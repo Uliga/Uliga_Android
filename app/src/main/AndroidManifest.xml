@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.uliga.app" >
+
     <!-- 인터넷 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -36,12 +37,11 @@
             android:name=".view.main.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".view.SchemeActivity"
+            android:name=".view.auth.AuthActivity"
             android:exported="false" />
         <activity
-            android:name=".view.auth.AuthActivity"
+            android:name=".view.scheme.SchemeActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Uliiga" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

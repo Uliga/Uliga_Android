@@ -4,7 +4,7 @@ import com.uliga.app.base.BaseViewModel
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookIdUseCase
 import com.uliga.domain.usecase.member.DeleteMemberUseCase
 import com.uliga.domain.usecase.member.GetMemberUseCase
-import com.uliga.domain.usecase.userAuth.GetLogoutRedirectUseCase
+import com.uliga.domain.usecase.userAuth.remote.GetLogoutRedirectUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import org.orbitmvi.orbit.ContainerHost

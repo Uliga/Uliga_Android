@@ -1,4 +1,4 @@
-package com.uliga.domain.usecase.userAuth
+package com.uliga.domain.usecase.userAuth.remote
 
 import com.uliga.domain.model.userAuth.UserAuthDataExisted
 import com.uliga.domain.repository.UserAuthRepository
