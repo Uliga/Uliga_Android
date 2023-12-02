@@ -98,8 +98,6 @@ fun HomeScreen(
     val context = LocalContext.current
     val state = viewModel.collectAsState().value
 
-    Log.d("homeScreen", "!!!!")
-
     val currentDate = LocalDate.now()
     val currentDay = currentDate.dayOfMonth
 
@@ -132,9 +130,8 @@ fun HomeScreen(
         mutableStateOf(false)
     }
 
-    var deleteAlertDialogVisibleState by remember {
-        mutableStateOf(false)
-    }
+    val fixedRecordList =
+        state.accountBookAnalyzeFixedRecordByMonth?.schedules ?: listOf()
 
     val recordValue = state.currentMonthAccountBookAsset?.record?.value?.toFloat() ?: 0f
 
@@ -630,10 +627,7 @@ fun HomeScreen(
                     )
                 }
 
-                val fixedRecordList =
-                    state.accountBookAnalyzeFixedRecordByMonth?.schedules
-
-                if (fixedRecordList.isNullOrEmpty()) {
+                if (fixedRecordList.isEmpty()) {
                     item {
                         Box(
                             modifier = Modifier
@@ -702,16 +696,13 @@ fun HomeScreen(
     if (state.selectedSchedule != null) {
         DeleteAlertDialog(
             onDismissRequest = {
-                deleteAlertDialogVisibleState = false
+                viewModel.updateFinanceSchedule(null)
             },
             onDeleteRequest = {
                 viewModel.apply {
                     deleteFinanceScheduleDetail(state.selectedSchedule.id)
-                    getAccountBookFixedRecordByMonth()
+                    updateFinanceSchedule(null)
                 }
-
-                deleteAlertDialogVisibleState = false
-                viewModel.updateFinanceSchedule(null)
             },
             title = "금융 일정 삭제",
             subTitle = "정말 선택한 금융 일정을 삭제하시겠어요?"
