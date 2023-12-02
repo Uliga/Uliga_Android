@@ -471,7 +471,8 @@ fun ProfileScreen(
                 logoutAlertDialogVisibleState = false
             },
             title = "정말로 로그아웃 하시겠습니까?",
-            subTitle = ""
+            subTitle = "",
+            positiveButtonTitle = "로그아웃"
         )
     }
 
@@ -485,7 +486,8 @@ fun ProfileScreen(
                 signOutAlertDialogVisibleState = false
             },
             title = "정말로 회원탈퇴를 하시겠습니까?",
-            subTitle = "지금까지 사용하셨던 정보들이 모두 삭제될 수 있어요."
+            subTitle = "지금까지 사용하셨던 정보들이 모두 삭제될 수 있어요.",
+            positiveButtonTitle = "탈퇴"
         )
     }
 
