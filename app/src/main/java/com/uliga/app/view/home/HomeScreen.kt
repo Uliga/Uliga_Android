@@ -3,6 +3,7 @@ package com.uliga.app.view.home
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -96,6 +97,8 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val state = viewModel.collectAsState().value
+
+    Log.d("homeScreen", "!!!!")
 
     val currentDate = LocalDate.now()
     val currentDay = currentDate.dayOfMonth
@@ -494,7 +497,10 @@ fun HomeScreen(
 
                 }
 
-                val totalSize = state.financeSchedules?.schedules?.size ?: 0
+                var totalSize = state.financeSchedules?.schedules?.size ?: 0
+                if (totalSize > 3) {
+                    totalSize = 3
+                }
 
                 if (totalSize == 0) {
                     item {
@@ -522,30 +528,27 @@ fun HomeScreen(
                     }
                 } else {
                     items(totalSize) { idx ->
-                        if (idx <= 2) {
-                            FinanceScheduleItem(
-                                state = state,
-                                idx = idx,
-                                currentDay = currentDay,
-                                onFinanceScheduleUpdateRequest = { financeSchedule ->
-                                    val intent =
-                                        Intent(context, ScheduleGenerationActivity::class.java)
-                                    intent.putExtra(
-                                        "notificationDay",
-                                        financeSchedule.notificationDay
-                                    )
-                                    intent.putExtra("isIncome", financeSchedule.isIncome)
-                                    intent.putExtra("name", financeSchedule.name)
-                                    intent.putExtra("value", financeSchedule.value)
-                                    intent.putExtra("scheduleId", financeSchedule.id)
-                                    launcher.launch(intent)
-                                },
-                                onFinanceScheduleDeleteRequest = { financeSchedule ->
-                                    viewModel.updateFinanceSchedule(financeSchedule)
-                                }
-                            )
-                        }
-
+                        FinanceScheduleItem(
+                            state = state,
+                            idx = idx,
+                            currentDay = currentDay,
+                            onFinanceScheduleUpdateRequest = { financeSchedule ->
+                                val intent =
+                                    Intent(context, ScheduleGenerationActivity::class.java)
+                                intent.putExtra(
+                                    "notificationDay",
+                                    financeSchedule.notificationDay
+                                )
+                                intent.putExtra("isIncome", financeSchedule.isIncome)
+                                intent.putExtra("name", financeSchedule.name)
+                                intent.putExtra("value", financeSchedule.value)
+                                intent.putExtra("scheduleId", financeSchedule.id)
+                                launcher.launch(intent)
+                            },
+                            onFinanceScheduleDeleteRequest = { financeSchedule ->
+                                viewModel.updateFinanceSchedule(financeSchedule)
+                            }
+                        )
                     }
                 }
 
