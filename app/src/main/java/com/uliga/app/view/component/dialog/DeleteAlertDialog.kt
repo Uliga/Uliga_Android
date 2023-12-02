@@ -35,7 +35,9 @@ fun DeleteAlertDialog(
     onDeleteRequest: () -> Unit,
     properties: DialogProperties = DialogProperties(),
     title: String,
-    subTitle: String
+    subTitle: String,
+    negativeButtonTitle: String = "취소",
+    positiveButtonTitle: String = "삭제"
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -77,73 +79,25 @@ fun DeleteAlertDialog(
                     modifier = Modifier
                         .wrapContentSize()
                         .padding(horizontal = 4.dp),
-                    text = "취소",
+                    text = negativeButtonTitle,
                     contentPadding = PaddingValues(
                         vertical = 4.dp
                     ),
                     onClick = { onDismissRequest() },
                     textStyle = UligaTheme.typography.body14
                 )
-//                Button(
-//                    modifier = Modifier
-//                        .wrapContentSize()
-//                        .padding(horizontal = 4.dp),
-//                    contentPadding = PaddingValues(
-//                        vertical = 4.dp
-//                    ),
-//                    colors = ButtonDefaults.buttonColors(
-//                        backgroundColor = White,
-//                    ),
-//                    shape = RoundedCornerShape(10.dp),
-//                    onClick = {
-//                        onDismissRequest()
-//                    }) {
-//
-//
-//                    Text(
-//                        color = Primary,
-//                        fontFamily = pretendard,
-//                        fontWeight = FontWeight.SemiBold,
-//                        fontSize = 12.sp,
-//                        text = "취소"
-//                    )
-//                }
 
                 PositiveButton(
                     modifier = Modifier
                         .wrapContentSize()
                         .padding(horizontal = 4.dp),
-                    text = "삭제",
+                    text = positiveButtonTitle,
                     contentPadding = PaddingValues(
                         vertical = 4.dp
                     ),
                     onClick = { onDeleteRequest() },
                     textStyle = UligaTheme.typography.body14
                 )
-//                Button(
-//                    modifier = Modifier
-//                        .wrapContentSize()
-//                        .padding(horizontal = 4.dp),
-//                    contentPadding = PaddingValues(
-//                        vertical = 4.dp
-//                    ),
-//                    colors = ButtonDefaults.buttonColors(
-//                        backgroundColor = Primary,
-//                    ),
-//                    shape = RoundedCornerShape(10.dp),
-//                    onClick = {
-//                        onDeleteRequest()
-//                    }) {
-//
-//
-//                    Text(
-//                        color = Color.White,
-//                        fontFamily = pretendard,
-//                        fontWeight = FontWeight.SemiBold,
-//                        fontSize = 12.sp,
-//                        text = "삭제"
-//                    )
-//                }
             }
         }
     }
