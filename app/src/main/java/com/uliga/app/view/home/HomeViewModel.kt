@@ -230,6 +230,7 @@ class HomeViewModel @Inject constructor(
                                 )
                             )
 
+                            getAccountBookFixedRecordByMonth()
                         }
                         .onFailure {
                             postSideEffect(
@@ -366,6 +367,8 @@ class HomeViewModel @Inject constructor(
                             accountBookAnalyzeFixedRecordByMonth = it
                         )
                     }
+
+                    Log.d("fixed", it.toString())
                 }
 
         }
