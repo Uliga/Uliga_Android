@@ -66,4 +66,12 @@ class FakeUserAuthRepository: UserAuthRepository {
     override suspend fun getId(): Result<Long> {
         return runCatching { id }
     }
+
+    override suspend fun updateIsLogin(isLogin: Boolean): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getIsLogin(): Result<Boolean> {
+        TODO("Not yet implemented")
+    }
 }

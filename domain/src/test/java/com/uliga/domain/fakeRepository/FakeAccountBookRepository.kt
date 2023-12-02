@@ -20,12 +20,15 @@ import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionIds
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionRequest
 import com.uliga.domain.model.accountBook.transaction.AccountBookTransactionResponse
 import com.uliga.domain.repository.AccountBookRepository
+import kotlinx.coroutines.flow.Flow
 
 class FakeAccountBookRepository : AccountBookRepository {
 
-    private lateinit var accountBookName: String
+    lateinit var fakeAccountBookName: String
 
-    private var accountBookId: Long = 0L
+    private var fakeAccountBookId: Long = 0L
+    override val accountBookAsset: Flow<AccountBookAsset?>
+        get() = TODO("Not yet implemented")
 
     override suspend fun getAccountBooks(): Result<AccountBooks> {
         TODO("Not yet implemented")
@@ -48,12 +51,15 @@ class FakeAccountBookRepository : AccountBookRepository {
     }
 
     override suspend fun getAccountBookMonthAsset(
+        isCurrent: Boolean,
         accountBookId: Long,
         year: Int,
         month: Int
     ): Result<AccountBookAsset> {
         TODO("Not yet implemented")
     }
+
+
 
     override suspend fun postAccountBookInvitationReply(accountBookInvitationReply: AccountBookInvitationReply): Result<AccountBookInvitationReply> {
         TODO("Not yet implemented")
@@ -124,20 +130,25 @@ class FakeAccountBookRepository : AccountBookRepository {
         TODO("Not yet implemented")
     }
 
+    override val accountBookId: Flow<Long?>
+        get() = TODO("Not yet implemented")
+    override val accountBookName: Flow<String?>
+        get() = TODO("Not yet implemented")
+
     override suspend fun updateCurrentAccountBookName(accountBookName: String): Result<Unit> {
-        return runCatching { this.accountBookName = accountBookName }
+        return runCatching { this.fakeAccountBookName = accountBookName }
     }
 
 
     override suspend fun getCurrentAccountBookName(): Result<String> {
-        return runCatching { accountBookName }
+        return runCatching { fakeAccountBookName }
     }
 
     override suspend fun updateCurrentAccountBookId(accountBookId: Long): Result<Unit> {
-        return runCatching { this.accountBookId = accountBookId }
+        return runCatching { this.fakeAccountBookId = accountBookId }
     }
 
     override suspend fun getCurrentAccountBookId(): Result<Long> {
-        return runCatching { accountBookId }
+        return runCatching { fakeAccountBookId }
     }
 }

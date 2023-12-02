@@ -145,6 +145,7 @@ dependencies {
     androidTestImplementation(Testing.composeTestRunner)
     androidTestImplementation(Testing.composeTestUiManifest)
     implementation(Testing.composeJunit4)
+
     androidTestImplementation(Testing.hiltTest)
     kaptAndroidTest(Testing.hiltTestCompiler)
 
