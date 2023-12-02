@@ -271,7 +271,7 @@ object Versions {
     const val composeTestRunner = "1.4.0"
     const val composeTestUi = "1.5.4"
 
-    const val hiltTest = "2.37.0"
+    const val hiltTest = "2.37"
 
     const val orbit = "6.1.0"
 
