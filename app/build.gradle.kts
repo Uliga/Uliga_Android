@@ -32,15 +32,15 @@ android {
         testInstrumentationRunner = "com.uliga.app.HiltTestRunner"
     }
 
-    val keyProperties = Properties()
-    keyProperties.load(project.rootProject.file("keystore.properties").inputStream())
+//    val keyProperties = Properties()
+//    keyProperties.load(project.rootProject.file("keystore.properties").inputStream())
 
     signingConfigs {
         create("release") {
-            keyAlias = keyProperties.getProperty("keyAlias")
-            keyPassword = keyProperties.getProperty("keyPassword")
-            storeFile = file(keyProperties.getProperty("storeFile"))
-            storePassword = keyProperties.getProperty("storePassword")
+            storeFile = file("../keystore/uliga_keystore")
+            storePassword = "uliga2062"
+            keyAlias = "uliga2062"
+            keyPassword = "uliga2062"
         }
     }
 
