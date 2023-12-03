@@ -1,3 +1,5 @@
+name: Android Unit Test
+
 on:
   push:
     branches: [ "develop" ]
