@@ -23,7 +23,7 @@ jobs:
           cache: gradle
 
       - name: Run compose ui tests
-        uses: reactivecircus/android-emulator-runner@v3
+        uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 33
           target: default
