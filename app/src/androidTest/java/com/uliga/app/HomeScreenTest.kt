@@ -65,6 +65,12 @@ class HomeScreenTest {
 
     @Test
     fun homeScreen_budgetSettingBottomSheet_test() {
+
+        /**
+         * 해당 부분을 수행하려면 test token을 datastore에 저장하는 로직이 선행되어야함.
+         * But 현재 백엔드와 소통이 불가능하기 때문에 해당 테스트는 에뮬레이터 환경에서 불가능할 것으로 보임..
+         */
+
 //        with(composeRule) {
 //            onNodeWithTag(TestTags.BUDGET_SETTING).performClick()
 //
