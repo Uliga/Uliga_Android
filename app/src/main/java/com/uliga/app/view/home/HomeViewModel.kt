@@ -16,11 +16,13 @@ import com.uliga.domain.model.accountBook.budget.AccountBookBudgetRequest
 import com.uliga.domain.model.accountBook.invitation.AccountBookInvitationReply
 import com.uliga.domain.model.financeSchedule.common.FinanceSchedule
 import com.uliga.domain.usecase.accountbook.GetAccountBookMonthAssetUseCase
+import com.uliga.domain.usecase.accountbook.GetAccountBooksUseCase
 import com.uliga.domain.usecase.accountbook.PatchAccountBookBudgetUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookBudgetUseCase
 import com.uliga.domain.usecase.accountbook.PostAccountBookInvitationReplyUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookIdUseCase
 import com.uliga.domain.usecase.accountbook.local.FetchCurrentAccountBookNameUseCase
+import com.uliga.domain.usecase.accountbook.local.UpdateAccountBookUseCase
 import com.uliga.domain.usecase.accountbook.remote.GetCurrentAccountBookAssetUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookFixedRecordByMonthUseCase
 import com.uliga.domain.usecase.accountbook.remote.analyze.GetAccountBookRecordByDayUseCase
@@ -51,7 +53,9 @@ class HomeViewModel @Inject constructor(
     private val getAccountBookFixedRecordByMonthUseCase: GetAccountBookFixedRecordByMonthUseCase,
     private val fetchCurrentAccountBookIdUseCase: FetchCurrentAccountBookIdUseCase,
     private val fetchCurrentAccountBookNameUseCase: FetchCurrentAccountBookNameUseCase,
-    private val getCurrentAccountBookAssetUseCase: GetCurrentAccountBookAssetUseCase
+    private val getCurrentAccountBookAssetUseCase: GetCurrentAccountBookAssetUseCase,
+    private val getAccountBooksUseCase: GetAccountBooksUseCase,
+    private val updateAccountBookUseCase: UpdateAccountBookUseCase
 ) : ContainerHost<HomeUiState, HomeSideEffect>, BaseViewModel() {
 
     override val container = container<HomeUiState, HomeSideEffect>(HomeUiState.empty())
@@ -103,18 +107,37 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun observeCurrentAccountBookAsset() = intent {
+    private fun observeCurrentAccountBookAsset() = intent {
         launch {
             getCurrentAccountBookAssetUseCase().collectLatest {
                 updateCurrentAccountBookAsset(it)
             }
         }
     }
-    fun observeCurrentAccountBookName() = intent {
+    private fun observeCurrentAccountBookName() = intent {
         launch {
             fetchCurrentAccountBookNameUseCase().collectLatest { accountBookName ->
-                updateAccountBookName(accountBookName)
+                if(accountBookName.isNullOrEmpty() || accountBookName.isBlank()) {
+                    getAccountBooks()
+                } else {
+                    updateAccountBookName(accountBookName)
+                }
             }
+        }
+    }
+
+    private suspend fun getAccountBooks() = intent {
+        launch {
+            getAccountBooksUseCase()
+                .onSuccess {
+                    val accountBookName = it.accountBooks[0].info.accountBookName
+                    val accountBookId = it.accountBooks[0].info.accountBookId
+
+                    updateAccountBookUseCase(accountBookName, accountBookId)
+                        .onSuccess {
+                            updateAccountBookName(accountBookName)
+                        }
+                }
         }
     }
 
@@ -367,14 +390,11 @@ class HomeViewModel @Inject constructor(
                             accountBookAnalyzeFixedRecordByMonth = it
                         )
                     }
-
-                    Log.d("fixed", it.toString())
                 }
-
         }
     }
 
-    suspend fun updateAccountBookId(accountBookId: Long?) = intent {
+    private suspend fun updateAccountBookId(accountBookId: Long?) = intent {
         launch {
             reduce {
                 state.copy(
@@ -384,7 +404,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    suspend fun updateAccountBookName(accountBookName: String?) = intent {
+    private suspend fun updateAccountBookName(accountBookName: String?) = intent {
         launch {
             reduce {
                 state.copy(
@@ -394,7 +414,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    suspend fun updateCurrentAccountBookAsset(accountBookAsset: AccountBookAsset?) = intent {
+    private suspend fun updateCurrentAccountBookAsset(accountBookAsset: AccountBookAsset?) = intent {
         launch {
             reduce {
                 state.copy(
